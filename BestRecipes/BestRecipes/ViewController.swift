@@ -13,6 +13,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Варя что-то написала
         // Ильнур что-то написал
+        // Nurislam что-то написал(123)
     }
 
 
