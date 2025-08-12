@@ -12,6 +12,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Варя что-то написала
+        // Nurislam что-то написал(123)
     }
 
 
