@@ -24,4 +24,5 @@ Carthage/
 *.lock
 
 # Xcode previews cache
-*.preview-thumbnails
+*.preview-thumbnails*.xcuserstate
+xcuserdata/

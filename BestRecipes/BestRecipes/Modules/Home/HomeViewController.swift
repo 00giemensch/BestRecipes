@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  HomeViewController.swift
 //  BestRecipes
 //
 //  Created by Ilnur on 11.08.2025.
@@ -7,12 +7,12 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+final class HomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        //test
+        
+        view.backgroundColor = .red
     }
 
 
