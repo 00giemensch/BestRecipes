@@ -20,7 +20,7 @@ extension SearchModel {
         [
             SearchModel(
                 title: """
-                How to make yam & vegetable sauce at home
+                How to make yam
                 & vegetable sauce at home
                 """,
                 ingredients: "9 Ingredients",
@@ -30,7 +30,7 @@ extension SearchModel {
             ),
             SearchModel(
                 title: """
-                How to make yam & vegetable sauce at home
+                How to make yam
                 & vegetable sauce at home
                 """,
                 ingredients: "9 Ingredients",
@@ -40,7 +40,7 @@ extension SearchModel {
             ),
             SearchModel(
                 title: """
-                How to make yam & vegetable sauce at home
+                How to make yam
                 & vegetable sauce at home
                 """,
                 ingredients: "9 Ingredients",
