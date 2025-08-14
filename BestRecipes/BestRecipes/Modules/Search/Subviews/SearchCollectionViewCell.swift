@@ -117,7 +117,7 @@ final class SearchCollectionViewCell: UICollectionViewCell {
             iconView.heightAnchor.constraint(equalToConstant: Drawing.starSize.height),
             
             titleStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Drawing.horizontalInset),
-            titleStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Drawing.horizontalInset),
+            titleStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Drawing.horizontalInset),
             titleStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Drawing.horizontalInset)
         ])
     }
