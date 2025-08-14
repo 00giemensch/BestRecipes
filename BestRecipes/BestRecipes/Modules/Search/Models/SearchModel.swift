@@ -31,7 +31,7 @@ extension SearchModel {
             SearchModel(
                 title: """
                 How to make yam
-                & vegetable sauce at home
+                & spicy steak at home
                 """,
                 ingredients: "9 Ingredients",
                 time: "25 min",
@@ -41,7 +41,7 @@ extension SearchModel {
             SearchModel(
                 title: """
                 How to make yam
-                & vegetable sauce at home
+                & sweet cake at home
                 """,
                 ingredients: "9 Ingredients",
                 time: "25 min",
