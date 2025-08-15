@@ -58,6 +58,15 @@ final class SearchViewController: UIViewController {
         setupUI()
         setLayout()
         filteredRecipes = allRecipes
+        
+        NetworkManager.shared.fetchRandomRecipes { result in
+            switch result {
+            case .success(let recipes):
+                print(recipes)
+            case .failure(let error):
+                print("ERROR: \(error)")
+            }
+        }
     }
 
     // MARK: - Setup UI
