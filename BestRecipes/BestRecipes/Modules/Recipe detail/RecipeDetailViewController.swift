@@ -8,12 +8,20 @@
 import UIKit
 
 class RecipeDetailViewController: UIViewController {
+    let recipe: Recipe
+
+    init(recipe: Recipe) {
+        self.recipe = recipe
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-         title = "Recipe detail"
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
+        title = recipe.title
     }
-    
-
 }
