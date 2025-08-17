@@ -170,6 +170,8 @@ class RecipesViewController: UIViewController, UICollectionViewDataSource, UICol
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedRecipe = presenter.recipes[indexPath.item]
         showRecipeDetail(for: selectedRecipe)
+//        print("\(selectedRecipe)")
+//        print("\(showRecipeDetail(for: selectedRecipe))")
     }
 }
 // MARK: - Пример контроллера деталей рецепта
