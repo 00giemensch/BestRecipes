@@ -8,10 +8,10 @@
 import Foundation
 
 struct Recipes: Codable {
-    let recipes: [Recipe]
+    let recipes: [RecipeModel]
 }
 
-struct Recipe: Codable {
+struct RecipeModel: Codable {
     let image: String
     let title: String
     let readyInMinutes: Int

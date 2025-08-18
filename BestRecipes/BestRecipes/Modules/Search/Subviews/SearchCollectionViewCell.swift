@@ -77,7 +77,7 @@ final class SearchCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Public Methods
-    func configure(with model: Recipe) {
+    func configure(with model: RecipeModel) {
         let rate = 5 * model.spoonacularScore / 100
         let roundedRate = (rate * 10).rounded() / 10
         rateLabel.text = roundedRate.description

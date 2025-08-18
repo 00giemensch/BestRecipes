@@ -48,8 +48,8 @@ final class SearchViewController: UIViewController {
     }()
     
     // MARK: - Private Properties
-    private var allRecipes: [Recipe] = []
-    private var filteredRecipes: [Recipe] = []
+    private var allRecipes: [RecipeModel] = []
+    private var filteredRecipes: [RecipeModel] = []
     private var isSearching: Bool = false
 
     // MARK: - View Lifecycle
