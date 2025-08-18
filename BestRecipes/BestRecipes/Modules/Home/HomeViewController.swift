@@ -84,10 +84,19 @@ final class HomeViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.backgroundColor = .white
         
         setupLayout()
 //        filteredRecipes = allRecipes
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = true
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.navigationBar.isHidden = false
     }
     //MARK: - Methods
     // Search Methods
@@ -109,8 +118,8 @@ final class HomeViewController: UIViewController {
     }
     func showRecipeDetail(for recipe: Recipe) {
         let detailVC = RecipeDetailViewController(recipe: recipe)
-        present(detailVC,animated: true)
-//        navigationController?.pushViewController(detailVC, animated: true)
+//        present(detailVC,animated: true)
+        navigationController?.pushViewController(detailVC, animated: true)
     }
     
     //MARK: - Setup Layout
@@ -289,7 +298,7 @@ extension HomeViewController: SearchTextFieldDelegate {
         DispatchQueue.main.async {
             self.searchRecipesCollection.reloadData()
         }
-        UIView.animate(withDuration: 2.3) {
+        UIView.animate(withDuration: 0.3) {
             self.contentView.alpha = 1
             self.searchRecipesCollection.alpha = 0
             self.titleLabel.alpha = 1
@@ -319,7 +328,7 @@ extension HomeViewController: UITextFieldDelegate {
     }
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.layer.borderColor = UIColor.searchBar.cgColor
-        UIView.animate(withDuration: 2.3) {
+        UIView.animate(withDuration: 0.3) {
             self.contentView.alpha = 0
             self.searchRecipesCollection.alpha = 1
             self.searchTFBottomCT.constant -= 100
