@@ -23,8 +23,8 @@ final class HomeViewController: UIViewController {
         static var iconSize: CGFloat { 16 }
     }
     private var searchTFBottomCT = NSLayoutConstraint()
-    private let allRecipes: [SearchModel] = SearchModel.getSearchModels()
-    private var filteredRecipes: [SearchModel] = []
+    private var allRecipes: [RecipeModel] = []
+    private var filteredRecipes: [RecipeModel] = []
     private var isSearching: Bool = false
     //TODO: create viewModel for all api data
     let presenter = RecipesPresenter()
@@ -39,7 +39,7 @@ final class HomeViewController: UIViewController {
     private let recentRecipeLabel = UILabel()
     
     //MARK: Collections
-    private let searchRecipesCollection: UICollectionView = {
+    private lazy var searchRecipesCollection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = Drawing.spacing
@@ -89,6 +89,8 @@ final class HomeViewController: UIViewController {
         
         setupLayout()
 //        filteredRecipes = allRecipes
+        
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -291,6 +293,7 @@ final class HomeViewController: UIViewController {
 // MARK: - SearchTextField Delegate
 extension HomeViewController: SearchTextFieldDelegate {
     func closeButtonTapped() {
+        performSearch(with: "")
         guard searchTextField.isEditing else { return }
         print("❌ Close search")
         filteredRecipes = []
@@ -327,6 +330,20 @@ extension HomeViewController: UITextFieldDelegate {
         return true
     }
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        //TODO: temporary crutch
+        NetworkManager.shared.fetchRandomRecipes { result in
+            DispatchQueue.main.async { [weak self] in
+                switch result {
+                case .success(let recipes):
+                    self?.allRecipes = recipes
+                    self?.filteredRecipes = recipes
+                    self?.searchRecipesCollection.reloadData()
+                case .failure(let error):
+                    print("ERROR: \(error)")
+                }
+            }
+        }
+        
         textField.layer.borderColor = UIColor.searchBar.cgColor
         UIView.animate(withDuration: 0.3) {
             self.contentView.alpha = 0
