@@ -9,6 +9,7 @@ import UIKit
 
 class RecipeDetailViewController: UIViewController {
     let recipe: Recipe
+    private var tableData: [RecipeModel] = []
     
     init(recipe: Recipe) {
         self.recipe = recipe
@@ -30,7 +31,7 @@ class RecipeDetailViewController: UIViewController {
     
     lazy var scrollContentView: UIView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.addSubviews(subtitleLbl, recipeVw, hStack, titleInstructionsLbl, instructionsTextLbl, footerInstructionsLbl, hStackIngridients)
+        $0.addSubviews(subtitleLbl, recipeVw, hStack, titleInstructionsLbl, instructionsTextLbl, footerInstructionsLbl, hStackIngridients, tableView)
         return $0
     }(UIView())
     
@@ -140,8 +141,23 @@ class RecipeDetailViewController: UIViewController {
         return stack
     }()
     
+//    var tableData
+    
+//    tableViewElements: image, title, weight
+    
+    private lazy var tableView: UITableView = {
+        $0.dataSource = self
+        $0.delegate = self
+        $0.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.rowHeight = 10
+            return $0
+        }(UITableView())
+    
+    
     
 //    lazy var recipeImg = recipe.image
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -192,7 +208,12 @@ class RecipeDetailViewController: UIViewController {
             hStackIngridients.topAnchor.constraint(equalTo: footerInstructionsLbl.bottomAnchor, constant: 31),
             hStackIngridients.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 16),
             hStackIngridients.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -16),
-            hStackIngridients.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -16),
+//            hStackIngridients.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -16),
+            
+            tableView.topAnchor.constraint(equalTo: hStackIngridients.bottomAnchor, constant: 8),
+            tableView.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -16),
             
         ])
     }
@@ -203,4 +224,24 @@ class RecipeDetailViewController: UIViewController {
 }
 
 
+
+extension RecipeDetailViewController: UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as? ItemCell else {
+            return UITableViewCell() //если будет ошибка(nil там, где "Cell"), то вернется просто пустая ячейка
+        }
+        cell.setupCell(item: tableData[indexPath.row])
+        cell.selectionStyle = .none
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        tableData.count
+        3
+    }
+}
+
+extension RecipeDetailViewController: UITableViewDelegate {}
 extension RecipeDetailViewController: UIScrollViewDelegate {}
