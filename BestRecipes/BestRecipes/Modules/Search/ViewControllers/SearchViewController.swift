@@ -48,8 +48,8 @@ final class SearchViewController: UIViewController {
     }()
     
     // MARK: - Private Properties
-    private let allRecipes: [SearchModel] = SearchModel.getSearchModels()
-    private var filteredRecipes: [SearchModel] = []
+    private var allRecipes: [RecipeModel] = []
+    private var filteredRecipes: [RecipeModel] = []
     private var isSearching: Bool = false
 
     // MARK: - View Lifecycle
@@ -58,6 +58,19 @@ final class SearchViewController: UIViewController {
         setupUI()
         setLayout()
         filteredRecipes = allRecipes
+        
+        NetworkManager.shared.fetchRandomRecipes { result in
+            DispatchQueue.main.async { [weak self] in
+                switch result {
+                case .success(let recipes):
+                    self?.allRecipes = recipes
+                    self?.filteredRecipes = recipes
+                    self?.recipesCollection.reloadData()
+                case .failure(let error):
+                    print("ERROR: \(error)")
+                }
+            }
+        }
     }
 
     // MARK: - Setup UI
@@ -107,6 +120,7 @@ final class SearchViewController: UIViewController {
 // MARK: - SearchTextFieldDelegate
 extension SearchViewController: SearchTextFieldDelegate {
     func closeButtonTapped() {
+        performSearch(with: "")
         print("❌ Close search")
 //        dismiss(animated: true, completion: nil)
     }

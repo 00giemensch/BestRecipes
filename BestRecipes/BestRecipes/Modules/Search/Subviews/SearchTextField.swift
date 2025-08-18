@@ -96,7 +96,10 @@ final class SearchTextField: UITextField {
     }
     
     @objc private func closeButtonTapped() {
+        text = ""
+        resignFirstResponder()
         searchDelegate?.closeButtonTapped()
+        sendActions(for: .editingChanged)
     }
     
     // MARK: - Override methods
