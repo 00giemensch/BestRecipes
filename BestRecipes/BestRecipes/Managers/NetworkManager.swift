@@ -28,7 +28,6 @@ final class NetworkManager {
     
     // MARK: - Public Methods
     func fetchRandomRecipes(completion: @escaping ((Result<[RecipeModel], NetworkError>) -> Void)) {
-        print("apiKey: \(apiKey)")
         let parameters: [String: Any] = [
             "apiKey": apiKey,
             "number": 10
