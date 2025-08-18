@@ -22,14 +22,16 @@ final class HomeViewController: UIViewController {
         static var searchTFHeight: CGFloat { 44 }
         static var iconSize: CGFloat { 16 }
     }
-    
+    private var searchTFBottomCT = NSLayoutConstraint()
     private let allRecipes: [SearchModel] = SearchModel.getSearchModels()
     private var filteredRecipes: [SearchModel] = []
     private var isSearching: Bool = false
-    
+    //TODO: create viewModel for all api data
     let presenter = RecipesPresenter()
-    
+   
     //MARK: - UI Components
+    private let vStack = UIStackView()
+    private let titleLabel = UILabel()
     private let searchTextField = SearchTextField()
     private let scrollView = UIScrollView()
     private let contentView = UIView()
@@ -83,6 +85,7 @@ final class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        
         setupLayout()
 //        filteredRecipes = allRecipes
     }
@@ -112,6 +115,7 @@ final class HomeViewController: UIViewController {
     
     //MARK: - Setup Layout
     private func setupLayout() {
+        setupTitleLabel()
         setupSearchTextField()
         setupScrollView()
         setupContentView()
@@ -122,24 +126,42 @@ final class HomeViewController: UIViewController {
         setupRecentRecipeCollection()
         setupSeeAllButton()
     }
+    private func setupTitleLabel() {
+        view.addSubview(titleLabel)
+        titleLabel.text = "Get amazing recipes for cooking"
+        titleLabel.numberOfLines = 2
+        titleLabel.font = UIFont.custom(.bold, size: 22)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Drawing.searchTopInset),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Drawing.horizontalEdges),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Drawing.horizontalEdges)
+        ])
+    }
+    
     private func setupSearchTextField() {
         view.addSubviews(searchTextField)
         searchTextField.delegate = self
         searchTextField.searchDelegate = self
+        searchTFBottomCT = searchTextField.topAnchor.constraint(
+            equalTo: titleLabel.bottomAnchor,
+            constant: Drawing.spacing
+        )
         searchTextField.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
-            searchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Drawing.searchTopInset),
+            searchTFBottomCT,
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Drawing.horizontalEdges),
             searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Drawing.horizontalEdges),
             searchTextField.heightAnchor.constraint(equalToConstant: Drawing.searchTFHeight)
         ])
     }
-    private func setupScrollView() {
+     private func setupScrollView() {
         view.addSubview(scrollView)
         scrollView.showsVerticalScrollIndicator = true
         scrollView.alwaysBounceVertical = true
-        scrollView.backgroundColor = .red
+        scrollView.backgroundColor = .white
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -151,7 +173,7 @@ final class HomeViewController: UIViewController {
     }
     private func setupContentView() {
         scrollView.addSubview(contentView)
-        contentView.backgroundColor = .green
+        contentView.backgroundColor = .white
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -175,10 +197,8 @@ final class HomeViewController: UIViewController {
         searchRecipesCollection.showsVerticalScrollIndicator = false
         searchRecipesCollection.alwaysBounceVertical = true
         searchRecipesCollection.isScrollEnabled = true
-        searchRecipesCollection.backgroundColor = .clear
-        
+        searchRecipesCollection.backgroundColor = .white
         searchRecipesCollection.alpha = 0
-        
         searchRecipesCollection.contentInset.top = Drawing.collectionVerticalInset
         searchRecipesCollection.contentInset.bottom = Drawing.collectionVerticalInset
         searchRecipesCollection.translatesAutoresizingMaskIntoConstraints = false
@@ -198,7 +218,7 @@ final class HomeViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             trendingNowLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            trendingNowLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            trendingNowLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Drawing.collectionVerticalInset),
         ])
     }
     private func setupTrendingNowCollection() {
@@ -262,13 +282,19 @@ final class HomeViewController: UIViewController {
 // MARK: - SearchTextField Delegate
 extension HomeViewController: SearchTextFieldDelegate {
     func closeButtonTapped() {
+        guard searchTextField.isEditing else { return }
         print("❌ Close search")
-        //        dismiss(animated: true, completion: nil)
         filteredRecipes = []
-        contentView.alpha = 1
-        searchRecipesCollection.alpha = 0
+        searchTextField.endEditing(true)
         DispatchQueue.main.async {
             self.searchRecipesCollection.reloadData()
+        }
+        UIView.animate(withDuration: 2.3) {
+            self.contentView.alpha = 1
+            self.searchRecipesCollection.alpha = 0
+            self.titleLabel.alpha = 1
+            self.searchTFBottomCT.constant += 100
+            self.view.layoutIfNeeded()
         }
     }
 }
@@ -291,24 +317,27 @@ extension HomeViewController: UITextFieldDelegate {
         performSearch(with: newText)
         return true
     }
-    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.layer.borderColor = UIColor.searchBar.cgColor
-        contentView.alpha = 0
-        searchRecipesCollection.alpha = 1
+        UIView.animate(withDuration: 2.3) {
+            self.contentView.alpha = 0
+            self.searchRecipesCollection.alpha = 1
+            self.searchTFBottomCT.constant -= 100
+            self.view.layoutIfNeeded()
+        } completion: { _ in
+            self.titleLabel.alpha = 0
+        }
     }
-    
     func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.layer.borderColor = textField.text?.isEmpty ?? true
+        textField.layer.borderColor = textField.isEnabled
         ? UIColor.searchBarGray.cgColor
         : UIColor.searchBar.cgColor
+        textField.text = nil
     }
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
-    
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
         performSearch(with: "")
         return true
@@ -331,7 +360,6 @@ extension HomeViewController: UICollectionViewDataSource {
             return 0
         }
     }
-    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch collectionView.tag {
         case 0:
