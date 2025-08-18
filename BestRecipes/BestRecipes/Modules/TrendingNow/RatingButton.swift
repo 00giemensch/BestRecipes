@@ -71,7 +71,7 @@ class RatingButton: UIView {
     private func setupGradeLabel() {
         self.addSubview(gradeLabel)
         gradeLabel.text = "4,5"
-        gradeLabel.font = .systemFont(ofSize: 14, weight: .bold)
+        gradeLabel.font = UIFont.custom(.bold, size: 14)
         gradeLabel.textColor = .white
         gradeLabel.translatesAutoresizingMaskIntoConstraints = false
         
