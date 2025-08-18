@@ -56,7 +56,7 @@ class TrendingNowCollection: UIViewController {
     private func setupTrendingNowLabel() {
         view.addSubview(trendingNowLabel)
         trendingNowLabel.text = "Trending now 🔥"
-        trendingNowLabel.font = .boldSystemFont(ofSize: 18)
+        trendingNowLabel.font = UIFont.custom(.bold, size: 18)
         trendingNowLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
