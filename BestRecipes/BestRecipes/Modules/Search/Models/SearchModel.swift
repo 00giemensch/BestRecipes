@@ -10,7 +10,7 @@ import Foundation
 struct SearchModel {
     let title: String
     let ingredients: String
-    let time: String
+    let time: Int
     let rate: String
     let imageName: String
 }
@@ -24,7 +24,7 @@ extension SearchModel {
                 & vegetable sauce at home
                 """,
                 ingredients: "9 Ingredients",
-                time: "25 min",
+                time: 25,
                 rate: "5,0",
                 imageName: "defaultSearch"
             ),
@@ -34,7 +34,7 @@ extension SearchModel {
                 & spicy steak at home
                 """,
                 ingredients: "9 Ingredients",
-                time: "25 min",
+                time: 25,
                 rate: "5,0",
                 imageName: "defaultSearch"
             ),
@@ -44,7 +44,7 @@ extension SearchModel {
                 & sweet cake at home
                 """,
                 ingredients: "9 Ingredients",
-                time: "25 min",
+                time: 25,
                 rate: "5,0",
                 imageName: "defaultSearch"
             )

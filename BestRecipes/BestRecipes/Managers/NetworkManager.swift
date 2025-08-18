@@ -5,13 +5,14 @@
 //  Created by Варвара Уткина on 15.08.2025.
 //
 
-import Foundation
+import UIKit
 
 
 enum NetworkError: Error {
     case invalidURL
     case decodingError
     case noData
+    case noImage
     case urlSessionError(Error)
 }
 
@@ -19,7 +20,7 @@ final class NetworkManager {
     static let shared = NetworkManager()
     
     // MARK: - Private Properties
-    private let apiKey = "e6c43b44170840ab8cd46bedce80bf3f"
+    private let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? ""
     private let baseURL = "https://api.spoonacular.com/recipes"
     
     // MARK: - Initializers
@@ -27,6 +28,7 @@ final class NetworkManager {
     
     // MARK: - Public Methods
     func fetchRandomRecipes(completion: @escaping ((Result<[Recipe], NetworkError>) -> Void)) {
+        print("apiKey: \(apiKey)")
         let parameters: [String: Any] = [
             "apiKey": apiKey,
             "number": 10
@@ -49,7 +51,7 @@ final class NetworkManager {
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        URLSession.shared.dataTask(with: request) { data, _, error in
             if let error {
                 completion(.failure(.urlSessionError(error)))
                 return
@@ -66,6 +68,26 @@ final class NetworkManager {
             } catch {
                 completion(.failure(.decodingError))
             }
+        }.resume()
+    }
+    
+    func loadImage(from urlString: String, completion: @escaping ((Result<UIImage, NetworkError>) -> Void)) {
+        guard let url = URL(string: urlString) else {
+            completion(.failure(NetworkError.invalidURL))
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let error {
+                completion(.failure(.urlSessionError(error)))
+                return
+            }
+            
+            guard let data, let image = UIImage(data: data) else {
+                completion(.failure(.noImage))
+                return
+            }
+            completion(.success(image))
         }.resume()
     }
 }
