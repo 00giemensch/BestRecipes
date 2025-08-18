@@ -61,8 +61,12 @@ final class SearchCollectionViewCell: UICollectionViewCell {
     private let lineLabel = UILabel.create(font: UIFont.custom(.regular, size: 12))
     private let timeLabel = UILabel.create(font: UIFont.custom(.regular, size: 12))
     
+    // MARK: - Dependencies
+    private let networkManager: NetworkManager
+    
     // MARK: - Initializers
     override init(frame: CGRect) {
+        networkManager = NetworkManager.shared
         super.init(frame: frame)
         setupUI()
     }
@@ -73,19 +77,27 @@ final class SearchCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Public Methods
-    func configure(with model: SearchModel) {
-        imageView.image = UIImage(named: model.imageName)
-        rateLabel.text = model.rate
+    func configure(with model: RecipeModel) {
+        let rate = 5 * model.spoonacularScore / 100
+        let roundedRate = (rate * 10).rounded() / 10
+        rateLabel.text = roundedRate.description
         titleLabel.text = model.title
-        ingredientsLabel.text = model.ingredients
+        
+        ingredientsLabel.text = "\(model.extendedIngredients.count) ingredients"
         lineLabel.text = "|"
-        timeLabel.text = model.time
-        addGradientToImageView()
+        timeLabel.text = "\(model.readyInMinutes.description) min"
+        
+        getImage(with: model.image) { [weak self] image in
+            self?.imageView.image = image
+            self?.addGradientToImageView()
+        }
     }
     
     // MARK: - Override Methods
     override func layoutSubviews() {
         super.layoutSubviews()
+        imageView.layoutIfNeeded()
+        addGradientToImageView()
     }
 
     // MARK: - Setup UI
@@ -135,12 +147,11 @@ final class SearchCollectionViewCell: UICollectionViewCell {
         gradientLayer.locations = [0.5, 1.0]
         gradientLayer.frame = imageView.bounds
         
-        let height = ceil(imageView.bounds.height * 0.55)
         gradientLayer.frame = CGRect(
             x: 0,
-            y: height,
+            y: 0,
             width: imageView.bounds.width,
-            height: height
+            height: imageView.bounds.height
         )
         imageView.layer.sublayers?
             .filter { $0 is CAGradientLayer }
@@ -150,5 +161,19 @@ final class SearchCollectionViewCell: UICollectionViewCell {
             gradientLayer,
             at: UInt32(imageView.layer.sublayers?.count ?? 0)
         )
+    }
+    
+    private func getImage(with urlString: String, completion: @escaping (UIImage) -> Void) {
+        networkManager.loadImage(from: urlString) { result in
+            DispatchQueue.main.async { [weak self] in
+                switch result {
+                case .success(let image):
+                    completion(image)
+                case .failure(let error):
+                    print("Cell ERROR: \(error)")
+                    self?.imageView.backgroundColor = .lightGray
+                }
+            }
+        }
     }
 }

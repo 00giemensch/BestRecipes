@@ -6,6 +6,7 @@
 *.xcworkspace
 xcuserdata/
 DerivedData/
+**/Secrets.xcconfig
 
 # SwiftPM
 .build/
