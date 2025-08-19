@@ -22,6 +22,7 @@ final class HomeViewController: UIViewController {
         static var searchTFHeight: CGFloat { 44 }
         static var iconSize: CGFloat { 16 }
     }
+    private var viewModel = HomeViewModel()
     private var searchTFBottomCT = NSLayoutConstraint()
     private var titleHeight: CGFloat = 0.0
     private var allRecipes: [RecipeModel] = []
@@ -87,7 +88,14 @@ final class HomeViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
-        setupLayout()
+        viewModel.callBack = { [weak self] in
+            DispatchQueue.main.async {
+                self?.setupLayout()
+//                self?.trendingNowCollection.reloadData()
+            }
+        }
+//        setupLayout()
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -328,18 +336,18 @@ extension HomeViewController: UITextFieldDelegate {
     }
     func textFieldDidBeginEditing(_ textField: UITextField) {
         //TODO: temporary crutch
-        NetworkManager.shared.fetchRandomRecipes { result in
-            DispatchQueue.main.async { [weak self] in
-                switch result {
-                case .success(let recipes):
-                    self?.allRecipes = recipes
-                    self?.filteredRecipes = recipes
-                    self?.searchRecipesCollection.reloadData()
-                case .failure(let error):
-                    print("ERROR: \(error)")
-                }
-            }
-        }
+//        NetworkManager.shared.fetchRandomRecipes { result in
+//            DispatchQueue.main.async { [weak self] in
+//                switch result {
+//                case .success(let recipes):
+//                    self?.allRecipes = recipes
+//                    self?.filteredRecipes = recipes
+//                    self?.searchRecipesCollection.reloadData()
+//                case .failure(let error):
+//                    print("ERROR: \(error)")
+//                }
+//            }
+//        }
         
         textField.layer.borderColor = UIColor.searchBar.cgColor
         
@@ -376,7 +384,7 @@ extension HomeViewController: UICollectionViewDataSource {
         case 0:
             return filteredRecipes.count
         case 1:
-            return 10
+            return viewModel.allRecipes.count
         case 2:
             return 0
         case 3:
@@ -398,12 +406,15 @@ extension HomeViewController: UICollectionViewDataSource {
             return cell
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
-            cell.configure(
-                title: "How to sharwama at home",
-                subtitle: "By Zeelicious foods",
-                imageUrl: "https://img.spoonacular.com/recipes/716429-312x231.jpg",
-                avatarImageUrl: "https://sun6-22.userapi.com/x4LcbN3OMOyr_NPbDUTmy72LgRqnkJkSXlpGCg/qDHljoTibhY.jpg"
-            )
+            let recipe = viewModel.allRecipes[indexPath.item]
+            cell.configure(with: recipe)
+            //TODO: Old method to debug
+//            cell.configure(
+//                title: "How to sharwama at home",
+//                subtitle: "By Zeelicious foods",
+//                imageUrl: "https://img.spoonacular.com/recipes/665329-556x370.jpg",
+//                avatarImageUrl: "https://sun6-22.userapi.com/x4LcbN3OMOyr_NPbDUTmy72LgRqnkJkSXlpGCg/qDHljoTibhY.jpg"
+//            )
             cell.favoriteButtonAction = { [weak self] in
                 print("favoriteButton tup")
             }
