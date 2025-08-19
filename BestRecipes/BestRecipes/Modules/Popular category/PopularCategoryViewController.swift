@@ -7,7 +7,30 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class PopularCategoryViewController: UIViewController {
+
+    private enum Drawings {
+        static var popularCategoryTitle: String { "Popular category" }
+        static var popCatTitleLabelHeight: CGFloat { 28 }
+        
+        static var popularCategoryStackSpacing: CGFloat { 19 }
+        
+        static var popCatCollectionViewHeight: CGFloat { 231 }
+        static var collectionViewCellSize: CGSize {CGSize(width: 150, height: 231)}
+        
+        static var buttonStackSpacing: CGFloat { 8 }
+        static var buttonsScrollViewHeight: CGFloat { 34 }
+        static var buttonsScrollViewPadding: CGFloat { 16 }
+        static var categoryButtonsPadding: NSDirectionalEdgeInsets { NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12) }
+        static var categoryButtonNormalBackgroundColor: UIColor { UIColor.white }
+        static var categoryButtonNormalForegroundColor: UIColor { UIColor(red: 243/255, green: 178/255, blue: 178/255, alpha: 1) }
+        static var categoryButtonRadius: CGFloat { 10 }
+        static var categoryButtonSelectedBackgroundColor: UIColor { UIColor(red: 226/255, green: 62/255, blue: 62/255, alpha: 1) }
+        static var categoryButtonSelectedForegroundColor: UIColor { UIColor.white }
+        static var categoryButtonAnimationDuration: CGFloat { 0.2 }
+    }
+    
+    
 //MARK: - Properties
     var selectedButton: UIButton?
   
@@ -15,18 +38,16 @@ class ViewController: UIViewController {
     private lazy var popularCategoryMainStack: UIStackView = {
         let element = UIStackView()
         element.axis = .vertical
-        element.spacing = 19
+        element.spacing = Drawings.popularCategoryStackSpacing
         element.distribution = .fillProportionally
-        
-        element.backgroundColor = .lightGray
-        
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
-    private lazy var blockTitleLabel: UILabel = {
+    private lazy var popularCategoryTitleLabel: UILabel = {
         let element = UILabel()
-        element.text = "Popular category"
+        element.font = UIFont.custom(.semibold, size: 20)
+        element.text = Drawings.popularCategoryTitle
         
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
@@ -34,11 +55,11 @@ class ViewController: UIViewController {
     
     private lazy var popularCategoryCollectionView: UICollectionView = {
         let viewLayout = UICollectionViewFlowLayout()
+        viewLayout.itemSize = CGSize(width: 150, height: 231)
         viewLayout.scrollDirection = .horizontal
-        let element = UICollectionView(frame: .zero, collectionViewLayout: viewLayout)
-        element.backgroundColor = .brown
-        element.showsHorizontalScrollIndicator = false
         
+        let element = UICollectionView(frame: .zero, collectionViewLayout: viewLayout)
+        element.showsHorizontalScrollIndicator = false
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -57,7 +78,7 @@ class ViewController: UIViewController {
     private lazy var categoriesButtonsStack: UIStackView = {
         let element = UIStackView()
         element.axis = .horizontal
-        element.spacing = 8
+        element.spacing = Drawings.buttonStackSpacing
         element.distribution = .fillProportionally
 //        element.backgroundColor = .green
         
@@ -79,67 +100,39 @@ class ViewController: UIViewController {
         setupConstraints()
     }
     
-//MARK: - Set Views and Setup Constaraints
+//MARK: - Set Views and Setup Constraints
     private func setViews() {
         
         view.backgroundColor = .white
         view.addSubview(popularCategoryMainStack)
      
-        popularCategoryMainStack.addArrangedSubview(blockTitleLabel)
+        popularCategoryMainStack.addArrangedSubview(popularCategoryTitleLabel)
         popularCategoryMainStack.addArrangedSubview(dishCategoriesScrollView)
+        popularCategoryMainStack.addArrangedSubview(popularCategoryCollectionView)
         
         dishCategoriesScrollView.addSubview(categoriesButtonsStack)
         addButtons()
-        
-        popularCategoryMainStack.addArrangedSubview(popularCategoryCollectionView)
-        
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-              
-//            popularCategoryMainStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-//            popularCategoryMainStack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//            popularCategoryMainStack.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-//            
-//            blockTitleLabel.heightAnchor.constraint(equalToConstant: 28),
-//            
-////            dishCategoriesScrollView.topAnchor.constraint(equalTo: blockTitleLabel.bottomAnchor),
-//            dishCategoriesScrollView.heightAnchor.constraint(equalToConstant: 34),
-////            dishCategoriesScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-////            dishCategoriesScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-//            
-//            categoriesButtonsStack.topAnchor.constraint(equalTo: dishCategoriesScrollView.topAnchor),
-//            categoriesButtonsStack.bottomAnchor.constraint(equalTo: dishCategoriesScrollView.bottomAnchor),
-//            categoriesButtonsStack.leadingAnchor.constraint(equalTo: dishCategoriesScrollView.leadingAnchor),
-//            categoriesButtonsStack.trailingAnchor.constraint(equalTo: dishCategoriesScrollView.trailingAnchor),
-//            
-//            popularCategoryCollectionView.topAnchor.constraint(equalTo: dishCategoriesScrollView.bottomAnchor),
-//            popularCategoryCollectionView.bottomAnchor.constraint(equalTo: popularCategoryMainStack.bottomAnchor),
-//            popularCategoryCollectionView.leadingAnchor.constraint(equalTo: popularCategoryMainStack.leadingAnchor),
-//            popularCategoryCollectionView.trailingAnchor.constraint(equalTo: popularCategoryMainStack.trailingAnchor),
-            
-            
-            
-            popularCategoryMainStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+
+            popularCategoryMainStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+
             popularCategoryMainStack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             popularCategoryMainStack.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            popularCategoryMainStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            blockTitleLabel.heightAnchor.constraint(equalToConstant: 28),
+            popularCategoryTitleLabel.heightAnchor.constraint(equalToConstant: Drawings.popCatTitleLabelHeight),
             
-            dishCategoriesScrollView.heightAnchor.constraint(equalToConstant: 34),
+            dishCategoriesScrollView.heightAnchor.constraint(equalToConstant: Drawings.buttonsScrollViewHeight),
             
             categoriesButtonsStack.topAnchor.constraint(equalTo: dishCategoriesScrollView.topAnchor),
             categoriesButtonsStack.bottomAnchor.constraint(equalTo: dishCategoriesScrollView.bottomAnchor),
-            categoriesButtonsStack.leadingAnchor.constraint(equalTo: dishCategoriesScrollView.leadingAnchor, constant: 16),
-            categoriesButtonsStack.trailingAnchor.constraint(equalTo: dishCategoriesScrollView.trailingAnchor, constant: -16),
+            categoriesButtonsStack.leadingAnchor.constraint(equalTo: dishCategoriesScrollView.leadingAnchor, constant: Drawings.buttonsScrollViewPadding),
+            categoriesButtonsStack.trailingAnchor.constraint(equalTo: dishCategoriesScrollView.trailingAnchor, constant: -Drawings.buttonsScrollViewPadding),
             categoriesButtonsStack.heightAnchor.constraint(equalTo: dishCategoriesScrollView.heightAnchor),
             
-            popularCategoryCollectionView.heightAnchor.constraint(equalToConstant: 231)
-            
-            
-            
+            popularCategoryCollectionView.heightAnchor.constraint(equalToConstant: Drawings.popCatCollectionViewHeight)
         ])
     }
     
@@ -147,7 +140,7 @@ class ViewController: UIViewController {
 
 //MARK: - Extension UICollectionViewDataSource
 
-extension ViewController: UICollectionViewDataSource {
+extension PopularCategoryViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         7
     }
@@ -165,32 +158,24 @@ extension ViewController: UICollectionViewDataSource {
 
 //MARK: - Extension UICollectionViewDelegate
 
-extension ViewController: UICollectionViewDelegate {
+extension PopularCategoryViewController: UICollectionViewDelegate {
     
 }
 
 //MARK: - Extension UICollectionViewDelegateFlowLayout
 
-extension ViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let width = itemWidth(for: view.frame.width, spacing: 16)
-        
-        return CGSize(width: 150, height: 231)
-    }
+extension PopularCategoryViewController: UICollectionViewDelegateFlowLayout {
     
-//    func itemWidth(for width: CGFloat, spacing: CGFloat) -> CGFloat {
-//            let itemsInRow: CGFloat = 3
-//
-//            let totalSpacing: CGFloat = 2 * spacing + (itemsInRow - 1) * spacing
-//            let finalWidth = (width - totalSpacing) / itemsInRow
-//
-//            return floor(finalWidth)
-//        }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return Drawings.collectionViewCellSize
+    }
 }
 //MARK: - Extension ViewController with scrollView
 
-extension ViewController {
-    private func addButtons(with categories: [String] = ["Компот", "Каша", "Торт", "Cok", "Pankake", "Marshmallow"]) {
+extension PopularCategoryViewController {
+    private func addButtons(with categories: [String] = ["Salad", "Breakfast", "Appetizer", "Noodle", "Pankake", "Marshmallow"]) {
         
         for (index, category) in categories.enumerated() {
             let button: UIButton = {
@@ -198,13 +183,15 @@ extension ViewController {
                 // Настраиваем первоначальное оборажение кнопки
                 var buttonConfiguration = UIButton.Configuration.filled()
                 buttonConfiguration.title = "\(category)"
-                buttonConfiguration.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
-                buttonConfiguration.baseBackgroundColor = .white
-                buttonConfiguration.baseForegroundColor = UIColor(red: 243/255, green: 178/255, blue: 178/255, alpha: 1)
-                buttonConfiguration.background.cornerRadius = 10
+                buttonConfiguration.attributedTitle?.font = UIFont.custom(.semibold, size: 12)
+                buttonConfiguration.contentInsets = Drawings.categoryButtonsPadding
+                buttonConfiguration.baseBackgroundColor = Drawings.categoryButtonNormalBackgroundColor
+                buttonConfiguration.baseForegroundColor = Drawings.categoryButtonNormalForegroundColor
+                buttonConfiguration.background.cornerRadius = Drawings.categoryButtonRadius
                 
                 let button = UIButton(configuration: buttonConfiguration)
                 button.tag = index
+
                 button.translatesAutoresizingMaskIntoConstraints = false
                 
                 //Обновляем отображение кнопки при смене состояния
@@ -213,17 +200,17 @@ extension ViewController {
                     
                     switch button.state {
                     case .selected:
-                        updatedConfiguration?.baseBackgroundColor = UIColor(red: 226/255, green: 62/255, blue: 62/255, alpha: 1)
-                        updatedConfiguration?.baseForegroundColor = .white
+                        updatedConfiguration?.baseBackgroundColor = Drawings.categoryButtonSelectedBackgroundColor
+                        updatedConfiguration?.baseForegroundColor = Drawings.categoryButtonSelectedForegroundColor
                     case .normal:
-                        updatedConfiguration?.baseBackgroundColor = .white
-                        updatedConfiguration?.baseForegroundColor = UIColor(red: 243/255, green: 178/255, blue: 178/255, alpha: 1)
+                        updatedConfiguration?.baseBackgroundColor = Drawings.categoryButtonNormalBackgroundColor
+                        updatedConfiguration?.baseForegroundColor = Drawings.categoryButtonNormalForegroundColor
                     default:
                         break
                     }
                     
                     // Анимация изменения отображения кнопки
-                    UIView.transition(with: button, duration: 0.2, options: .transitionCrossDissolve) {
+                    UIView.transition(with: button, duration: Drawings.categoryButtonAnimationDuration, options: .transitionCrossDissolve) {
                         button.configuration = updatedConfiguration
                     }
                 }
@@ -231,7 +218,6 @@ extension ViewController {
                 
                 return button
             }()
-            
             categoriesButtonsStack.addArrangedSubview(button)
         }
     }

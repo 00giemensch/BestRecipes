@@ -8,10 +8,36 @@
 import UIKit
 
 class PopularCategoryCell: UICollectionViewCell {
+    private enum Drawings {
+        static var imageRectSize: CGRect { CGRectMake(0, 0, 110, 110) }
+        static var imageShadowOpacity: Float { 1.0 }
+        static var imageShadowRadius: CGFloat { 25 }
+        static var imageShadowColor: CGColor { UIColor(red: 32/255, green: 32/255, blue: 32/255, alpha: 0.15).cgColor }
+        static var imageShadowOffset: CGSize { CGSize(width: 0, height: 8) }
+        
+        static var timeLabelText: String { "Time" }
+        static var timeLabelColor: UIColor { UIColor(red: 193/255, green: 193/255, blue: 193/255, alpha: 1) }
+        
+        static var favoriteButtonRadius: CGFloat { 12 }
+        static var favoriteButtonIconSize: CGSize { CGSize(width: 10.96, height: 13.67) }
+        static var favoriteButtonColor: UIColor { UIColor(red: 193/255, green: 193/255, blue: 193/255, alpha: 1) }
+        
+        static var backgroundRadius: CGFloat { 12 }
+        static var backgroundColor: UIColor { UIColor(red: 241/255, green: 241/255, blue: 241/255, alpha: 1) }
+        
+//        static var
+//        static var
+    }
 
 //MARK: - Properties
-    
     static let identifier = "PopularCategoryCell"
+    private var isAddedInFavorite: Bool = false {
+        didSet {
+            fillingBookmark()
+        }
+    }
+    
+    var favoriteButtonAction: (() -> Void)?
     
 //MARK: - Init
     override init(frame: CGRect) {
@@ -21,14 +47,10 @@ class PopularCategoryCell: UICollectionViewCell {
     }
     
     required init?(coder: NSCoder) {
-        
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    
 //MARK: - UI
-    
     private lazy var mainView: UIView = {
         let element = UIView()
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -36,31 +58,31 @@ class PopularCategoryCell: UICollectionViewCell {
     }()
        
     private lazy var imageShadow: UIView = {
-        let element = UIView(frame: CGRectMake(0, 0, 110, 110))
+        let element = UIView(frame: Drawings.imageRectSize)
         element.layer.cornerRadius = element.frame.height / 2
-        
-        element.layer.shadowOpacity = 0.12
-        element.layer.shadowRadius = 25
-        element.layer.shadowColor = UIColor(red: 32/255, green: 32/255, blue: 32/255, alpha: 0.15).cgColor
-        element.layer.shadowOffset = CGSize(width: 0, height: 8)
+        element.layer.shadowOpacity = Drawings.imageShadowOpacity
+        element.layer.shadowRadius = Drawings.imageShadowRadius
+        element.layer.shadowColor = Drawings.imageShadowColor
+        element.layer.shadowOffset = Drawings.imageShadowOffset
         
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
     private lazy var dishImage: UIImageView = {
-        let element = UIImageView(frame: CGRectMake(0, 0, 110, 110))
-        element.image = UIImage(named: "marshmallow")
+        let element = UIImageView(frame: Drawings.imageRectSize)
+        element.image = UIImage(named: "defaultSearch")
         element.contentMode = .scaleAspectFill
         element.layer.masksToBounds = true
         element.layer.cornerRadius = element.frame.height / 2
-               	
+                   
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
     private lazy var dishTitleLabel: UILabel = {
         let element = UILabel()
+        element.font = UIFont.custom(.semibold, size: 14)
         element.text = "Mashmallow and rose wrap"
         element.numberOfLines = 0
         element.textAlignment = .center
@@ -71,8 +93,9 @@ class PopularCategoryCell: UICollectionViewCell {
     
     private lazy var timeLabel: UILabel = {
         let element = UILabel()
-        element.text = "Time"
-        element.textColor = .systemGray4
+        element.font = UIFont.custom(.regular, size: 12)
+        element.text = Drawings.timeLabelText
+        element.textColor = Drawings.timeLabelColor
         
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
@@ -80,29 +103,35 @@ class PopularCategoryCell: UICollectionViewCell {
     
     private lazy var cookingTimeLabel: UILabel = {
         let element = UILabel()
+        element.font = UIFont.custom(.semibold, size: 12)
         element.text = "5 min"
-        element.textColor = UIColor(red: 193/255, green: 193/255, blue: 193/255, alpha: 1)
         
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
-    private lazy var favoritesMark: UIImageView = {
-        let element = UIImageView()
-        element.image = UIImage(resource: .bookmarkIco)
-        element.contentMode = .scaleAspectFit
-        element.backgroundColor = .white
-        element.layer.cornerRadius = 12
+    private lazy var favoriteButton: UIButton = {
+        let image = UIImage(resource: .bookmarkIco)
+        let scaledImage = image.scale(to: Drawings.favoriteButtonIconSize)
         
+        var buttonConfiguration = UIButton.Configuration.filled()
+        buttonConfiguration.baseBackgroundColor = .white
+        buttonConfiguration.baseForegroundColor = Drawings.favoriteButtonColor
+        buttonConfiguration.background.cornerRadius = Drawings.favoriteButtonRadius
+        buttonConfiguration.image = scaledImage
+        
+        let element = UIButton()
+        element.configuration = buttonConfiguration
+//        fillingBookmark()
+        element.addTarget(self, action: #selector(favoriteButtonPressed), for: .touchUpInside)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
     
     private lazy var background: UIView = {
         let element = UIView()
-        element.backgroundColor = UIColor(red: 241/255, green: 241/255, blue: 241/255, alpha: 1)
-        element.layer.cornerRadius = 12
-        
+        element.backgroundColor = Drawings.backgroundColor
+        element.layer.cornerRadius = Drawings.backgroundRadius
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -114,10 +143,8 @@ class PopularCategoryCell: UICollectionViewCell {
     }()
     
     //MARK: - Setup Constraints and Set Views
-
         private func setViews() {
-            
-            contentView.layer.cornerRadius = 12
+            contentView.layer.cornerRadius = Drawings.backgroundRadius
         
             contentView.addSubview(background)
             contentView.addSubview(imageShadow)
@@ -127,14 +154,11 @@ class PopularCategoryCell: UICollectionViewCell {
             imageShadow.addSubview(dishImage)
             footerSectionView.addSubview(timeLabel)
             footerSectionView.addSubview(cookingTimeLabel)
-            footerSectionView.addSubview(favoritesMark)
-            
+            footerSectionView.addSubview(favoriteButton)
         }
-        
-        private func setupConstraints() {
-            
-            NSLayoutConstraint.activate([
 
+        private func setupConstraints() {
+            NSLayoutConstraint.activate([
                 imageShadow.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 2),
                 imageShadow.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
                    
@@ -158,9 +182,10 @@ class PopularCategoryCell: UICollectionViewCell {
                 footerSectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
                 footerSectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
                 
-                favoritesMark.heightAnchor.constraint(equalToConstant: 24),
-                favoritesMark.bottomAnchor.constraint(equalTo: footerSectionView.bottomAnchor),
-                favoritesMark.trailingAnchor.constraint(equalTo: footerSectionView.trailingAnchor),
+                favoriteButton.heightAnchor.constraint(equalToConstant: 24),
+                favoriteButton.widthAnchor.constraint(equalToConstant: 24),
+                favoriteButton.bottomAnchor.constraint(equalTo: footerSectionView.bottomAnchor),
+                favoriteButton.trailingAnchor.constraint(equalTo: footerSectionView.trailingAnchor),
                 
                 timeLabel.topAnchor.constraint(equalTo: footerSectionView.topAnchor),
                 timeLabel.leadingAnchor.constraint(equalTo: footerSectionView.leadingAnchor),
@@ -169,4 +194,25 @@ class PopularCategoryCell: UICollectionViewCell {
                 cookingTimeLabel.leadingAnchor.constraint(equalTo: footerSectionView.leadingAnchor)
             ])
         }
+    
+    @objc func favoriteButtonPressed() {
+        isAddedInFavorite.toggle()
+        guard let action = self.favoriteButtonAction else { return }
+        action()
+    }
+    
+    private func fillingBookmark() {
+        favoriteButton.tintColor = isAddedInFavorite ? .systemRed : .gray
+    }
+}
+
+//MARK: - Extension UIImage
+
+extension UIImage {
+    func scale(to size: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
 }
