@@ -22,12 +22,15 @@ final class NetworkManager {
     // MARK: - Private Properties
     private let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String ?? ""
     private let baseURL = "https://api.spoonacular.com/recipes"
+    private let imageBaseURL = "https://img.spoonacular.com/ingredients_100x100/"
     
     // MARK: - Initializers
     private init() {}
     
     // MARK: - Public Methods
-    func fetchRandomRecipes(completion: @escaping ((Result<[RecipeModel], NetworkError>) -> Void)) {
+    func fetchRandomRecipes(
+        completion: @escaping ((Result<[RecipeModel], NetworkError>) -> Void)
+    ) {
         let parameters: [String: Any] = [
             "apiKey": apiKey,
             "number": 10
@@ -60,17 +63,21 @@ final class NetworkManager {
                 completion(.failure(.noData))
                 return
             }
-            
+
             do {
                 let decodedData = try JSONDecoder().decode(Recipes.self, from: data)
                 completion(.success(decodedData.recipes))
+                print(decodedData.recipes)
             } catch {
                 completion(.failure(.decodingError))
             }
         }.resume()
     }
     
-    func loadImage(from urlString: String, completion: @escaping ((Result<UIImage, NetworkError>) -> Void)) {
+    func loadImage(
+        from urlString: String,
+        completion: @escaping ((Result<UIImage, NetworkError>) -> Void)
+    ) {
         guard let url = URL(string: urlString) else {
             completion(.failure(NetworkError.invalidURL))
             return
@@ -88,5 +95,18 @@ final class NetworkManager {
             }
             completion(.success(image))
         }.resume()
+    }
+    
+    func loadIngredientImage(
+        imageName: String?,
+        completion: @escaping ((Result<UIImage, NetworkError>) -> Void)
+    ) {
+        guard let imageName else {
+            completion(.failure(.noImage))
+            return
+        }
+        
+        let fullImagePath = imageBaseURL + imageName
+        loadImage(from: fullImagePath, completion: completion)
     }
 }
