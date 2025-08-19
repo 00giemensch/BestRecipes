@@ -108,7 +108,7 @@ class DishCell: UICollectionViewCell {
     private func setupTitleLabel() {
         contentView.addSubview(titleLabel)
         titleLabel.text = "Title text fot testing textLabel"
-        titleLabel.font = .boldSystemFont(ofSize: 22)
+        titleLabel.font = UIFont.custom(.bold, size: 22)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -152,7 +152,7 @@ class DishCell: UICollectionViewCell {
     private func setupSubtitleLabel() {
         contentView.addSubview(subtitleLabel)
         subtitleLabel.text = "Subtitle text for subtitle lable"
-        subtitleLabel.font = .systemFont(ofSize: 17, weight: .light)
+        subtitleLabel.font = UIFont.custom(.light, size: 17)
         subtitleLabel.textColor = .lightGray
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         
