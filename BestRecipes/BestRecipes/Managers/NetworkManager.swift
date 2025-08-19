@@ -67,7 +67,7 @@ final class NetworkManager {
             do {
                 let decodedData = try JSONDecoder().decode(Recipes.self, from: data)
                 completion(.success(decodedData.recipes))
-                print(decodedData.recipes)
+              //  decodedData.recipes.forEach({print($0.image)})
             } catch {
                 completion(.failure(.decodingError))
             }
