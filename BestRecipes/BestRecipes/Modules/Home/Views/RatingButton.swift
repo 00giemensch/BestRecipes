@@ -10,7 +10,7 @@ import UIKit
 class RatingButton: UIView {
     //MARK: - Properties
     var action: (() -> Void)?
-    private var isHasRating: Bool {
+    var isHasRating: Bool {
         didSet {
             fillingStar()
         }
@@ -40,7 +40,9 @@ class RatingButton: UIView {
     private func fillingStar() {
         starImageView.tintColor = isHasRating ? .yellow : .black
     }
-    
+    func setRatingGrade(_ grade: Double) {
+        gradeLabel.text = String(format:"%.1f", grade)
+    }
     //MARK: - Setup Layout
     private func setupLayout() {
         setupBackground()
@@ -70,8 +72,7 @@ class RatingButton: UIView {
     }
     private func setupGradeLabel() {
         self.addSubview(gradeLabel)
-        gradeLabel.text = "4,5"
-        gradeLabel.font = .systemFont(ofSize: 14, weight: .bold)
+        gradeLabel.font = UIFont.custom(.bold, size: 12)
         gradeLabel.textColor = .white
         gradeLabel.translatesAutoresizingMaskIntoConstraints = false
         

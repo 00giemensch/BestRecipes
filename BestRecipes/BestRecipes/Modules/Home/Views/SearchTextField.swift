@@ -97,7 +97,7 @@ final class SearchTextField: UITextField {
     
     @objc private func closeButtonTapped() {
         text = ""
-        resignFirstResponder()
+     //   resignFirstResponder()
         searchDelegate?.closeButtonTapped()
         sendActions(for: .editingChanged)
     }
