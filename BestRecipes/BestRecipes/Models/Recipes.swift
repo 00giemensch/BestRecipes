@@ -16,6 +16,7 @@ struct RecipeModel: Codable {
     let title: String
     let readyInMinutes: Int
     let spoonacularScore: Double
+    let creditsText: String
     let cuisines: [String]
     let dishTypes: [String]
     let extendedIngredients: [Ingredient]
