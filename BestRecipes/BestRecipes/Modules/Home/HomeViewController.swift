@@ -23,6 +23,7 @@ final class HomeViewController: UIViewController {
         static var iconSize: CGFloat { 16 }
     }
     private var searchTFBottomCT = NSLayoutConstraint()
+    private var titleHeight: CGFloat = 0.0
     private var allRecipes: [RecipeModel] = []
     private var filteredRecipes: [RecipeModel] = []
     private var isSearching: Bool = false
@@ -30,7 +31,7 @@ final class HomeViewController: UIViewController {
     let presenter = RecipesPresenter()
    
     //MARK: - UI Components
-    private let vStack = UIStackView()
+   // private let vStack = UIStackView()
     private let titleLabel = UILabel()
     private let searchTextField = SearchTextField()
     private let scrollView = UIScrollView()
@@ -86,11 +87,7 @@ final class HomeViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
-        
         setupLayout()
-//        filteredRecipes = allRecipes
-        
-        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -293,7 +290,7 @@ final class HomeViewController: UIViewController {
 // MARK: - SearchTextField Delegate
 extension HomeViewController: SearchTextFieldDelegate {
     func closeButtonTapped() {
-        performSearch(with: "")
+        //performSearch(with: "")
         guard searchTextField.isEditing else { return }
         print("❌ Close search")
         filteredRecipes = []
@@ -305,7 +302,7 @@ extension HomeViewController: SearchTextFieldDelegate {
             self.contentView.alpha = 1
             self.searchRecipesCollection.alpha = 0
             self.titleLabel.alpha = 1
-            self.searchTFBottomCT.constant += 100
+            self.searchTFBottomCT.constant += self.titleHeight
             self.view.layoutIfNeeded()
         }
     }
@@ -345,10 +342,12 @@ extension HomeViewController: UITextFieldDelegate {
         }
         
         textField.layer.borderColor = UIColor.searchBar.cgColor
+        
+        titleHeight = titleLabel.frame.height + Drawing.spacing + Drawing.searchTopInset
         UIView.animate(withDuration: 0.3) {
             self.contentView.alpha = 0
             self.searchRecipesCollection.alpha = 1
-            self.searchTFBottomCT.constant -= 100
+            self.searchTFBottomCT.constant -= self.titleHeight
             self.view.layoutIfNeeded()
         } completion: { _ in
             self.titleLabel.alpha = 0
@@ -361,11 +360,11 @@ extension HomeViewController: UITextFieldDelegate {
         textField.text = nil
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
+      //  textField.resignFirstResponder()
         return true
     }
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        performSearch(with: "")
+       // performSearch(with: "")
         return true
     }
 }
