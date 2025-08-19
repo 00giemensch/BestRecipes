@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct SearchModel {
-    let title: String
-    let ingredients: String
-    let time: Int
-    let rate: String
-    let imageName: String
-}
+//struct SearchModel {
+//    let title: String
+//    let ingredients: String
+//    let time: Int
+//    let rate: String
+//    let imageName: String
+//}
