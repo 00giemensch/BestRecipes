@@ -23,7 +23,7 @@ struct RecipeModel: Codable {
 }
 
 struct Ingredient: Codable {
-    let image: String
+    let image: String?
     let name: String
     let amount: Double
     let unit: String
