@@ -62,11 +62,11 @@ final class SearchCollectionViewCell: UICollectionViewCell {
     private let timeLabel = UILabel.create(font: UIFont.custom(.regular, size: 12))
     
     // MARK: - Dependencies
-    private let networkManager: NetworkManager
+   // private let networkManager: NetworkManager
     
     // MARK: - Initializers
     override init(frame: CGRect) {
-        networkManager = NetworkManager.shared
+        //networkManager = NetworkManager.shared
         super.init(frame: frame)
         setupUI()
     }
@@ -164,16 +164,16 @@ final class SearchCollectionViewCell: UICollectionViewCell {
     }
     
     private func getImage(with urlString: String, completion: @escaping (UIImage) -> Void) {
-        networkManager.loadImage(from: urlString) { result in
-            DispatchQueue.main.async { [weak self] in
-                switch result {
-                case .success(let image):
-                    completion(image)
-                case .failure(let error):
-                    print("Cell ERROR: \(error)")
-                    self?.imageView.backgroundColor = .lightGray
-                }
-            }
-        }
+//        networkManager.loadImage(from: urlString) { result in
+//            DispatchQueue.main.async { [weak self] in
+//                switch result {
+//                case .success(let image):
+//                    completion(image)
+//                case .failure(let error):
+//                    print("Cell ERROR: \(error)")
+//                    self?.imageView.backgroundColor = .lightGray
+//                }
+//            }
+//        }
     }
 }
