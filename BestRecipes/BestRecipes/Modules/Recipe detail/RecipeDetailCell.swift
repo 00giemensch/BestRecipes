@@ -9,96 +9,94 @@ import UIKit
 
 class RecipeDetailCell: UITableViewCell {
 
-    var completion: ( () -> Void )?
-    
+//    var completion: ( () -> Void )?
     
 
-    
 // Lbls
+    
     lazy var cellTitleLbl: UILabel = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.numberOfLines = 0
-        $0.text = "dasd"
-        $0.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        $0.font = UIFont(name: "Poppins-SemiBold", size: 16)
         $0.textColor = .black
+        $0.textAlignment = .right
         return $0
     }(UILabel())
     
-    lazy var cellPriceLbl: UILabel = {
+    lazy var cellWeightLbl: UILabel = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        $0.textColor = .systemGreen
+        $0.font = UIFont(name: "Poppins-Regular", size: 14)
+        $0.textColor = #colorLiteral(red: 0.568627451, green: 0.568627451, blue: 0.568627451, alpha: 1)
         $0.textAlignment = .right
-        $0.text = "dasd"
+        $0.text = "200g"
         return $0
     }(UILabel())
 //
     
     lazy var cellView: UIView = {
-        $0.backgroundColor = .clear
+        $0.backgroundColor = #colorLiteral(red: 0.9450980392, green: 0.9450980392, blue: 0.9450980392, alpha: 1)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        $0.layer.cornerRadius = 10
         return $0
     }(UIView())
 
     
     lazy var cellImage: UIImageView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        $0.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        $0.heightAnchor.constraint(equalToConstant: 53).isActive = true
+        $0.widthAnchor.constraint(equalToConstant: 53).isActive = true
         $0.contentMode = .scaleAspectFill
         $0.image = UIImage(named: "defaultSearch")
         $0.clipsToBounds = true
+        $0.layer.cornerRadius = 12
+        $0.backgroundColor = .red
         return $0
     }(UIImageView())
-    
+        
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         clipsToBounds = true
         
+        contentView.addSubview(cellView)
         contentView.addSubview(cellTitleLbl)
-        contentView.addSubview(cellPriceLbl)
+        contentView.addSubview(cellWeightLbl)
         contentView.addSubview(cellImage)
+        
         setupConstraints()
     }
     
     override func prepareForReuse() {
-        cellImage.image = nil
+        cellWeightLbl.text = nil
         cellTitleLbl.text = nil
+        cellImage.image = nil
     }
      
-    
-    func setupCell(item: RecipeModel) {
+    func setupCell(item: IngredientItem) {
+        cellImage.image = UIImage(named: item.image)
         cellTitleLbl.text = item.title
-        
-        NetworkManager.shared.loadImage(from: item.image) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let image):
-                    self?.cellImage.image = image
-                case .failure:
-                    self?.cellImage.image = nil // или поставить плейсхолдер
-                }
-            }
-        }
     }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            cellImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            cellImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            cellView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6),
+            cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6),
+            
+            cellImage.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 16),
+            cellImage.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
 
             
-            cellTitleLbl.topAnchor.constraint(equalTo: cellImage.topAnchor,constant: 12),
+//            cellTitleLbl.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
             cellTitleLbl.leadingAnchor.constraint(equalTo: cellImage.trailingAnchor, constant: 16),
-            cellTitleLbl.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
+            cellTitleLbl.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
             
-            cellPriceLbl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            cellPriceLbl.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            cellPriceLbl.widthAnchor.constraint(equalToConstant: 80),
+            cellWeightLbl.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -16),
+            cellWeightLbl.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
             
-            cellTitleLbl.trailingAnchor.constraint(equalTo: cellPriceLbl.leadingAnchor, constant: -8),
+            
+
         ])
     }
     

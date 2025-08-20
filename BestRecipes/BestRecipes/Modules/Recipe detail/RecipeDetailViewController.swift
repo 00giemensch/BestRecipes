@@ -7,9 +7,14 @@
 
 import UIKit
 
+struct IngredientItem {
+    let title: String
+    let image: String
+}
+
 class RecipeDetailViewController: UIViewController {
     let recipe: Recipe
-    private var tableData: [RecipeModel] = []
+    private var mockTableData: [IngredientItem] = []
     
     init(recipe: Recipe) {
         self.recipe = recipe
@@ -31,7 +36,7 @@ class RecipeDetailViewController: UIViewController {
     
     lazy var scrollContentView: UIView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.addSubviews(subtitleLbl, recipeVw, hStack, titleInstructionsLbl, instructionsTextLbl, footerInstructionsLbl, hStackIngridients, tableView)
+        $0.addSubviews(subtitleLbl, recipeVw, hStackRating, titleInstructionsLbl, instructionsStepTextLbl, footerInstructionsLbl, hStackIngridients, tableView)
         return $0
     }(UIView())
     
@@ -80,7 +85,7 @@ class RecipeDetailViewController: UIViewController {
         return $0
     }(UILabel())
     
-    lazy var hStack: UIStackView = {
+    lazy var hStackRating: UIStackView = {
         let stack = UIStackView.create(spacing: 8)
         stack.distribution = .equalSpacing
         stack.widthAnchor.constraint(equalToConstant: 300)
@@ -88,9 +93,11 @@ class RecipeDetailViewController: UIViewController {
         return stack
     }()
     
-    lazy var instructionsTextLbl: UILabel = {
+    var instructionsNumberLbl = 111
+    
+    lazy var instructionsStepTextLbl: UILabel = {
         $0.text = """
-            1. Place eggs in a saucepan and cover with cold water. Bring water to a boil and immediately remove from heat. Cover and let eggs stand in hot water for 10 to 12 minutes. Remove from hot water, cool, peel, and chop.
+            \(instructionsNumberLbl). Place eggs in a saucepan and cover with cold water. Bring water to a boil and immediately remove from heat. Cover and let eggs stand in hot water for 10 to 12 minutes. Remove from hot water, cool, peel, and chop.
             2. Place chopped eggs in a bowl.
             3. Add chopped tomatoes, corns, lettuce, and any other vegitable of your choice.
             4. Stir in mayonnaise, green onion, and mustard. Season with paprika, salt, and pepper.
@@ -141,22 +148,19 @@ class RecipeDetailViewController: UIViewController {
         return stack
     }()
     
-//    var tableData
     
-//    tableViewElements: image, title, weight
+    private var tableViewHeightConstraint: NSLayoutConstraint!
     
     private lazy var tableView: UITableView = {
         $0.dataSource = self
         $0.delegate = self
-        $0.register(UITableViewCell.self, forCellReuseIdentifier: "RecipeDetailCell")
+        $0.register(RecipeDetailCell.self, forCellReuseIdentifier: "RecipeDetailCell")
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.rowHeight = 100
-            return $0
-        }(UITableView())
-    
-    
-    
-//    lazy var recipeImg = recipe.image
+        $0.rowHeight = 90
+        $0.separatorStyle = .none
+        $0.isScrollEnabled = false
+        return $0
+    }(UITableView())
     
     
     override func viewDidLoad() {
@@ -166,17 +170,26 @@ class RecipeDetailViewController: UIViewController {
         view.addSubview(scrollView)
         setupConstr()
         
-        // Заполнение таблицы тестовыми данными
-        tableData = [
-            RecipeModel(title: "Eggs", image: "defaultSearch"),
-            RecipeModel(title: "Tomatoes", image: "defaultSearch"),
-            RecipeModel(title: "Lettuce", image: "defaultSearch")
+        // mockData
+        mockTableData = [
+            IngredientItem(title: "Eggs", image: "defaultSearch"),
+            IngredientItem(title: "Tomatoes", image: "defaultSearch"),
+            IngredientItem(title: "Lettuce", image: "defaultSearch"),
+            IngredientItem(title: "Lettuce", image: "defaultSearch"),
+            IngredientItem(title: "Lettuce", image: "defaultSearch"),
+            IngredientItem(title: "Lettuce", image: "defaultSearch"),
+            IngredientItem(title: "Lettuce", image: "defaultSearch"),
         ]
-
-        tableView.reloadData()
+        tableView.layoutIfNeeded()
+        tableViewHeightConstraint.constant = tableView.contentSize.height
     }
     
+
     func setupConstr() {
+        
+        tableViewHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: 0)
+        tableViewHeightConstraint.isActive = true
+        
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -198,37 +211,36 @@ class RecipeDetailViewController: UIViewController {
             recipeVw.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -16),
             recipeVw.heightAnchor.constraint(equalTo: scrollContentView.widthAnchor, multiplier: 0.5),
             
-            hStack.topAnchor.constraint(equalTo: recipeVw.bottomAnchor, constant: 16),
-            hStack.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 16),
-            hStack.heightAnchor.constraint(equalToConstant: 20),
+            hStackRating.topAnchor.constraint(equalTo: recipeVw.bottomAnchor, constant: 16),
+            hStackRating.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 16),
+            hStackRating.heightAnchor.constraint(equalToConstant: 20),
             
-            titleInstructionsLbl.topAnchor.constraint(equalTo: hStack.bottomAnchor, constant: 16),
+            titleInstructionsLbl.topAnchor.constraint(equalTo: hStackRating.bottomAnchor, constant: 16),
             titleInstructionsLbl.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 24),
             titleInstructionsLbl.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -24),
             
-            instructionsTextLbl.topAnchor.constraint(equalTo: titleInstructionsLbl.bottomAnchor, constant: 8),
-            instructionsTextLbl.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 32),
-            instructionsTextLbl.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -32),
+            instructionsStepTextLbl.topAnchor.constraint(equalTo: titleInstructionsLbl.bottomAnchor, constant: 8),
+            instructionsStepTextLbl.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 32),
+            instructionsStepTextLbl.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -32),
             
-            footerInstructionsLbl.topAnchor.constraint(equalTo: instructionsTextLbl.bottomAnchor, constant: 1),
+            footerInstructionsLbl.topAnchor.constraint(equalTo: instructionsStepTextLbl.bottomAnchor, constant: 1),
             footerInstructionsLbl.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 16),
             footerInstructionsLbl.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -16),
             
             hStackIngridients.topAnchor.constraint(equalTo: footerInstructionsLbl.bottomAnchor, constant: 31),
             hStackIngridients.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 16),
             hStackIngridients.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -16),
-//            hStackIngridients.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -16),
+
             
             tableView.topAnchor.constraint(equalTo: hStackIngridients.bottomAnchor, constant: 8),
             tableView.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -36),
+            
             
         ])
     }
-    
-    
-    
+  
     
 }
 
@@ -240,28 +252,17 @@ extension RecipeDetailViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "RecipeDetailCell", for: indexPath) as? RecipeDetailCell else {
             return UITableViewCell() //если будет ошибка(nil там, где "Cell"), то вернется просто пустая ячейка
         }
-        cell.setupCell(item: tableData[indexPath.row])
+        cell.setupCell(item: mockTableData[indexPath.row])
         cell.selectionStyle = .none
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        tableData.count
-        3
+        mockTableData.count
     }
 }
 
 extension RecipeDetailViewController: UITableViewDelegate {}
 extension RecipeDetailViewController: UIScrollViewDelegate {}
-extension RecipeModel {
-    init(title: String, image: String) {
-        self.title = title
-        self.image = image
-        self.readyInMinutes = 0
-        self.spoonacularScore = 0
-        self.cuisines = []
-        self.extendedIngredients = []
-        self.analyzedInstructions = []
-    }
-}
+
