@@ -2,22 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>API_KEY</key>
-    <string>$(API_KEY)</string>
-    <key>UIAppFonts</key>
-    <array>
-        <string>Poppins-Black.ttf</string>
-        <string>Poppins-Bold.ttf</string>
-        <string>Poppins-ExtraBold.ttf</string>
-        <string>Poppins-ExtraLight.ttf</string>
-        <string>Poppins-Light.ttf</string>
-        <string>Poppins-Medium.ttf</string>
-        <string>Poppins-Regular.ttf</string>
-        <string>Poppins-SemiBold.ttf</string>
-        <string>Poppins-Thin.ttf</string>
-    </array>
-    <key>CFBundleIdentifier</key>
-    <string></string>
+	<key>API_KEY</key>
+	<string>e6c43b44170840ab8cd46bedce80bf3f</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Poppins-Black.ttf</string>
+		<string>Poppins-Bold.ttf</string>
+		<string>Poppins-ExtraBold.ttf</string>
+		<string>Poppins-ExtraLight.ttf</string>
+		<string>Poppins-Light.ttf</string>
+		<string>Poppins-Medium.ttf</string>
+		<string>Poppins-Regular.ttf</string>
+		<string>Poppins-SemiBold.ttf</string>
+		<string>Poppins-Thin.ttf</string>
+	</array>
+	<key>CFBundleIdentifier</key>
+	<string></string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

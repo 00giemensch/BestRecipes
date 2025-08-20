@@ -22,6 +22,8 @@ final class HomeViewController: UIViewController {
         static var searchTFHeight: CGFloat { 44 }
         static var iconSize: CGFloat { 16 }
     }
+    let userStorage = UserStorage.shared
+    
     private var viewModel = HomeViewModel()
     private var searchTFBottomCT = NSLayoutConstraint()
     private var titleHeight: CGFloat = 0.0
@@ -83,6 +85,19 @@ final class HomeViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Testing Button
+    let testOnboardingButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Test Onboarding", for: .normal)
+        button.titleLabel?.font = UIFont(name: "Poppins-Bold", size: 12)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor(named: "Primary50") ?? UIColor(hex: 0xFD5B44)
+        button.layer.cornerRadius = 8
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(nil, action: #selector(testOnboardingTapped), for: .touchUpInside)
+        return button
+    }()
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,12 +105,11 @@ final class HomeViewController: UIViewController {
         view.backgroundColor = .white
         viewModel.callBack = { [weak self] in
             DispatchQueue.main.async {
-                self?.setupLayout()
-//                self?.trendingNowCollection.reloadData()
+//                self?.setupLayout()
+                self?.trendingNowCollection.reloadData()
             }
         }
-//        setupLayout()
-        
+        setupLayout()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -123,6 +137,17 @@ final class HomeViewController: UIViewController {
     @objc func seeAllTapped() {
         print("See all tapped")
     }
+    
+    // MARK: - Testing Methods
+    @objc func testOnboardingTapped() {
+        let storage = OnboardingStorage()
+        storage.resetOnboardingState()
+        
+        let onboardingVC = OnboardingViewController()
+        onboardingVC.modalPresentationStyle = .fullScreen
+        present(onboardingVC, animated: true)
+    }
+    
     func showRecipeDetail(for recipe: Recipe) {
         let detailVC = RecipeDetailViewController(recipe: recipe)
 //        present(detailVC,animated: true)
@@ -141,6 +166,7 @@ final class HomeViewController: UIViewController {
         setupRecentRecipeLabel()
         setupRecentRecipeCollection()
         setupSeeAllButton()
+        setupTestOnboardingButton()
     }
     private func setupTitleLabel() {
         view.addSubview(titleLabel)
@@ -263,6 +289,15 @@ final class HomeViewController: UIViewController {
             seeAllButton.heightAnchor.constraint(equalToConstant: 20),
 
           ])
+    }
+    private func setupTestOnboardingButton() {
+        view.addSubview(testOnboardingButton)
+        NSLayoutConstraint.activate([
+            testOnboardingButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            testOnboardingButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            testOnboardingButton.widthAnchor.constraint(equalToConstant: 120),
+            testOnboardingButton.heightAnchor.constraint(equalToConstant: 30)
+        ])
     }
     private func setupRecentRecipeLabel() {
         contentView.addSubview(recentRecipeLabel)
@@ -407,16 +442,21 @@ extension HomeViewController: UICollectionViewDataSource {
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
             let recipe = viewModel.allRecipes[indexPath.item]
-            cell.configure(with: recipe)
-            //TODO: Old method to debug
-//            cell.configure(
-//                title: "How to sharwama at home",
-//                subtitle: "By Zeelicious foods",
-//                imageUrl: "https://img.spoonacular.com/recipes/665329-556x370.jpg",
-//                avatarImageUrl: "https://sun6-22.userapi.com/x4LcbN3OMOyr_NPbDUTmy72LgRqnkJkSXlpGCg/qDHljoTibhY.jpg"
-//            )
+            let isItInFavorites = viewModel.favoriteRecipesIDDic.keys.contains(recipe.image)
+            
+            cell.configure(with: recipe, isItInFavorites)
             cell.favoriteButtonAction = { [weak self] in
-                print("favoriteButton tup")
+               // print("favoriteButton tup")
+                self?.viewModel.addOrRemoveFavorite(recipe)
+            }
+            /// this action print all favorites
+            cell.ratingButton.action = { [weak self] in
+                let favorites = self?.userStorage.favoriteDishes
+                favorites?.forEach { data in
+                    if let x = try? JSONDecoder().decode(RecipeModel.self, from: data) {
+                        print(x.title)
+                    }
+                }
             }
             return cell
         case 2:
