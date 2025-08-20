@@ -20,7 +20,7 @@ class DishCell: UICollectionViewCell {
     //MARK: - UI Components
     private let dishImageView = UIImageView()
     private let favoriteButton = UIButton()
-    private let ratingButton = RatingButton()
+    let ratingButton = RatingButton()
     private let avatarImageView = UIImageView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
@@ -37,8 +37,8 @@ class DishCell: UICollectionViewCell {
         super.prepareForReuse()
         titleLabel.text = nil
         subtitleLabel.text = nil
-        dishImageView.image = nil
-        avatarImageView.image = nil
+        dishImageView.image = UIImage(systemName: "frying.pan")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal)
+        avatarImageView.image = UIImage(systemName: "person.circle")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal)
         ratingButton.isHasRating = false
         isAddedInFavorite = false
     }
@@ -51,27 +51,10 @@ class DishCell: UICollectionViewCell {
     private func fillingBookmark() {
         favoriteButton.tintColor = isAddedInFavorite ? .systemRed : .gray
     }
-   
-    //TODO: Old method for debug
-//    func configure(title: String, subtitle: String, imageUrl: String, avatarImageUrl: String) {
-//        titleLabel.text = title
-//        subtitleLabel.text = subtitle
-//        
-//        fetchImage(with: imageUrl) { [weak self] image in
-//            DispatchQueue.main.async {
-//                self?.dishImageView.image = image
-//            }
-//        }
-//        fetchImage(with: avatarImageUrl) { [weak self] image in
-//            DispatchQueue.main.async {
-//                self?.avatarImageView.image = image
-//            }
-//        }
-//    }
-    
-    func configure(with recipe: RecipeModel) {
+    func configure(with recipe: RecipeModel,_ isAddToFavorite: Bool) {
         titleLabel.text = recipe.title
         subtitleLabel.text = recipe.creditsText
+        isAddedInFavorite = isAddToFavorite
         ratingButton.setRatingGrade(recipe.spoonacularScore)
         fetchImage(with: recipe.image) { [weak self] image in
             DispatchQueue.main.async {
