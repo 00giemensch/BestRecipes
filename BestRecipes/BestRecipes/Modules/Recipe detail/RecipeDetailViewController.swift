@@ -148,9 +148,9 @@ class RecipeDetailViewController: UIViewController {
     private lazy var tableView: UITableView = {
         $0.dataSource = self
         $0.delegate = self
-        $0.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        $0.register(UITableViewCell.self, forCellReuseIdentifier: "RecipeDetailCell")
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.rowHeight = 10
+        $0.rowHeight = 100
             return $0
         }(UITableView())
     
@@ -165,6 +165,15 @@ class RecipeDetailViewController: UIViewController {
         title = "Recipe detail"
         view.addSubview(scrollView)
         setupConstr()
+        
+        // Заполнение таблицы тестовыми данными
+        tableData = [
+            RecipeModel(title: "Eggs", image: "defaultSearch"),
+            RecipeModel(title: "Tomatoes", image: "defaultSearch"),
+            RecipeModel(title: "Lettuce", image: "defaultSearch")
+        ]
+
+        tableView.reloadData()
     }
     
     func setupConstr() {
@@ -228,7 +237,7 @@ class RecipeDetailViewController: UIViewController {
 extension RecipeDetailViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as? ItemCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "RecipeDetailCell", for: indexPath) as? RecipeDetailCell else {
             return UITableViewCell() //если будет ошибка(nil там, где "Cell"), то вернется просто пустая ячейка
         }
         cell.setupCell(item: tableData[indexPath.row])
@@ -245,3 +254,14 @@ extension RecipeDetailViewController: UITableViewDataSource {
 
 extension RecipeDetailViewController: UITableViewDelegate {}
 extension RecipeDetailViewController: UIScrollViewDelegate {}
+extension RecipeModel {
+    init(title: String, image: String) {
+        self.title = title
+        self.image = image
+        self.readyInMinutes = 0
+        self.spoonacularScore = 0
+        self.cuisines = []
+        self.extendedIngredients = []
+        self.analyzedInstructions = []
+    }
+}
