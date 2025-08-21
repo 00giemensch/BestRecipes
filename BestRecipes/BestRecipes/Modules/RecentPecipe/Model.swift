@@ -10,8 +10,8 @@ import UIKit
 
 // MARK: - Model
 struct Recipe {
-    let title: String
-    let subtitle: String
+    let title: String // название рецепта
+    let subtitle: String // автор
     let image: UIImage?
 }
 

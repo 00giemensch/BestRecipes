@@ -13,7 +13,17 @@ struct IngredientItem {
 }
 
 class RecipeDetailViewController: UIViewController {
+    
+   
+    /*
+    отсюда приходит название рецепт(из recent recipe).
+    передается от туда же картинка.
+    эта модель для шапки экрана(название+картинка рецепта).
+    */
     let recipe: Recipe
+
+    
+    // тестовые данные для верстки таблицы
     private var mockTableData: [IngredientItem] = []
     
     init(recipe: Recipe) {
@@ -36,7 +46,7 @@ class RecipeDetailViewController: UIViewController {
     
     lazy var scrollContentView: UIView = {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.addSubviews(subtitleLbl, recipeVw, hStackRating, titleInstructionsLbl, instructionsStepTextLbl, footerInstructionsLbl, hStackIngridients, tableView)
+        $0.addSubviews(subtitleLbl, recipeVw, hStackRating, titleInstructionsLbl, instructionsStepNumberLbl, instructionsStepTextLbl, footerInstructionsLbl, hStackIngridients, tableView)
         return $0
     }(UIView())
     
@@ -50,8 +60,9 @@ class RecipeDetailViewController: UIViewController {
         return $0
     }(UILabel())
     
+    // картинка рецепта(у меня пока просто вью)
     lazy var recipeVw: UIView = {
-        $0.backgroundColor = .searchBar
+        $0.backgroundColor = .red
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.layer.cornerRadius = 18
         return $0
@@ -63,6 +74,7 @@ class RecipeDetailViewController: UIViewController {
         return $0
     }(UIImageView())
     
+    //значение рейтинга - найти в модели
     lazy var ratingNumberLbl: UILabel = {
         $0.font = .custom(.regular, size: 14)
         $0.textColor = .black
@@ -70,6 +82,7 @@ class RecipeDetailViewController: UIViewController {
         return $0
     }(UILabel())
     
+    // кол-во отзывов - найти в модели
     lazy var reviewsLbl: UILabel = {
         $0.text = "(300 Reviews)"
         $0.font = .custom(.regular, size: 14)
@@ -93,14 +106,23 @@ class RecipeDetailViewController: UIViewController {
         return stack
     }()
     
-    var instructionsNumberLbl = 111
     
+    // RecipeModel/analyzedInstructions/Instruction/number
+    lazy var instructionsStepNumberLbl: UILabel = {
+        $0.text = "1."
+        $0.font = .custom(.regular, size: 16)
+        $0.numberOfLines = 0
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.textColor = .black
+        $0.backgroundColor = .clear
+        $0.textAlignment = .left
+        return $0
+    }(UILabel())
+    
+    // RecipeModel/analyzedInstructions/Instruction/step
     lazy var instructionsStepTextLbl: UILabel = {
         $0.text = """
-            \(instructionsNumberLbl). Place eggs in a saucepan and cover with cold water. Bring water to a boil and immediately remove from heat. Cover and let eggs stand in hot water for 10 to 12 minutes. Remove from hot water, cool, peel, and chop.
-            2. Place chopped eggs in a bowl.
-            3. Add chopped tomatoes, corns, lettuce, and any other vegitable of your choice.
-            4. Stir in mayonnaise, green onion, and mustard. Season with paprika, salt, and pepper.
+            Place eggs in a saucepan and cover with cold water. Bring water to a boil and immediately remove from heat. Cover and let eggs stand in hot water for 10 to 12 minutes. Remove from hot water, cool, peel, and chop.
             """
         $0.font = .custom(.regular, size: 16)
         $0.numberOfLines = 0
@@ -179,7 +201,7 @@ class RecipeDetailViewController: UIViewController {
             IngredientItem(title: "Lettuce", image: "defaultSearch"),
             IngredientItem(title: "Lettuce", image: "defaultSearch"),
             IngredientItem(title: "Lettuce", image: "defaultSearch"),
-        ]
+        ] // должны приходить еще граммы
         tableView.layoutIfNeeded()
         tableViewHeightConstraint.constant = tableView.contentSize.height
     }
@@ -218,9 +240,12 @@ class RecipeDetailViewController: UIViewController {
             titleInstructionsLbl.topAnchor.constraint(equalTo: hStackRating.bottomAnchor, constant: 16),
             titleInstructionsLbl.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 24),
             titleInstructionsLbl.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -24),
+                        
+            instructionsStepNumberLbl.topAnchor.constraint(equalTo: titleInstructionsLbl.bottomAnchor, constant: 8),
+            instructionsStepNumberLbl.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 32),
             
             instructionsStepTextLbl.topAnchor.constraint(equalTo: titleInstructionsLbl.bottomAnchor, constant: 8),
-            instructionsStepTextLbl.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 32),
+            instructionsStepTextLbl.leadingAnchor.constraint(equalTo: instructionsStepNumberLbl.trailingAnchor, constant: 4),
             instructionsStepTextLbl.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -32),
             
             footerInstructionsLbl.topAnchor.constraint(equalTo: instructionsStepTextLbl.bottomAnchor, constant: 1),
@@ -231,11 +256,10 @@ class RecipeDetailViewController: UIViewController {
             hStackIngridients.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 16),
             hStackIngridients.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -16),
 
-            
             tableView.topAnchor.constraint(equalTo: hStackIngridients.bottomAnchor, constant: 8),
             tableView.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -36),
+            tableView.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor, constant: -110),
             
             
         ])
