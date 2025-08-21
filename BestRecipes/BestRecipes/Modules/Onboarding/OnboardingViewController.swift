@@ -245,11 +245,11 @@ final class OnboardingViewController: UIPageViewController {
     }
     
     private func presentMainApp() {
-        let homeViewController = HomeViewController()
-        let navigationController = UINavigationController(rootViewController: homeViewController)
-        navigationController.modalPresentationStyle = .fullScreen
+        let homeViewController = CustomTabBarController()
+        homeViewController.modalPresentationStyle = .fullScreen
+//        let navigationController = UINavigationController(rootViewController: homeViewController)
         
-        present(navigationController, animated: true) { [weak self] in
+        present(homeViewController, animated: true) { [weak self] in
             // Clear cache after transition
             self?.cachedViewControllers.removeAll()
         }

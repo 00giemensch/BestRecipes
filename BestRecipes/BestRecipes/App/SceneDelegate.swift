@@ -25,7 +25,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         if onboardingShown {
             // Show main app
-            window?.rootViewController = UINavigationController(rootViewController: HomeViewController())
+            window?.rootViewController = CustomTabBarController()
         } else {
             // Show onboarding
             window?.rootViewController = OnboardingViewController()
