@@ -150,7 +150,7 @@ class CustomTabBar: UITabBar {
     private func createCenterButton() {
         if centerButton == nil {
             let button = UIButton(type: .custom)
-            button.backgroundColor = .red
+            button.backgroundColor = .searchBar
             button.layer.cornerRadius = Constants.buttonRadius
             button.layer.masksToBounds = true
             
