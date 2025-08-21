@@ -11,6 +11,8 @@ final class UserStorage {
     
     static let shared = UserStorage()
     
+    private init() {}
+    
     var pastOnboarding: Bool {
         get { UserDefaults.standard.bool(forKey: "pastOnboarding") }
         set { UserDefaults.standard.set(newValue, forKey: "pastOnboarding") }
