@@ -81,10 +81,22 @@ class RecipeDetailCell: UITableViewCell {
         cellImage.image = nil
     }
      
-    func setupCell(item: IngredientItem) {
-        cellImage.image = UIImage(named: item.image)
-        cellTitleLbl.text = item.title
-    }
+    func configure(with ingredient: Ingredient) { //'Ingredient' is not a member type of struct 'BestRecipes.RecipeModel'
+            cellTitleLbl.text = ingredient.name
+            cellWeightLbl.text = String(format: "%.2f", ingredient.amount)
+            cellUnitLbl.text = ingredient.unit.isEmpty ? "" : ingredient.unit
+
+            NetworkManager.shared.loadIngredientImage(imageName: ingredient.image) { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let image):
+                        self?.cellImage.image = image
+                    case .failure:
+                        self?.cellImage.image = UIImage(named: "defaultSearch")
+                    }
+                }
+            }
+        }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([

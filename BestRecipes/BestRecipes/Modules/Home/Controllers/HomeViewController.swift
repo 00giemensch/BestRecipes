@@ -109,6 +109,11 @@ final class HomeViewController: UIViewController {
                 self?.trendingNowCollection.reloadData()
             }
         }
+        
+        presenter.fetchRecipes { [weak self] in
+            self?.recentRecipeCollection.reloadData()
+        }
+        
         setupLayout()
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -148,7 +153,7 @@ final class HomeViewController: UIViewController {
         present(onboardingVC, animated: true)
     }
     
-    func showRecipeDetail(for recipe: Recipe) {
+    func showRecipeDetail(for recipe: RecipeModel) {
         let detailVC = RecipeDetailViewController(recipe: recipe)
 //        present(detailVC,animated: true)
         navigationController?.pushViewController(detailVC, animated: true)
@@ -466,6 +471,10 @@ extension HomeViewController: UICollectionViewDataSource {
                 return UICollectionViewCell()
             }
             cell.setupRecipe(presenter.recipes[indexPath.item])
+            
+//            let recipeModel = presenter.recipes[indexPath.item]
+//            cell.setupRecipe(recipeModel)showRecipeDetail
+            
             return cell
         default :
             return UICollectionViewCell()
