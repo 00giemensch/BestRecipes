@@ -8,9 +8,7 @@
 import UIKit
 
 class RecipeDetailCell: UITableViewCell {
-
-//    var completion: ( () -> Void )?
-    
+  
 
 // Lbls
     lazy var cellTitleLbl: UILabel = {
@@ -28,7 +26,17 @@ class RecipeDetailCell: UITableViewCell {
         $0.font = .custom(.regular, size: 14)
         $0.textColor = #colorLiteral(red: 0.568627451, green: 0.568627451, blue: 0.568627451, alpha: 1)
         $0.textAlignment = .right
-        $0.text = "200g"
+        $0.text = "200"
+        return $0
+    }(UILabel())
+    
+    lazy var cellUnitLbl: UILabel = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.font = UIFont(name: "Poppins-Regular", size: 14)
+        $0.font = .custom(.regular, size: 14)
+        $0.textColor = #colorLiteral(red: 0.568627451, green: 0.568627451, blue: 0.568627451, alpha: 1)
+        $0.textAlignment = .right
+        $0.text = "g"
         return $0
     }(UILabel())
 //
@@ -59,9 +67,10 @@ class RecipeDetailCell: UITableViewCell {
         clipsToBounds = true
         
         contentView.addSubview(cellView)
-        contentView.addSubview(cellTitleLbl)
-        contentView.addSubview(cellWeightLbl)
-        contentView.addSubview(cellImage)
+        contentView.addSubview(cellTitleLbl) // Ingredient/name
+        contentView.addSubview(cellWeightLbl) // Ingredient/amount
+        contentView.addSubview(cellUnitLbl) // Ingredient/unit - для грамм
+        contentView.addSubview(cellImage) // Ingredient/image
         
         setupConstraints()
     }
@@ -72,10 +81,22 @@ class RecipeDetailCell: UITableViewCell {
         cellImage.image = nil
     }
      
-    func setupCell(item: IngredientItem) {
-        cellImage.image = UIImage(named: item.image)
-        cellTitleLbl.text = item.title
-    }
+    func configure(with ingredient: Ingredient) { //'Ingredient' is not a member type of struct 'BestRecipes.RecipeModel'
+            cellTitleLbl.text = ingredient.name
+            cellWeightLbl.text = String(format: "%.2f", ingredient.amount)
+            cellUnitLbl.text = ingredient.unit.isEmpty ? "" : ingredient.unit
+
+            NetworkManager.shared.loadIngredientImage(imageName: ingredient.image) { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let image):
+                        self?.cellImage.image = image
+                    case .failure:
+                        self?.cellImage.image = UIImage(named: "defaultSearch")
+                    }
+                }
+            }
+        }
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
@@ -89,14 +110,14 @@ class RecipeDetailCell: UITableViewCell {
             cellImage.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
 
             
-//            cellTitleLbl.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
             cellTitleLbl.leadingAnchor.constraint(equalTo: cellImage.trailingAnchor, constant: 16),
             cellTitleLbl.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
             
-            cellWeightLbl.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -16),
-            cellWeightLbl.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
+            cellUnitLbl.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -16),
+            cellUnitLbl.centerYAnchor.constraint(equalTo: cellView.centerYAnchor),
             
-            
+            cellWeightLbl.trailingAnchor.constraint(equalTo: cellUnitLbl.leadingAnchor, constant: 0),
+            cellWeightLbl.centerYAnchor.constraint(equalTo: cellView.centerYAnchor)
 
         ])
     }

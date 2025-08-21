@@ -64,11 +64,23 @@ class RecipeItemCell: UICollectionViewCell {
         ])
     }
 
-    func setupRecipe(_ recipe: Recipe) {
-        imageView.image = recipe.image
-        titleLabel.text = recipe.title
-        subtitleLabel.text = recipe.subtitle
-    }
+    func setupRecipe(_ recipe: RecipeModel) {
+            titleLabel.text = recipe.title
+            subtitleLabel.text = recipe.creditsText.isEmpty ? "Unknown Author" : recipe.creditsText
+
+            NetworkManager.shared.loadImage(from: recipe.image) { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let image):
+                        self?.imageView.image = image
+                    case .failure:
+                        self?.imageView.image = UIImage(named: "defaultSearch")
+                    }
+                }
+            }
+        }
+    
+
 }
 
 
@@ -147,7 +159,7 @@ class RecipesViewController: UIViewController, UICollectionViewDataSource, UICol
         print("See all tapped")
     }
 
-    func showRecipeDetail(for recipe: Recipe) {
+    func showRecipeDetail(for recipe: RecipeModel) {
         let detailVC = RecipeDetailViewController(recipe: recipe)
         navigationController?.pushViewController(detailVC, animated: true)
     }
