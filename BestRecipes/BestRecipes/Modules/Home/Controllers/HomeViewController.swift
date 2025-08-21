@@ -408,11 +408,11 @@ extension HomeViewController: UITextFieldDelegate {
         textField.text = nil
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-      //  textField.resignFirstResponder()
+//        textField.resignFirstResponder()
         return true
     }
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
-       // performSearch(with: "")
+//        performSearch(with: "")
         return true
     }
 }
@@ -487,9 +487,11 @@ extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch collectionView.tag {
         case 0:
-            break
+            let selectedRecipe = filteredRecipes[indexPath.item]
+            showRecipeDetail(for: selectedRecipe)
         case 1:
-            break
+            let selectedRecipe = viewModel.allRecipes[indexPath.item]
+            showRecipeDetail(for: selectedRecipe)
         case 2:
             break
         case 3:
