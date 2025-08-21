@@ -13,10 +13,10 @@ class RecipeDetailCell: UITableViewCell {
     
 
 // Lbls
-    
     lazy var cellTitleLbl: UILabel = {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.font = UIFont(name: "Poppins-SemiBold", size: 16)
+        $0.font = .custom(.semibold, size: 16)
         $0.textColor = .black
         $0.textAlignment = .right
         return $0
@@ -25,6 +25,7 @@ class RecipeDetailCell: UITableViewCell {
     lazy var cellWeightLbl: UILabel = {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.font = UIFont(name: "Poppins-Regular", size: 14)
+        $0.font = .custom(.regular, size: 14)
         $0.textColor = #colorLiteral(red: 0.568627451, green: 0.568627451, blue: 0.568627451, alpha: 1)
         $0.textAlignment = .right
         $0.text = "200g"

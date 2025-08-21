@@ -43,7 +43,7 @@ class RecipeDetailViewController: UIViewController {
     
     lazy var subtitleLbl: UILabel = {
         $0.text = recipe.title
-        $0.font = UIFont(name: "Poppins-SemiBold", size: 24)
+        $0.font = .custom(.semibold, size: 24)
         $0.textColor = .black
         $0.numberOfLines = 3
         $0.translatesAutoresizingMaskIntoConstraints = false
@@ -64,22 +64,22 @@ class RecipeDetailViewController: UIViewController {
     }(UIImageView())
     
     lazy var ratingNumberLbl: UILabel = {
-        $0.text = "4,5"
-        $0.font = UIFont(name: "Poppins", size: 14)
+        $0.font = .custom(.regular, size: 14)
         $0.textColor = .black
+        $0.text = "4.5"
         return $0
     }(UILabel())
     
     lazy var reviewsLbl: UILabel = {
         $0.text = "(300 Reviews)"
-        $0.font = UIFont(name: "Poppins-Regular", size: 14)
+        $0.font = .custom(.regular, size: 14)
         $0.textColor = #colorLiteral(red: 0.568627451, green: 0.568627451, blue: 0.568627451, alpha: 1)
         return $0
     }(UILabel())
     
     lazy var titleInstructionsLbl: UILabel = {
         $0.text = "Instructions"
-        $0.font = UIFont(name: "Poppins-SemiBold", size: 20)
+        $0.font = .custom(.semibold, size: 20)
         $0.textColor = .black
         $0.translatesAutoresizingMaskIntoConstraints = false
         return $0
@@ -102,7 +102,7 @@ class RecipeDetailViewController: UIViewController {
             3. Add chopped tomatoes, corns, lettuce, and any other vegitable of your choice.
             4. Stir in mayonnaise, green onion, and mustard. Season with paprika, salt, and pepper.
             """
-        $0.font = UIFont(name: "Poppins-Regular", size: 16)
+        $0.font = .custom(.regular, size: 16)
         $0.numberOfLines = 0
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.textColor = .black
@@ -115,7 +115,7 @@ class RecipeDetailViewController: UIViewController {
         $0.text = """
             Stir and serve on your favorite bread or crackers.
             """
-        $0.font = UIFont(name: "Poppins-Regular", size: 16)
+        $0.font = .custom(.regular, size: 16)
         $0.textColor = .systemRed
         $0.numberOfLines = 0
         $0.translatesAutoresizingMaskIntoConstraints = false
@@ -124,7 +124,7 @@ class RecipeDetailViewController: UIViewController {
     
     lazy var titleIngredientsLbl: UILabel = {
         $0.text = "Ingredients"
-        $0.font = UIFont(name: "Poppins-SemiBold", size: 20)
+        $0.font = .custom(.semibold, size: 20)
         $0.textColor = .black
         $0.translatesAutoresizingMaskIntoConstraints = false
         return $0
@@ -135,7 +135,7 @@ class RecipeDetailViewController: UIViewController {
     
     lazy var itemsLbl: UILabel = {
         $0.text = "\(numberOfItemsInIngredients) items"
-        $0.font = UIFont(name: "Poppins-Regular", size: 14)
+        $0.font = .custom(.regular, size: 14)
         $0.textColor = #colorLiteral(red: 0.568627451, green: 0.568627451, blue: 0.568627451, alpha: 1)
         return $0
     }(UILabel())
