@@ -63,6 +63,10 @@ final class NetworkManager {
                 completion(.failure(.noData))
                 return
             }
+            
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print(jsonString)
+            }
 
             do {
                 let decodedData = try JSONDecoder().decode(Recipes.self, from: data)
