@@ -32,7 +32,9 @@ class PopularCategoryViewController: UIViewController {
     
     
 //MARK: - Properties
-    var selectedButton: UIButton?
+    private var selectedButton: UIButton?
+    private var allRecipes: [RecipeModel] = []
+    
   
 //MARK: - UI
     private lazy var popularCategoryMainStack: UIStackView = {
@@ -96,6 +98,18 @@ class PopularCategoryViewController: UIViewController {
         popularCategoryCollectionView.dataSource = self
         popularCategoryCollectionView.register(PopularCategoryCell.self, forCellWithReuseIdentifier: PopularCategoryCell.identifier)
         
+        NetworkManager.shared.fetchRandomRecipes { result in
+                    DispatchQueue.main.async { [weak self] in
+                        switch result {
+                        case .success(let recipes):
+                            self?.allRecipes = recipes
+//                            self?.popularCategoryCollectionView.reloadData()
+                        case .failure(let error):
+                            print("ERROR: \(error)")
+                        }
+                    }
+                }
+        
         setViews()
         setupConstraints()
     }
@@ -142,7 +156,7 @@ class PopularCategoryViewController: UIViewController {
 
 extension PopularCategoryViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        7
+        1
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -153,7 +167,7 @@ extension PopularCategoryViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PopularCategoryCell.identifier, for: indexPath) as! PopularCategoryCell
     
         return cell
-    }
+    }   
 }
 
 //MARK: - Extension UICollectionViewDelegate

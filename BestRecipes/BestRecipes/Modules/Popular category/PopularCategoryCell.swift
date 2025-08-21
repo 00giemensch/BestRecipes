@@ -24,9 +24,6 @@ class PopularCategoryCell: UICollectionViewCell {
         
         static var backgroundRadius: CGFloat { 12 }
         static var backgroundColor: UIColor { UIColor(red: 241/255, green: 241/255, blue: 241/255, alpha: 1) }
-        
-//        static var
-//        static var
     }
 
 //MARK: - Properties
@@ -112,17 +109,13 @@ class PopularCategoryCell: UICollectionViewCell {
     
     private lazy var favoriteButton: UIButton = {
         let image = UIImage(resource: .bookmarkIco)
-        let scaledImage = image.scale(to: Drawings.favoriteButtonIconSize)
-        
-        var buttonConfiguration = UIButton.Configuration.filled()
-        buttonConfiguration.baseBackgroundColor = .white
-        buttonConfiguration.baseForegroundColor = Drawings.favoriteButtonColor
-        buttonConfiguration.background.cornerRadius = Drawings.favoriteButtonRadius
-        buttonConfiguration.image = scaledImage
-        
+        let scaledImage = image.scale(to: Drawings.favoriteButtonIconSize).withRenderingMode(.alwaysTemplate)
+
         let element = UIButton()
-        element.configuration = buttonConfiguration
-//        fillingBookmark()
+        element.setImage(scaledImage, for: .normal)
+        element.backgroundColor = .white
+        
+        element.layer.cornerRadius = 12
         element.addTarget(self, action: #selector(favoriteButtonPressed), for: .touchUpInside)
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
@@ -155,6 +148,7 @@ class PopularCategoryCell: UICollectionViewCell {
             footerSectionView.addSubview(timeLabel)
             footerSectionView.addSubview(cookingTimeLabel)
             footerSectionView.addSubview(favoriteButton)
+            fillingBookmark()
         }
 
         private func setupConstraints() {
