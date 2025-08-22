@@ -191,6 +191,11 @@ final class HomeViewController: UIViewController {
         view.addSubviews(searchTextField)
         searchTextField.delegate = self
         searchTextField.searchDelegate = self
+        
+        searchTextField.returnKeyType = .search
+        searchTextField.autocapitalizationType = .none
+        searchTextField.autocorrectionType = .no
+        
         searchTFBottomCT = searchTextField.topAnchor.constraint(
             equalTo: titleLabel.bottomAnchor,
             constant: Drawing.spacing
@@ -374,6 +379,7 @@ extension HomeViewController: UITextFieldDelegate {
         performSearch(with: newText)
         return true
     }
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         //TODO: temporary crutch
 //        NetworkManager.shared.fetchRandomRecipes { result in
@@ -408,9 +414,27 @@ extension HomeViewController: UITextFieldDelegate {
         textField.text = nil
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//        textField.resignFirstResponder()
+        guard let searchText = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !searchText.isEmpty else {
+            return true
+        }
+        
+        NetworkManager.shared.searchRecipes(query: searchText) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let recipes):
+                    // TODO: - Обновить коллекцию с результатами поиска!
+                    print("SUCCESS: \(recipes)")
+                case .failure(let error):
+                    print("Search ERROR: \(error)")
+                }
+            }
+        }
+        
+        textField.resignFirstResponder()
         return true
     }
+    
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
 //        performSearch(with: "")
         return true
