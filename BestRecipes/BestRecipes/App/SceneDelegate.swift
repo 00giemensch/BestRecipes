@@ -16,12 +16,12 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         
         // Check if onboarding was shown using the storage service
-        let storage = OnboardingStorage()
+        let storage = UserStorage.shared
         
         // TEMPORARY: Reset onboarding for testing - REMOVE THIS LINE AFTER TESTING
-        storage.resetOnboardingState()
+//        storage.resetOnboardingState()
         
-        let onboardingShown = storage.isOnboardingShown()
+        let onboardingShown = storage.pastOnboarding
         
         if onboardingShown {
             // Show main app
@@ -30,7 +30,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             // Show onboarding
             window?.rootViewController = OnboardingViewController()
         }
-        
+//        window?.rootViewController = UINavigationController(rootViewController: MainViewController())
         window?.makeKeyAndVisible()
     }
 

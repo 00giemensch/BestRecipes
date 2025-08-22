@@ -17,6 +17,7 @@ final class TempViewController: UIViewController {
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .white
         view.addSubview(titleStack)
         titleStack.addArrangedSubviews(emojiLabel, titleLabel)
         

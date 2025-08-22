@@ -11,29 +11,32 @@ import UIKit
 protocol OnboardingStorageProtocol {
     func saveOnboardingShown() throws
     func isOnboardingShown() -> Bool
-    func resetOnboardingState()
+//    func resetOnboardingState()
 }
 
 // MARK: - Onboarding Storage Implementation
 final class OnboardingStorage: OnboardingStorageProtocol {
-    private enum Keys {
-        static let onboardingShown = "OnboardingShown"
-    }
+//    private enum Keys {
+//        static let onboardingShown = "OnboardingShown"
+//    }
+    private let userStorage = UserStorage.shared
     
     func saveOnboardingShown() throws {
-        UserDefaults.standard.set(true, forKey: Keys.onboardingShown)
+        userStorage.pastOnboarding = true
+//        UserDefaults.standard.set(true, forKey: Keys.onboardingShown)
         if !UserDefaults.standard.synchronize() {
             throw OnboardingError.failedToSaveState
         }
     }
     
     func isOnboardingShown() -> Bool {
-        return UserDefaults.standard.bool(forKey: Keys.onboardingShown)
+        userStorage.pastOnboarding
+//        return UserDefaults.standard.bool(forKey: Keys.onboardingShown)
     }
     
-    func resetOnboardingState() {
-        UserDefaults.standard.removeObject(forKey: Keys.onboardingShown)
-    }
+//    func resetOnboardingState() {
+//        UserDefaults.standard.removeObject(forKey: Keys.onboardingShown)
+//    }
 }
 
 // MARK: - Onboarding Service Protocol

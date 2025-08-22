@@ -14,7 +14,7 @@ class KitchenCollectionViewCell: UICollectionViewCell {
     private let flagLabel = UILabel()
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        label.font = UIFont.custom(.regular, size: 14)
         label.textAlignment = .center
         label.textColor = .label
         label.numberOfLines = 1
@@ -36,7 +36,7 @@ class KitchenCollectionViewCell: UICollectionViewCell {
         contentView.backgroundColor = .clear
 
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 55           // Круг: 110 / 2
+        imageView.layer.cornerRadius = 55
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
 

@@ -65,7 +65,7 @@ final class NetworkManager {
             }
             
             if let jsonString = String(data: data, encoding: .utf8) {
-                print(jsonString)
+//                print(jsonString)
             }
 
             do {

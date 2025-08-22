@@ -14,11 +14,15 @@ final class UserStorage {
     private init() {}
     
     var pastOnboarding: Bool {
-        get { UserDefaults.standard.bool(forKey: "pastOnboarding") }
-        set { UserDefaults.standard.set(newValue, forKey: "pastOnboarding") }
+        get { UserDefaults.standard.bool(forKey: "OnboardingShown") }
+        set { UserDefaults.standard.set(newValue, forKey: "OnboardingShown") }
     }
     var favoriteDishes: [Data] {
         get { UserDefaults.standard.array(forKey: "favorite") as? [Data] ?? [Data]()}
         set { UserDefaults.standard.set(newValue, forKey: "favorite") }
+    }
+    var recentRecipes: [Data] {
+        get { UserDefaults.standard.array(forKey: "recentRecipes") as? [Data] ?? [Data]()}
+        set { UserDefaults.standard.set(newValue, forKey: "recentRecipes") }
     }
 }
