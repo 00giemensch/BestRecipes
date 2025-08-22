@@ -109,6 +109,11 @@ final class HomeViewController: UIViewController {
                 self?.trendingNowCollection.reloadData()
             }
         }
+        
+        presenter.fetchRecipes { [weak self] in
+            self?.recentRecipeCollection.reloadData()
+        }
+        
         setupLayout()
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -148,7 +153,7 @@ final class HomeViewController: UIViewController {
         present(onboardingVC, animated: true)
     }
     
-    func showRecipeDetail(for recipe: Recipe) {
+    func showRecipeDetail(for recipe: RecipeModel) {
         let detailVC = RecipeDetailViewController(recipe: recipe)
 //        present(detailVC,animated: true)
         navigationController?.pushViewController(detailVC, animated: true)
@@ -431,7 +436,7 @@ extension HomeViewController: UITextFieldDelegate {
     }
     
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
-       // performSearch(with: "")
+//        performSearch(with: "")
         return true
     }
 }
@@ -490,6 +495,10 @@ extension HomeViewController: UICollectionViewDataSource {
                 return UICollectionViewCell()
             }
             cell.setupRecipe(presenter.recipes[indexPath.item])
+            
+//            let recipeModel = presenter.recipes[indexPath.item]
+//            cell.setupRecipe(recipeModel)showRecipeDetail
+            
             return cell
         default :
             return UICollectionViewCell()
@@ -502,9 +511,11 @@ extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch collectionView.tag {
         case 0:
-            break
+            let selectedRecipe = filteredRecipes[indexPath.item]
+            showRecipeDetail(for: selectedRecipe)
         case 1:
-            break
+            let selectedRecipe = viewModel.allRecipes[indexPath.item]
+            showRecipeDetail(for: selectedRecipe)
         case 2:
             break
         case 3:
