@@ -16,12 +16,16 @@ struct RecipeModel: Codable {
     let title: String
     let readyInMinutes: Int
     let spoonacularScore: Double
+    let aggregateLikes: Int
+    let creditsText: String
     let cuisines: [String]
+    let dishTypes: [String]
     let extendedIngredients: [Ingredient]
     let analyzedInstructions: [Instruction]
 }
 
 struct Ingredient: Codable {
+    let image: String?
     let name: String
     let amount: Double
     let unit: String

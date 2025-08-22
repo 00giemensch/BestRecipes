@@ -9,9 +9,22 @@ import UIKit
 
 // MARK: - Presenter
 class RecipesPresenter {
-    private(set) var recipes: [Recipe] = [
-        Recipe(title: "Kelewele Ghanian Recipe", subtitle: "By Zeelicious Foods", image: UIImage(named: "dish1")),
-                Recipe(title: "Kelewele Ghanian Recipe", subtitle: "By Zeelicious Foods", image: UIImage(named: "dish2")),
-                Recipe(title: "Kelewele Ghanian Recipe", subtitle: "By Zeelicious Foods", image: UIImage(named: "dish3"))
-    ]
+    private(set) var recipes: [RecipeModel] = [] // Теперь полные модели из API
+    
+    func fetchRecipes(completion: @escaping () -> Void) {
+        NetworkManager.shared.fetchRandomRecipes { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let fetchedRecipes):
+                    self?.recipes = fetchedRecipes // Рандомные рецепты
+                    completion()
+                case .failure(let error):
+                    print("Ошибка загрузки recent recipes: \(error)")
+                    
+                    self?.recipes = []
+                    completion()
+                }
+            }
+        }
+    }
 }

@@ -4,8 +4,10 @@
 //
 //  Created by Анастасия Тихонова on 22.08.2025.
 //
+import UIKit
 
 // MARK: - Kitchen Service (mock data)
+
 class KitchenService {
     func getPopularKitchens() -> [Kitchen] {
         return [

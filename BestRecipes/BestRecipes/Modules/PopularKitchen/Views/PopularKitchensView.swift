@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 // MARK: - Popular Kitchens View
 
 class PopularKitchensView: UIView {

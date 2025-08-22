@@ -20,7 +20,7 @@ class DishCell: UICollectionViewCell {
     //MARK: - UI Components
     private let dishImageView = UIImageView()
     private let favoriteButton = UIButton()
-    private let ratingButton = RatingButton()
+    let ratingButton = RatingButton()
     private let avatarImageView = UIImageView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
@@ -35,11 +35,12 @@ class DishCell: UICollectionViewCell {
     }
     override func prepareForReuse() {
         super.prepareForReuse()
-        //TODO: - update reuse methods
         titleLabel.text = nil
         subtitleLabel.text = nil
-        dishImageView.image = nil
-        avatarImageView.image = nil
+        dishImageView.image = UIImage(systemName: "frying.pan")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal)
+        avatarImageView.image = UIImage(systemName: "person.circle")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal)
+        ratingButton.isHasRating = false
+        isAddedInFavorite = false
     }
     //MARK: - Methods
     @objc private func buttonPressed() {
@@ -50,17 +51,17 @@ class DishCell: UICollectionViewCell {
     private func fillingBookmark() {
         favoriteButton.tintColor = isAddedInFavorite ? .systemRed : .gray
     }
-    //TODO: - Update this method
-    func configure(title: String, subtitle: String, imageUrl: String, avatarImageUrl: String) {
-        titleLabel.text = title
-        subtitleLabel.text = subtitle
-        
-        fetchImage(with: imageUrl) { [weak self] image in
+    func configure(with recipe: RecipeModel,_ isAddToFavorite: Bool) {
+        titleLabel.text = recipe.title
+        subtitleLabel.text = recipe.creditsText
+        isAddedInFavorite = isAddToFavorite
+        ratingButton.setRatingGrade(recipe.spoonacularScore)
+        fetchImage(with: recipe.image) { [weak self] image in
             DispatchQueue.main.async {
                 self?.dishImageView.image = image
             }
         }
-        fetchImage(with: avatarImageUrl) { [weak self] image in
+        fetchImage(with: recipe.image) { [weak self] image in
             DispatchQueue.main.async {
                 self?.avatarImageView.image = image
             }
@@ -89,14 +90,21 @@ class DishCell: UICollectionViewCell {
         setupRatingButton()
     }
     private func setupDishImageView() {
-        contentView.addSubview(dishImageView)
         dishImageView.backgroundColor = .systemGray5
         dishImageView.layer.cornerRadius = 16
         let image = UIImage(systemName: "frying.pan")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal)
         dishImageView.image = image
         dishImageView.contentMode = .scaleAspectFill
-        dishImageView.clipsToBounds = true
+        dishImageView.layer.masksToBounds = true
         dishImageView.translatesAutoresizingMaskIntoConstraints = false
+        let shadowView = UIView()
+        shadowView.layer.shadowOpacity = 0.3
+        shadowView.layer.shadowRadius = 1
+        shadowView.layer.shadowOffset = .init(width: 0, height: 0)
+        shadowView.layer.cornerRadius = 20
+        shadowView.frame = dishImageView.bounds
+        contentView.addSubview(shadowView)
+        shadowView.addSubview(dishImageView)
         
         NSLayoutConstraint.activate([
             dishImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
@@ -153,12 +161,15 @@ class DishCell: UICollectionViewCell {
         contentView.addSubview(subtitleLabel)
         subtitleLabel.text = "Subtitle text for subtitle lable"
         subtitleLabel.font = UIFont.custom(.light, size: 17)
+        subtitleLabel.numberOfLines = 2
+        subtitleLabel.adjustsFontSizeToFitWidth = true
         subtitleLabel.textColor = .lightGray
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             subtitleLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
-            subtitleLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8)
+            subtitleLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
+            subtitleLabel.trailingAnchor.constraint(equalTo: dishImageView.trailingAnchor)
         ])
     }
     private func setupRatingButton() {

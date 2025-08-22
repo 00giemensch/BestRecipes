@@ -1,0 +1,22 @@
+//
+//  UserStorage.swift
+//  BestRecipes
+//
+//  Created by Andrei Kovryzhenko on 20.08.2025.
+//
+
+import Foundation
+
+final class UserStorage {
+    
+    static let shared = UserStorage()
+    
+    var pastOnboarding: Bool {
+        get { UserDefaults.standard.bool(forKey: "pastOnboarding") }
+        set { UserDefaults.standard.set(newValue, forKey: "pastOnboarding") }
+    }
+    var favoriteDishes: [Data] {
+        get { UserDefaults.standard.array(forKey: "favorite") as? [Data] ?? [Data]()}
+        set { UserDefaults.standard.set(newValue, forKey: "favorite") }
+    }
+}
