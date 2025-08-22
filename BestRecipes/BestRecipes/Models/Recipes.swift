@@ -11,6 +11,10 @@ struct Recipes: Codable {
     let recipes: [RecipeModel]
 }
 
+struct SearchRecipe: Codable {
+    let results: [RecipeModel]
+}
+
 struct RecipeModel: Codable {
     let image: String
     let title: String

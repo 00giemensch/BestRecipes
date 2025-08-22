@@ -64,14 +64,64 @@ final class NetworkManager {
                 return
             }
             
-            if let jsonString = String(data: data, encoding: .utf8) {
+//            if let jsonString = String(data: data, encoding: .utf8) {
 //                print(jsonString)
-            }
+//            }
 
             do {
                 let decodedData = try JSONDecoder().decode(Recipes.self, from: data)
                 completion(.success(decodedData.recipes))
               //  decodedData.recipes.forEach({print($0.image)})
+            } catch {
+                completion(.failure(.decodingError))
+            }
+        }.resume()
+    }
+    
+    func searchRecipes(
+        query: String,
+        completion: @escaping ((Result<[RecipeModel], NetworkError>) -> Void)
+    ) {
+        let parameters: [String: Any] = [
+            "apiKey": apiKey,
+            "query": query.lowercased(),
+            "fillIngredients": true,
+            "addRecipeInformation": true,
+            "addRecipeInstructions": true,
+            "number": 15
+        ]
+        
+        guard var urlComponents = URLComponents(string: "\(baseURL)/complexSearch") else {
+            completion(.failure(.invalidURL))
+            return
+        }
+        urlComponents.queryItems = parameters.map { key, value in
+            URLQueryItem(name: key, value: "\(value)")
+        }
+        
+        guard let url = urlComponents.url else {
+            completion(.failure(.invalidURL))
+            return
+        }
+
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let error {
+                completion(.failure(.urlSessionError(error)))
+                return
+            }
+            
+            guard let data else {
+                completion(.failure(.noData))
+                return
+            }
+            
+//            if let jsonString = String(data: data, encoding: .utf8) {
+//                print(jsonString)
+//            }
+            
+            do {
+                let decodedData = try JSONDecoder().decode(SearchRecipe.self, from: data)
+                completion(.success(decodedData.results))
             } catch {
                 completion(.failure(.decodingError))
             }
