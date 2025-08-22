@@ -41,7 +41,10 @@ class RatingButton: UIView {
         starImageView.tintColor = isHasRating ? .yellow : .black
     }
     func setRatingGrade(_ grade: Double) {
-        gradeLabel.text = String(format:"%.1f", grade)
+        let rate = 5 * grade / 100
+        let roundedRate = (rate * 10).rounded() / 10
+        gradeLabel.text = roundedRate.description
+//        String(format:"%.1f", grade)
     }
     //MARK: - Setup Layout
     private func setupLayout() {
