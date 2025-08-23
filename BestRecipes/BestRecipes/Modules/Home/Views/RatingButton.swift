@@ -43,8 +43,12 @@ class RatingButton: UIView {
     func setRatingGrade(_ grade: Double) {
         let rate = 5 * grade / 100
         let roundedRate = (rate * 10).rounded() / 10
-        gradeLabel.text = roundedRate.description
-//        String(format:"%.1f", grade)
+        // Форматируем с запятой как на макете
+        let formatter = NumberFormatter()
+        formatter.decimalSeparator = ","
+        formatter.minimumFractionDigits = 1
+        formatter.maximumFractionDigits = 1
+        gradeLabel.text = formatter.string(from: NSNumber(value: roundedRate)) ?? roundedRate.description
     }
     //MARK: - Setup Layout
     private func setupLayout() {

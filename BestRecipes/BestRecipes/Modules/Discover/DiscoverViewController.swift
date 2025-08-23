@@ -13,19 +13,22 @@ final class DiscoverViewController: UIViewController {
     private enum Constants {
         static let titleFontSize: CGFloat = 24
         static let titleTopInset: CGFloat = 60
-        static let titleHorizontalInset: CGFloat = 20
+        static let titleHorizontalInset: CGFloat = 16 // По Figma: (375 - 343) / 2 = 16
         static let collectionTopInset: CGFloat = 20
         static let spacing: CGFloat = 16
         static let emptyStateTopInset: CGFloat = 100
         static let emptyStateHorizontalInset: CGFloat = 40
+        static let cardHeight: CGFloat = 258 // По Figma
+        static let imageHeight: CGFloat = 180 // По Figma
     }
     
     // MARK: - UI Elements
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Saved recipes"
-        label.font = UIFont(name: "Poppins-Bold", size: Constants.titleFontSize)
+        label.font = UIFont(name: "Poppins-SemiBold", size: Constants.titleFontSize)
         label.textColor = UIColor(named: "Neutral100") ?? .black
+        label.textAlignment = .center // По Figma - центрирован
         label.translatesAutoresizingMaskIntoConstraints = false
         label.accessibilityIdentifier = "saved_recipes_title"
         label.accessibilityLabel = "Saved recipes screen title"
@@ -38,7 +41,7 @@ final class DiscoverViewController: UIViewController {
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 16
         layout.minimumInteritemSpacing = 0
-        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16) // По Figma отступы
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
@@ -100,11 +103,13 @@ final class DiscoverViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Title
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.titleTopInset),
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.titleHorizontalInset),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.titleHorizontalInset),
-            
+            titleLabel.heightAnchor.constraint(equalToConstant: 29) // По Figma: 29px высота
+        ])
+        
+        NSLayoutConstraint.activate([
             // CollectionView
             collectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Constants.collectionTopInset),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -128,10 +133,10 @@ final class DiscoverViewController: UIViewController {
     private func loadMockData() {
         recipes = [
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg", // Бургер с яйцом
                 title: "How to make sharwama at home",
                 readyInMinutes: 15,
-                spoonacularScore: 25, // 2.5 звезды
+                spoonacularScore: 100, // 5.0 звезды (100/100)
                 aggregateLikes: 120,
                 creditsText: "Zeelicious Foods",
                 cuisines: ["Middle Eastern"],
@@ -140,10 +145,10 @@ final class DiscoverViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                image: "https://spoonacular.com/recipeImages/716426-556x370.jpg", // Яичница
                 title: "How to make sharwama at home",
                 readyInMinutes: 15,
-                spoonacularScore: 25, // 2.5 звезды
+                spoonacularScore: 100, // 5.0 звезды (100/100)
                 aggregateLikes: 200,
                 creditsText: "Zeelicious Foods",
                 cuisines: ["Middle Eastern"],
@@ -152,10 +157,10 @@ final class DiscoverViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                image: "https://spoonacular.com/recipeImages/716428-556x370.jpg", // Лосось
                 title: "How to make sharwama at home",
                 readyInMinutes: 15,
-                spoonacularScore: 25, // 2.5 звезды
+                spoonacularScore: 100, // 5.0 звезды (100/100)
                 aggregateLikes: 150,
                 creditsText: "Zeelicious Foods",
                 cuisines: ["Middle Eastern"],
@@ -164,10 +169,10 @@ final class DiscoverViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                image: "https://spoonacular.com/recipeImages/716427-556x370.jpg", // Разное блюдо
                 title: "How to make sharwama at home",
                 readyInMinutes: 15,
-                spoonacularScore: 25, // 2.5 звезды
+                spoonacularScore: 100, // 5.0 звезды (100/100)
                 aggregateLikes: 180,
                 creditsText: "Zeelicious Foods",
                 cuisines: ["Middle Eastern"],
@@ -176,10 +181,10 @@ final class DiscoverViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                image: "https://spoonacular.com/recipeImages/716425-556x370.jpg", // Еще одно блюдо
                 title: "How to make sharwama at home",
                 readyInMinutes: 15,
-                spoonacularScore: 25, // 2.5 звезды
+                spoonacularScore: 100, // 5.0 звезды (100/100)
                 aggregateLikes: 220,
                 creditsText: "Zeelicious Foods",
                 cuisines: ["Middle Eastern"],
@@ -207,7 +212,7 @@ extension DiscoverViewController: UICollectionViewDataSource {
         let recipe = recipes[indexPath.item]
         let isItInFavorites = true // Все рецепты сохранены (как на макете)
         
-        cell.configure(with: recipe, isItInFavorites)
+        cell.configure(with: recipe, isItInFavorites, showMinusIcon: true) // Показываем минус для Saved recipes
         cell.favoriteButtonAction = { [weak self] in
             // Handle favorite action
             print("Favorite tapped for: \(recipe.title)")
@@ -220,8 +225,8 @@ extension DiscoverViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension DiscoverViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width - 32 // 16px отступы с каждой стороны
-        let height: CGFloat = 180 // Высота как на макете
+        let width = collectionView.bounds.width - 32 // 16px отступы с каждой стороны = 343px
+        let height: CGFloat = 258 // Высота карточки по Figma
         return CGSize(width: width, height: height)
     }
 }

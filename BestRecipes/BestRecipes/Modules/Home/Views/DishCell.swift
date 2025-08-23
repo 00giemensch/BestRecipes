@@ -24,6 +24,7 @@ class DishCell: UICollectionViewCell {
     private let avatarImageView = UIImageView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
+    private let timeLabel = UILabel() // Добавляем время приготовления
     
     //MARK: - Lifecycle
     override init(frame: CGRect) {
@@ -37,6 +38,7 @@ class DishCell: UICollectionViewCell {
         super.prepareForReuse()
         titleLabel.text = nil
         subtitleLabel.text = nil
+        timeLabel.text = nil
         dishImageView.image = UIImage(systemName: "frying.pan")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal)
         avatarImageView.image = UIImage(systemName: "person.circle")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal)
         ratingButton.isHasRating = false
@@ -51,10 +53,21 @@ class DishCell: UICollectionViewCell {
     private func fillingBookmark() {
         favoriteButton.tintColor = isAddedInFavorite ? .systemRed : .gray
     }
-    func configure(with recipe: RecipeModel,_ isAddToFavorite: Bool) {
+    func configure(with recipe: RecipeModel,_ isAddToFavorite: Bool, showMinusIcon: Bool = false) {
         titleLabel.text = recipe.title
         subtitleLabel.text = recipe.creditsText
+        timeLabel.text = "\(recipe.readyInMinutes):10" // Формат времени как на макете
         isAddedInFavorite = isAddToFavorite
+        
+        // Настраиваем иконку закладки
+        if showMinusIcon {
+            let minusImage = UIImage(systemName: "minus")?.withRenderingMode(.alwaysTemplate)
+            favoriteButton.setImage(minusImage, for: .normal)
+        } else {
+            let bookmarkImage = UIImage(resource: .bookmarkIco).withRenderingMode(.alwaysTemplate)
+            favoriteButton.setImage(bookmarkImage, for: .normal)
+        }
+        
         ratingButton.setRatingGrade(recipe.spoonacularScore)
         fetchImage(with: recipe.image) { [weak self] image in
             DispatchQueue.main.async {
@@ -88,6 +101,7 @@ class DishCell: UICollectionViewCell {
         setupAvatarImageView()
         setupSubtitleLabel()
         setupRatingButton()
+        setupTimeLabel() // Добавляем настройку времени
     }
     private func setupDishImageView() {
         dishImageView.backgroundColor = .systemGray5
@@ -110,7 +124,7 @@ class DishCell: UICollectionViewCell {
             dishImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             dishImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
             dishImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
-            dishImageView.heightAnchor.constraint(equalToConstant: contentView.frame.height * 0.73)
+            dishImageView.heightAnchor.constraint(equalToConstant: 180) // По Figma: 180px высота изображения
         ])
     }
     private func setupTitleLabel() {
@@ -153,8 +167,8 @@ class DishCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             avatarImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
             avatarImageView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 32),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 32)
+            avatarImageView.widthAnchor.constraint(equalToConstant: 156), // По Figma: 156px ширина
+            avatarImageView.heightAnchor.constraint(equalToConstant: 32) // По Figma: 32px высота
         ])
     }
     private func setupSubtitleLabel() {
@@ -169,7 +183,8 @@ class DishCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             subtitleLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             subtitleLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
-            subtitleLabel.trailingAnchor.constraint(equalTo: dishImageView.trailingAnchor)
+            subtitleLabel.trailingAnchor.constraint(equalTo: dishImageView.trailingAnchor),
+            subtitleLabel.heightAnchor.constraint(equalToConstant: 22) // По Figma: 22px высота текста
         ])
     }
     private func setupRatingButton() {
@@ -184,6 +199,23 @@ class DishCell: UICollectionViewCell {
             ratingButton.leadingAnchor.constraint(equalTo: dishImageView.leadingAnchor, constant: 8),
             ratingButton.widthAnchor.constraint(equalToConstant: 58),
             ratingButton.heightAnchor.constraint(equalToConstant: 27.6)
+        ])
+    }
+    private func setupTimeLabel() {
+        contentView.addSubview(timeLabel)
+        timeLabel.text = "15:10" // Placeholder text
+        timeLabel.font = UIFont.custom(.bold, size: 12)
+        timeLabel.textColor = .white
+        timeLabel.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        timeLabel.layer.cornerRadius = 8
+        timeLabel.textAlignment = .center
+        timeLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            timeLabel.bottomAnchor.constraint(equalTo: dishImageView.bottomAnchor, constant: -8),
+            timeLabel.trailingAnchor.constraint(equalTo: dishImageView.trailingAnchor, constant: -8),
+            timeLabel.widthAnchor.constraint(equalToConstant: 50),
+            timeLabel.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
 }
