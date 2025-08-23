@@ -15,22 +15,22 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
-        // Check if onboarding was shown using the storage service
-        let storage = UserStorage.shared
-        
-        // TEMPORARY: Reset onboarding for testing - REMOVE THIS LINE AFTER TESTING
-//        storage.resetOnboardingState()
-        
-        let onboardingShown = storage.pastOnboarding
-        
-        if onboardingShown {
+//        // Check if onboarding was shown using the storage service
+//        let storage = UserStorage.shared
+//        
+//        // TEMPORARY: Reset onboarding for testing - REMOVE THIS LINE AFTER TESTING
+////        storage.resetOnboardingState()
+//        
+//        let onboardingShown = storage.pastOnboarding
+//        
+        if UserStorage.shared.pastOnboarding {
             // Show main app
             window?.rootViewController = CustomTabBarController()
         } else {
             // Show onboarding
             window?.rootViewController = OnboardingViewController()
         }
-//        window?.rootViewController = UINavigationController(rootViewController: MainViewController())
+//        window?.rootViewController = UINavigationController(rootViewController: PopularCategoryViewController())
         window?.makeKeyAndVisible()
     }
 

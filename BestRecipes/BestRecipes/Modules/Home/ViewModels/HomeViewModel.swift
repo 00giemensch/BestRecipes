@@ -10,10 +10,15 @@ import UIKit
 class HomeViewModel {
     //MARK: - Properties
     var callBack: (() -> Void)?
-    
+    var categoryRecipesCallBack: (() -> Void)?
     private(set) var allRecipes = [RecipeModel]() {
         didSet {
             callBack?()
+        }
+    }
+    private(set) var categoryRecipes = [RecipeModel]() {
+        didSet {
+            categoryRecipesCallBack?()
         }
     }
     private let userStorage = UserStorage.shared
@@ -27,6 +32,7 @@ class HomeViewModel {
     //MARK: - Lifecycle
     init() {
         fetchDishes()
+        fetchCategoryDishes()
         fetchFavoriteRecipes()
         fetchRecentRecipes()
     }
@@ -38,6 +44,18 @@ class HomeViewModel {
                 switch result {
                 case .success(let recipes):
                     self?.allRecipes = recipes
+                case .failure(let error):
+                    print("ERROR: \(error)")
+                }
+            }
+        }
+    }
+    private func fetchCategoryDishes() {
+        NetworkManager.shared.fetchRandomRecipes { [weak self] result in
+            DispatchQueue.main.async { [weak self] in
+                switch result {
+                case .success(let recipes):
+                    self?.categoryRecipes = recipes
                 case .failure(let error):
                     print("ERROR: \(error)")
                 }
@@ -116,5 +134,21 @@ class HomeViewModel {
     public func clearSearchResults() {
         foundRecipes.removeAll()
     }
+    
+    
+//    func getMock() {
+//        DispatchQueue.main.async {
+//            self.allRecipes = [
+//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "One", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["q","r","t","y","u"], extendedIngredients: [], analyzedInstructions: []),
+//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Two", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["q","w","e","r"], extendedIngredients: [], analyzedInstructions: []),
+//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Three", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["u"], extendedIngredients: [], analyzedInstructions: []),
+//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Four", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["e","y","u"], extendedIngredients: [], analyzedInstructions: []),
+//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Five", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["w","r","y"], extendedIngredients: [], analyzedInstructions: []),
+//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Six", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["r","t","y","u"], extendedIngredients: [], analyzedInstructions: []),
+//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "SEven", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["q","w","u"], extendedIngredients: [], analyzedInstructions: []),
+//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Eight", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["q","w","e"], extendedIngredients: [], analyzedInstructions: []),
+//            ]
+//        }
+//    }
 }
 

@@ -21,13 +21,43 @@ final class HomeViewController: UIViewController {
         static var searchBarHeight: CGFloat { 60 }
         static var searchTFHeight: CGFloat { 44 }
         static var iconSize: CGFloat { 16 }
+        
+        static var popularCategoryTitle: String { "Popular category" }
+        static var popCatTitleLabelHeight: CGFloat { 28 }
+        
+        static var popularCategoryStackSpacing: CGFloat { 19 }
+        
+        static var popCatCollectionViewHeight: CGFloat { 231 }
+        static var collectionViewCellSize: CGSize {CGSize(width: 150, height: 231)}
+        
+        static var buttonStackSpacing: CGFloat { 8 }
+        static var buttonsScrollViewHeight: CGFloat { 34 }
+        static var buttonsScrollViewPadding: CGFloat { 16 }
+        static var categoryButtonsPadding: NSDirectionalEdgeInsets { NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12) }
+        static var categoryButtonNormalBackgroundColor: UIColor { UIColor.white }
+        static var categoryButtonNormalForegroundColor: UIColor { UIColor(red: 243/255, green: 178/255, blue: 178/255, alpha: 1) }
+        static var categoryButtonRadius: CGFloat { 10 }
+        static var categoryButtonSelectedBackgroundColor: UIColor { UIColor(red: 226/255, green: 62/255, blue: 62/255, alpha: 1) }
+        static var categoryButtonSelectedForegroundColor: UIColor { UIColor.white }
+        static var categoryButtonAnimationDuration: CGFloat { 0.2 }
     }
     private var viewModel = HomeViewModel()
     private var searchTFBottomCT = NSLayoutConstraint()
     private var titleHeight: CGFloat = 0.0
-    private var allRecipes: [RecipeModel] = []
-    private var filteredRecipes: [RecipeModel] = []
     private var isSearching: Bool = false
+    
+    private var allRecipes: [RecipeModel] = []
+    private var allDishTypes: Set<String> = [] {
+        didSet {
+            addButtons(with: allDishTypes)
+        }
+    }
+    private var filteredRecipes: [RecipeModel] = [] {
+        didSet {
+            popularCategoryCollection.reloadData()
+        }
+    }
+    
     
     //MARK: - UI Components
     private let titleLabel = UILabel()
@@ -36,7 +66,13 @@ final class HomeViewController: UIViewController {
     private let contentView = UIView()
     private let trendingNowHeader = CollectionHeader()
     private let recentRecipeHeader = CollectionHeader()
+    private let popularCategoryHeader = CollectionHeader()
     private let popularKitchensHeader = CollectionHeader()
+    private let popularCategoryMainStack = UIStackView()
+    private let dishCategoriesScrollView = UIScrollView()
+    private let categoriesButtonsStack = UIStackView()
+    private var selectedButton: UIButton?
+    
     //MARK: Collections
     private lazy var searchRecipesCollection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -58,6 +94,14 @@ final class HomeViewController: UIViewController {
         
         return collection
     }()
+    private let popularCategoryCollection: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.tag = 2
+        
+        return collection
+    }()
     private let recentRecipeCollection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -68,14 +112,12 @@ final class HomeViewController: UIViewController {
         
         return collection
     }()
-    
     private let popularKitchensCollection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 16
         layout.minimumLineSpacing = 16
         layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.tag = 4
         
@@ -89,13 +131,20 @@ final class HomeViewController: UIViewController {
         view.backgroundColor = .white
         viewModel.callBack = { [weak self] in
             DispatchQueue.main.async {
-                self?.setupLayout()
-//                self?.trendingNowCollection.reloadData()
-//                self?.recentRecipeCollection.reloadData()
-//                self?.popularKitchensCollection.reloadData()
+//                self?.setupLayout()
+                self?.trendingNowCollection.reloadData()
+                self?.recentRecipeCollection.reloadData()
+                self?.popularKitchensCollection.reloadData()
+                
+                self?.prepareCategoryCollection()
             }
         }
-//        setupLayout()
+        viewModel.categoryRecipesCallBack = { [weak self] in
+            DispatchQueue.main.async {
+                self?.prepareCategoryCollection()
+            }
+        }
+        setupLayout()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -128,6 +177,14 @@ final class HomeViewController: UIViewController {
         recentRecipeHeader.heightAnchor.constraint(equalToConstant: 40).isActive = true
         recentRecipeCollection.heightAnchor.constraint(equalToConstant: 190).isActive = true
     }
+    private func prepareCategoryCollection() {
+        var temp: Set<String> = []
+        allRecipes = viewModel.categoryRecipes
+        popularCategoryCollection.reloadData()
+        allRecipes.forEach { recipe in temp.formUnion(recipe.dishTypes) }
+        allDishTypes = temp
+        filteredRecipes = allRecipes
+    }
     
     // MARK: - Testing Methods
     func showRecipeDetail(for recipe: RecipeModel) {
@@ -144,10 +201,16 @@ final class HomeViewController: UIViewController {
         setupSearchRecipesCollection()
         setupTrendingNowHeader()
         setupTrendingNowCollection()
+        setupDishCategoriesScrollView()
+        setupCategoriesButtonsStack()
+        setupPopularCategoryHeader()
+        setupPopularCategoryCollection()
+        setupPopularCategoryMainStack()
         setupRecentRecipeLabel()
         setupRecentRecipeCollection()
         setupPopularKitchensLabel()
         setupPopularKitchensCollection()
+        setScrollViewHeight()
     }
     private func setupTitleLabel() {
         view.addSubview(titleLabel)
@@ -181,7 +244,7 @@ final class HomeViewController: UIViewController {
     }
     private func setupScrollView() {
         view.addSubview(scrollView)
-        scrollView.showsVerticalScrollIndicator = true
+        scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = true
         scrollView.backgroundColor = .white
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -203,9 +266,7 @@ final class HomeViewController: UIViewController {
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            //TODO: - Only for mock data
-            contentView.heightAnchor.constraint(equalToConstant: 2000)
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         ])
     }
     private func setupSearchRecipesCollection() {
@@ -274,7 +335,7 @@ final class HomeViewController: UIViewController {
         NSLayoutConstraint.activate([
             recentRecipeHeader.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Drawing.horizontalEdges),
             recentRecipeHeader.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Drawing.horizontalEdges),
-            recentRecipeHeader.topAnchor.constraint(equalTo: trendingNowCollection.bottomAnchor, constant: Drawing.collectionVerticalInset),
+            recentRecipeHeader.topAnchor.constraint(equalTo: popularCategoryMainStack.bottomAnchor, constant: Drawing.collectionVerticalInset),
         ])
     }
     private func setupRecentRecipeCollection() {
@@ -290,8 +351,7 @@ final class HomeViewController: UIViewController {
         NSLayoutConstraint.activate([
             recentRecipeCollection.topAnchor.constraint(equalTo: recentRecipeHeader.bottomAnchor, constant: Drawing.horizontalEdges),
             recentRecipeCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            recentRecipeCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-//            recentRecipeCollection.heightAnchor.constraint(equalToConstant: 190)
+            recentRecipeCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
     }
     private func setupPopularKitchensLabel() {
@@ -325,6 +385,65 @@ final class HomeViewController: UIViewController {
             popularKitchensCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             popularKitchensCollection.heightAnchor.constraint(equalToConstant: 190)
         ])
+    }
+    private func setupDishCategoriesScrollView() {
+        dishCategoriesScrollView.showsHorizontalScrollIndicator = false
+        dishCategoriesScrollView.showsVerticalScrollIndicator = false
+        dishCategoriesScrollView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    private func setupCategoriesButtonsStack() {
+        categoriesButtonsStack.axis = .horizontal
+        categoriesButtonsStack.spacing = Drawing.buttonStackSpacing
+        categoriesButtonsStack.distribution = .fillProportionally
+        categoriesButtonsStack.translatesAutoresizingMaskIntoConstraints = false
+    }
+    private func setupPopularCategoryHeader() {
+        popularCategoryHeader.action = { [weak self] in
+                print("popularCategory see all")
+        }
+        popularCategoryHeader.setTitle(Drawing.popularCategoryTitle)
+        popularCategoryHeader.translatesAutoresizingMaskIntoConstraints = false
+    }
+    private func setupPopularCategoryCollection() {
+        popularCategoryCollection.showsHorizontalScrollIndicator = false
+        popularCategoryCollection.translatesAutoresizingMaskIntoConstraints = false
+        popularCategoryCollection.delegate = self
+        popularCategoryCollection.dataSource = self
+        popularCategoryCollection.register(PopularCategoryCell.self, forCellWithReuseIdentifier: PopularCategoryCell.identifier)
+    }
+    private func setupPopularCategoryMainStack() {
+        contentView.addSubview(popularCategoryMainStack)
+        popularCategoryMainStack.addArrangedSubview(popularCategoryHeader)
+        popularCategoryMainStack.addArrangedSubview(dishCategoriesScrollView)
+        popularCategoryMainStack.addArrangedSubview(popularCategoryCollection)
+        
+        popularCategoryMainStack.axis = .vertical
+        popularCategoryMainStack.spacing = Drawing.popularCategoryStackSpacing
+        popularCategoryMainStack.distribution = .fillProportionally
+       
+        popularCategoryMainStack.translatesAutoresizingMaskIntoConstraints = false
+        dishCategoriesScrollView.addSubview(categoriesButtonsStack)
+        
+        NSLayoutConstraint.activate([
+            popularCategoryMainStack.topAnchor.constraint(equalTo: trendingNowCollection.bottomAnchor, constant: Drawing.collectionVerticalInset),
+            popularCategoryMainStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Drawing.horizontalEdges),
+            popularCategoryMainStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Drawing.horizontalEdges),
+            
+            popularCategoryHeader.heightAnchor.constraint(equalToConstant: Drawing.popCatTitleLabelHeight),
+            
+            dishCategoriesScrollView.heightAnchor.constraint(equalToConstant: Drawing.buttonsScrollViewHeight),
+            
+            categoriesButtonsStack.topAnchor.constraint(equalTo: dishCategoriesScrollView.topAnchor),
+            categoriesButtonsStack.bottomAnchor.constraint(equalTo: dishCategoriesScrollView.bottomAnchor),
+            categoriesButtonsStack.leadingAnchor.constraint(equalTo: dishCategoriesScrollView.leadingAnchor, constant: Drawing.horizontalEdges),
+            categoriesButtonsStack.trailingAnchor.constraint(equalTo: dishCategoriesScrollView.trailingAnchor, constant: -Drawing.horizontalEdges),
+            categoriesButtonsStack.heightAnchor.constraint(equalTo: dishCategoriesScrollView.heightAnchor),
+            
+            popularCategoryCollection.heightAnchor.constraint(equalToConstant: Drawing.popCatCollectionViewHeight)
+        ])
+    }
+    private func setScrollViewHeight() {
+        contentView.bottomAnchor.constraint(equalTo: popularKitchensCollection.bottomAnchor).isActive = true
     }
 }
 
@@ -397,10 +516,6 @@ extension HomeViewController: UITextFieldDelegate {
         }
         return true
     }
-//    func textFieldShouldClear(_ textField: UITextField) -> Bool {
-//        //        performSearch(with: "")
-//        return true
-//    }
 }
 
 // MARK: - CollectionView DataSource
@@ -412,7 +527,7 @@ extension HomeViewController: UICollectionViewDataSource {
         case 1:
             return viewModel.allRecipes.count
         case 2:
-            return 0
+            return filteredRecipes.count
         case 3:
             return viewModel.recentRecipes.count
         case 4:
@@ -436,7 +551,6 @@ extension HomeViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
             let recipe = viewModel.allRecipes[indexPath.item]
             let isItInFavorites = viewModel.favoriteRecipesIDDic.keys.contains(recipe.image)
-            
             cell.configure(with: recipe, isItInFavorites)
             cell.favoriteButtonAction = { [weak self] in
                 self?.viewModel.addOrRemoveFavorite(recipe)
@@ -450,7 +564,14 @@ extension HomeViewController: UICollectionViewDataSource {
             }
             return cell
         case 2:
-            return UICollectionViewCell()
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PopularCategoryCell.identifier, for: indexPath) as! PopularCategoryCell
+            let cellItem = filteredRecipes[indexPath.item]
+            let isItInFavorites = viewModel.favoriteRecipesIDDic.keys.contains(cellItem.image)
+            cell.configureCell(with: cellItem, isItInFavorites)
+            cell.favoriteButtonAction = { [weak self] in
+                self?.viewModel.addOrRemoveFavorite(cellItem)
+            }
+            return cell
         case 3:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeItemCell.reuseId, for: indexPath) as? RecipeItemCell else {
                 return UICollectionViewCell()
@@ -487,7 +608,9 @@ extension HomeViewController: UICollectionViewDelegate {
             viewModel.addRecentRecipes(selectedRecipe)
             showRecipeDetail(for: selectedRecipe)
         case 2:
-            break
+            let selectedRecipe = filteredRecipes[indexPath.item]
+            viewModel.addRecentRecipes(selectedRecipe)
+            showRecipeDetail(for: selectedRecipe)
         case 3:
             let selectedRecipe = viewModel.recentRecipes[indexPath.item]
             showRecipeDetail(for: selectedRecipe)
@@ -512,7 +635,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout{
         case 1:
             return CGSize(width: view.frame.width * 0.9, height: view.frame.height * 0.4)
         case 2:
-            return.zero
+            return Drawing.collectionViewCellSize
         case 3:
             return CGSize(width: 124, height: 190)
         case 4:
@@ -520,5 +643,66 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout{
         default:
             return .zero
         }
+    }
+}
+
+//MARK: - Extension ViewController with scrollView
+extension HomeViewController {
+    private func addButtons(with categories: Set<String>) {
+        let sortedDishTypes = categories.sorted()
+        
+        for (index, sortedDishType) in sortedDishTypes.enumerated() {
+            let button: UIButton = {
+                
+                // Настраиваем первоначальное оборажение кнопки
+                var buttonConfiguration = UIButton.Configuration.filled()
+                buttonConfiguration.title = "\(sortedDishType)"
+                buttonConfiguration.attributedTitle?.font = UIFont.custom(.semibold, size: 12)
+                buttonConfiguration.contentInsets = Drawing.categoryButtonsPadding
+                buttonConfiguration.baseBackgroundColor = Drawing.categoryButtonNormalBackgroundColor
+                buttonConfiguration.baseForegroundColor = Drawing.categoryButtonNormalForegroundColor
+                buttonConfiguration.background.cornerRadius = Drawing.categoryButtonRadius
+                
+                let button = UIButton(configuration: buttonConfiguration)
+                button.tag = index
+
+                button.translatesAutoresizingMaskIntoConstraints = false
+                
+                //Обновляем отображение кнопки при смене состояния
+                button.configurationUpdateHandler = { button in
+                    var updatedConfiguration = button.configuration
+                    
+                    switch button.state {
+                    case .selected:
+                        updatedConfiguration?.baseBackgroundColor = Drawing.categoryButtonSelectedBackgroundColor
+                        updatedConfiguration?.baseForegroundColor = Drawing.categoryButtonSelectedForegroundColor
+                    case .normal:
+                        updatedConfiguration?.baseBackgroundColor = Drawing.categoryButtonNormalBackgroundColor
+                        updatedConfiguration?.baseForegroundColor = Drawing.categoryButtonNormalForegroundColor
+                    default:
+                        break
+                    }
+                    
+                    // Анимация изменения отображения кнопки
+                    UIView.transition(with: button, duration: Drawing.categoryButtonAnimationDuration, options: .transitionCrossDissolve) {
+                        button.configuration = updatedConfiguration
+                    }
+                }
+                button.addTarget(self, action: #selector(updatePopularCategoryCV), for: .touchUpInside)
+                
+                return button
+            }()
+            categoriesButtonsStack.addArrangedSubview(button)
+        }
+    }
+    
+    @objc private func updatePopularCategoryCV(_ sender: UIButton) {
+        selectedButton?.isSelected = false
+        selectedButton = sender
+        sender.isSelected = true
+        
+        guard let currentDishType = sender.titleLabel?.text else { return }
+        filteredRecipes = allRecipes.filter { $0.dishTypes.contains(currentDishType) }
+        popularCategoryCollection.reloadData()
     }
 }
