@@ -34,7 +34,7 @@ class KitchenCollectionViewCell: UICollectionViewCell {
 
     private func setupUI() {
         contentView.backgroundColor = .clear
-
+        imageView.image = UIImage(systemName: "globe")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal)
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 55
         imageView.clipsToBounds = true
@@ -90,7 +90,7 @@ class KitchenCollectionViewCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageView.image = nil
+        imageView.image = UIImage(systemName: "globe")?.withTintColor(.darkGray, renderingMode: .alwaysOriginal)
         flagLabel.text = nil
         nameLabel.text = nil
     }

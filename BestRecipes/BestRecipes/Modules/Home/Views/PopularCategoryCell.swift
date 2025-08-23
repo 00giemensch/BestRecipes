@@ -46,6 +46,12 @@ class PopularCategoryCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        dishTitleLabel.text = nil
+        cookingTimeLabel.text = nil
+        isAddedInFavorite = false
+    }
     
 //MARK: - UI
     private lazy var mainView: UIView = {
@@ -202,9 +208,10 @@ class PopularCategoryCell: UICollectionViewCell {
         favoriteButton.tintColor = isAddedInFavorite ? .systemRed : .gray
     }
     
-    func configureCell(with recipe: RecipeModel) {
+    func configureCell(with recipe: RecipeModel,_ isAddToFavorite: Bool) {
         dishTitleLabel.text = recipe.title
         cookingTimeLabel.text = "\(recipe.readyInMinutes) min"
+        isAddedInFavorite = isAddToFavorite
         NetworkManager.shared.loadImage(from: recipe.image) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {

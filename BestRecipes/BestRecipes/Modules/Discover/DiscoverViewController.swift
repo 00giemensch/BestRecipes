@@ -107,11 +107,11 @@ final class DiscoverViewController: UIViewController {
     }
     
     private func setupBindings() {
-        viewModel.favoriteRecipesUpdated = { [weak self] in
-            DispatchQueue.main.async {
-                self?.updateRecipes()
-            }
-        }
+//        viewModel.favoriteRecipesUpdated = { [weak self] in
+//            DispatchQueue.main.async {
+//                self?.updateRecipes()
+//            }
+//        }
     }
     
     // MARK: - Data Management
