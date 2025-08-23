@@ -128,7 +128,6 @@ final class DiscoverViewController: UIViewController {
             RecipeModel(
                 title: "Grilled Salmon",
                 readyInMinutes: 25,
-                servings: 4,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 88,
                 aggregateLikes: 120,
@@ -141,7 +140,6 @@ final class DiscoverViewController: UIViewController {
             RecipeModel(
                 title: "Chocolate Cake",
                 readyInMinutes: 60,
-                servings: 8,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 92,
                 aggregateLikes: 200,
@@ -154,7 +152,6 @@ final class DiscoverViewController: UIViewController {
             RecipeModel(
                 title: "Beef Steak",
                 readyInMinutes: 30,
-                servings: 2,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 90,
                 aggregateLikes: 150,
@@ -167,7 +164,6 @@ final class DiscoverViewController: UIViewController {
             RecipeModel(
                 title: "Pasta Primavera",
                 readyInMinutes: 20,
-                servings: 4,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 80,
                 aggregateLikes: 80,

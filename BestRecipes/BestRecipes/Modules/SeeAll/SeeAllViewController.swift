@@ -158,7 +158,6 @@ final class SeeAllViewController: UIViewController {
             RecipeModel(
                 title: "Spaghetti Carbonara",
                 readyInMinutes: 25,
-                servings: 4,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 85,
                 aggregateLikes: 450,
@@ -171,7 +170,6 @@ final class SeeAllViewController: UIViewController {
             RecipeModel(
                 title: "Chicken Caesar Salad",
                 readyInMinutes: 20,
-                servings: 2,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 78,
                 aggregateLikes: 320,
@@ -184,7 +182,6 @@ final class SeeAllViewController: UIViewController {
             RecipeModel(
                 title: "Beef Tacos",
                 readyInMinutes: 30,
-                servings: 6,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 82,
                 aggregateLikes: 280,
@@ -197,7 +194,6 @@ final class SeeAllViewController: UIViewController {
             RecipeModel(
                 title: "Vegetarian Pizza",
                 readyInMinutes: 35,
-                servings: 4,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 75,
                 aggregateLikes: 390,
@@ -210,7 +206,6 @@ final class SeeAllViewController: UIViewController {
             RecipeModel(
                 title: "Grilled Salmon",
                 readyInMinutes: 22,
-                servings: 2,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 88,
                 aggregateLikes: 520,
@@ -223,7 +218,6 @@ final class SeeAllViewController: UIViewController {
             RecipeModel(
                 title: "Chocolate Cake",
                 readyInMinutes: 60,
-                servings: 8,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 92,
                 aggregateLikes: 680,
@@ -236,7 +230,6 @@ final class SeeAllViewController: UIViewController {
             RecipeModel(
                 title: "Beef Steak",
                 readyInMinutes: 25,
-                servings: 2,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 90,
                 aggregateLikes: 550,
@@ -249,7 +242,6 @@ final class SeeAllViewController: UIViewController {
             RecipeModel(
                 title: "Pasta Primavera",
                 readyInMinutes: 18,
-                servings: 4,
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 80,
                 aggregateLikes: 420,
