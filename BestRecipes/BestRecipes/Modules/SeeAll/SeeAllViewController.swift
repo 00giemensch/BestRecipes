@@ -156,9 +156,9 @@ final class SeeAllViewController: UIViewController {
     private func loadMockData() {
         recipes = [
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Spaghetti Carbonara",
                 readyInMinutes: 25,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 85,
                 aggregateLikes: 450,
                 creditsText: "Chef John",
@@ -168,9 +168,9 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Chicken Caesar Salad",
                 readyInMinutes: 20,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 78,
                 aggregateLikes: 320,
                 creditsText: "Chef Maria",
@@ -180,9 +180,9 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Beef Tacos",
                 readyInMinutes: 30,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 82,
                 aggregateLikes: 280,
                 creditsText: "Chef Carlos",
@@ -192,9 +192,9 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Vegetarian Pizza",
                 readyInMinutes: 35,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 75,
                 aggregateLikes: 390,
                 creditsText: "Chef Anna",
@@ -204,9 +204,9 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Grilled Salmon",
                 readyInMinutes: 22,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 88,
                 aggregateLikes: 520,
                 creditsText: "Chef David",
@@ -216,9 +216,9 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Chocolate Cake",
                 readyInMinutes: 60,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 92,
                 aggregateLikes: 680,
                 creditsText: "Chef Sarah",
@@ -228,9 +228,9 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Beef Steak",
                 readyInMinutes: 25,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 90,
                 aggregateLikes: 550,
                 creditsText: "Chef Michael",
@@ -240,9 +240,9 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Pasta Primavera",
                 readyInMinutes: 18,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 80,
                 aggregateLikes: 420,
                 creditsText: "Chef Lisa",

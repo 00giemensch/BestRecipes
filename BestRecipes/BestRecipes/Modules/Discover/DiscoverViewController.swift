@@ -126,9 +126,9 @@ final class DiscoverViewController: UIViewController {
     private func loadMockData() {
         recipes = [
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Grilled Salmon",
                 readyInMinutes: 25,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 88,
                 aggregateLikes: 120,
                 creditsText: "Chef John",
@@ -138,9 +138,9 @@ final class DiscoverViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Chocolate Cake",
                 readyInMinutes: 60,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 92,
                 aggregateLikes: 200,
                 creditsText: "Baking Master",
@@ -150,9 +150,9 @@ final class DiscoverViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Beef Steak",
                 readyInMinutes: 30,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 90,
                 aggregateLikes: 150,
                 creditsText: "Grill Master",
@@ -162,9 +162,9 @@ final class DiscoverViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 title: "Pasta Primavera",
                 readyInMinutes: 20,
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
                 spoonacularScore: 80,
                 aggregateLikes: 80,
                 creditsText: "Italian Chef",
