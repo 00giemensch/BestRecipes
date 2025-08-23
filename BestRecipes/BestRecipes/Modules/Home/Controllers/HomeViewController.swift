@@ -656,7 +656,7 @@ extension HomeViewController {
                 
                 // Настраиваем первоначальное оборажение кнопки
                 var buttonConfiguration = UIButton.Configuration.filled()
-                buttonConfiguration.title = "\(sortedDishType)"
+                buttonConfiguration.title = sortedDishType.capitalizingFirstLetter()
                 buttonConfiguration.attributedTitle?.font = UIFont.custom(.semibold, size: 12)
                 buttonConfiguration.contentInsets = Drawing.categoryButtonsPadding
                 buttonConfiguration.baseBackgroundColor = Drawing.categoryButtonNormalBackgroundColor
