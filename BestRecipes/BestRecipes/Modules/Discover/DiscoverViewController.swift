@@ -14,7 +14,8 @@ final class DiscoverViewController: UIViewController {
         static let titleFontSize: CGFloat = 24
         static let titleTopInset: CGFloat = 60
         static let titleHorizontalInset: CGFloat = 20
-        static let tableViewTopInset: CGFloat = 20
+        static let collectionTopInset: CGFloat = 20
+        static let spacing: CGFloat = 16
         static let emptyStateTopInset: CGFloat = 100
         static let emptyStateHorizontalInset: CGFloat = 40
     }
@@ -32,22 +33,23 @@ final class DiscoverViewController: UIViewController {
         return label
     }()
     
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .none
-        tableView.showsVerticalScrollIndicator = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.accessibilityIdentifier = "discover_table_view"
-        tableView.accessibilityLabel = "Discover recipes table"
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = Constants.spacing
+        layout.minimumInteritemSpacing = Constants.spacing
+        layout.sectionInset = UIEdgeInsets(top: Constants.spacing, left: Constants.spacing, bottom: Constants.spacing, right: Constants.spacing)
         
-        // Регистрируем новую ячейку для таблиц
-        tableView.register(RecipeTableViewCell.self, forCellReuseIdentifier: RecipeTableViewCell.reuseId)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .white
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(DishCell.self, forCellWithReuseIdentifier: DishCell.cellId)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.accessibilityIdentifier = "discover_collection_view"
+        collectionView.accessibilityLabel = "Discover recipes collection"
         
-        tableView.dataSource = self
-        tableView.delegate = self
-        
-        return tableView
+        return collectionView
     }()
     
     private let emptyStateView: UIView = {
@@ -91,7 +93,7 @@ final class DiscoverViewController: UIViewController {
         view.backgroundColor = .white
         
         view.addSubview(titleLabel)
-        view.addSubview(tableView)
+        view.addSubview(collectionView)
         view.addSubview(emptyStateView)
         emptyStateView.addSubview(emptyStateLabel)
     }
@@ -103,11 +105,11 @@ final class DiscoverViewController: UIViewController {
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.titleHorizontalInset),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.titleHorizontalInset),
             
-            // TableView
-            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Constants.tableViewTopInset),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            // CollectionView
+            collectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Constants.collectionTopInset),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
             // Empty State
             emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -178,37 +180,44 @@ final class DiscoverViewController: UIViewController {
     
     private func updateUI() {
         emptyStateView.isHidden = !recipes.isEmpty
-        tableView.reloadData()
+        collectionView.reloadData()
     }
 }
 
-// MARK: - UITableViewDataSource
-extension DiscoverViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+// MARK: - UICollectionViewDataSource
+extension DiscoverViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return recipes.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: RecipeTableViewCell.reuseId, for: indexPath) as? RecipeTableViewCell else {
-            return UITableViewCell()
-        }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
+        let recipe = recipes[indexPath.item]
+        let isItInFavorites = false // Mock data for favorites
         
-        let recipe = recipes[indexPath.row]
-        cell.setupRecipe(recipe)
-        cell.selectionStyle = .none
+        cell.configure(with: recipe, isItInFavorites)
+        cell.favoriteButtonAction = { [weak self] in
+            // Handle favorite action
+            print("Favorite tapped for: \(recipe.title)")
+        }
         
         return cell
     }
 }
 
-// MARK: - UITableViewDelegate
-extension DiscoverViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 180 // Высота для RecipeItemCell
+// MARK: - UICollectionViewDelegateFlowLayout
+extension DiscoverViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = (collectionView.bounds.width - Constants.spacing * 3) / 2
+        let height = width * 1.4 // Aspect ratio
+        return CGSize(width: width, height: height)
     }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let recipe = recipes[indexPath.row]
+}
+
+// MARK: - UICollectionViewDelegate
+extension DiscoverViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let recipe = recipes[indexPath.item]
         let detailVC = RecipeDetailViewController(recipe: recipe)
         navigationController?.pushViewController(detailVC, animated: true)
     }
