@@ -89,13 +89,13 @@ final class HomeViewController: UIViewController {
         view.backgroundColor = .white
         viewModel.callBack = { [weak self] in
             DispatchQueue.main.async {
-                //                self?.setupLayout()
-                self?.trendingNowCollection.reloadData()
-                self?.recentRecipeCollection.reloadData()
-                self?.popularKitchensCollection.reloadData()
+                self?.setupLayout()
+//                self?.trendingNowCollection.reloadData()
+//                self?.recentRecipeCollection.reloadData()
+//                self?.popularKitchensCollection.reloadData()
             }
         }
-        setupLayout()
+//        setupLayout()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -132,7 +132,6 @@ final class HomeViewController: UIViewController {
     // MARK: - Testing Methods
     func showRecipeDetail(for recipe: RecipeModel) {
         let detailVC = RecipeDetailViewController(recipe: recipe)
-        //        present(detailVC,animated: true)
         navigationController?.pushViewController(detailVC, animated: true)
     }
     
@@ -417,7 +416,7 @@ extension HomeViewController: UICollectionViewDataSource {
         case 3:
             return viewModel.recentRecipes.count
         case 4:
-            return viewModel.kitchens.count
+            return 10
         default:
             return 0
         }
@@ -456,7 +455,8 @@ extension HomeViewController: UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecipeItemCell.reuseId, for: indexPath) as? RecipeItemCell else {
                 return UICollectionViewCell()
             }
-            cell.setupRecipe(viewModel.recentRecipes[indexPath.item])
+            let recentRecipe = viewModel.recentRecipes[indexPath.item]
+            cell.setupRecipe(recentRecipe)
             
             return cell
         case 4:
