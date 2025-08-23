@@ -133,7 +133,8 @@ final class HomeViewController: UIViewController {
     }
     // Mock methods
     @objc func seeAllTapped() {
-        print("See all tapped")
+        let seeAllVC = SeeAllViewController()
+        navigationController?.pushViewController(seeAllVC, animated: true)
     }
     
     // MARK: - Testing Methods
