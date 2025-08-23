@@ -11,10 +11,7 @@ final class DiscoverViewController: UIViewController {
     
     // MARK: - Constants
     private enum Constants {
-        static let columnSpacing: CGFloat = 16
         static let sectionInset: CGFloat = 16
-        static let aspectRatio: CGFloat = 1.4
-        static let columnsCount: CGFloat = 2
         static let titleTopInset: CGFloat = 16
         static let titleHorizontalInset: CGFloat = 16
         static let collectionTopInset: CGFloat = 16
@@ -24,22 +21,21 @@ final class DiscoverViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = Constants.columnSpacing
-        layout.minimumInteritemSpacing = Constants.columnSpacing
-        layout.sectionInset = UIEdgeInsets(top: Constants.sectionInset, left: Constants.sectionInset, bottom: Constants.sectionInset, right: Constants.sectionInset)
+        layout.minimumLineSpacing = Constants.sectionInset
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(RecipeCardCell.self, forCellWithReuseIdentifier: "RecipeCardCell")
+        collectionView.register(DishCell.self, forCellWithReuseIdentifier: DishCell.cellId)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Discover"
+        label.text = "Saved Recipes" 
         label.font = UIFont(name: "Poppins-Bold", size: 24)
         label.textColor = UIColor(named: "Neutral100") ?? .black
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -56,7 +52,7 @@ final class DiscoverViewController: UIViewController {
     
     private let emptyStateLabel: UILabel = {
         let label = UILabel()
-        label.text = "No recipes found"
+        label.text = "No saved recipes" // Изменено на более подходящее сообщение
         label.font = UIFont(name: "Poppins-Regular", size: 16)
         label.textColor = UIColor(named: "Neutral50") ?? .gray
         label.textAlignment = .center
@@ -65,14 +61,15 @@ final class DiscoverViewController: UIViewController {
     }()
     
     // MARK: - Data
-    private var recipes: [RecipeModel] = []
+    private var recipes: [RecipeModel] = [] // Теперь будет содержать только избранные рецепты
+    private var favoriteRecipes: [RecipeModel] = [] // Временное хранение избранного в памяти
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        loadMockData()
+        updateRecipes() // Загружаем только избранные рецепты при старте
     }
     
     // MARK: - Setup
@@ -109,107 +106,9 @@ final class DiscoverViewController: UIViewController {
         ])
     }
     
-    // MARK: - Data Loading
-    private func loadMockData() {
-        // Моковые данные для демо
-        recipes = [
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/1-556x370.jpg",
-                title: "Spaghetti Carbonara",
-                readyInMinutes: 25,
-                spoonacularScore: 85.0,
-                aggregateLikes: 450,
-                creditsText: "Chef John",
-                cuisines: ["Italian"],
-                dishTypes: ["main course"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/2-556x370.jpg",
-                title: "Chicken Caesar Salad",
-                readyInMinutes: 20,
-                spoonacularScore: 78.0,
-                aggregateLikes: 320,
-                creditsText: "Chef Maria",
-                cuisines: ["American"],
-                dishTypes: ["salad"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/3-556x370.jpg",
-                title: "Beef Tacos",
-                readyInMinutes: 30,
-                spoonacularScore: 82.0,
-                aggregateLikes: 280,
-                creditsText: "Chef Carlos",
-                cuisines: ["Mexican"],
-                dishTypes: ["main course"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/4-556x370.jpg",
-                title: "Vegetarian Pizza",
-                readyInMinutes: 35,
-                spoonacularScore: 75.0,
-                aggregateLikes: 390,
-                creditsText: "Chef Anna",
-                cuisines: ["Italian"],
-                dishTypes: ["main course"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/5-556x370.jpg",
-                title: "Grilled Salmon",
-                readyInMinutes: 22,
-                spoonacularScore: 88.0,
-                aggregateLikes: 520,
-                creditsText: "Chef David",
-                cuisines: ["Mediterranean"],
-                dishTypes: ["main course"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/6-556x370.jpg",
-                title: "Chocolate Cake",
-                readyInMinutes: 60,
-                spoonacularScore: 92.0,
-                aggregateLikes: 680,
-                creditsText: "Chef Sarah",
-                cuisines: ["American"],
-                dishTypes: ["dessert"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/7-556x370.jpg",
-                title: "Beef Steak",
-                readyInMinutes: 25,
-                spoonacularScore: 90.0,
-                aggregateLikes: 550,
-                creditsText: "Chef Michael",
-                cuisines: ["American"],
-                dishTypes: ["main course"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/8-556x370.jpg",
-                title: "Pasta Primavera",
-                readyInMinutes: 18,
-                spoonacularScore: 80.0,
-                aggregateLikes: 420,
-                creditsText: "Chef Lisa",
-                cuisines: ["Italian"],
-                dishTypes: ["main course"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            )
-        ]
+    // MARK: - Data Management
+    private func updateRecipes() {
+        recipes = favoriteRecipes // Отображаем только избранные рецепты
         updateUI()
     }
     
@@ -223,6 +122,16 @@ final class DiscoverViewController: UIViewController {
         }
         collectionView.reloadData()
     }
+    
+    // MARK: - Favorite Management
+    private func toggleFavorite(for recipe: RecipeModel) {
+        if let index = favoriteRecipes.firstIndex(where: { $0.image == recipe.image }) {
+            favoriteRecipes.remove(at: index)
+        } else {
+            favoriteRecipes.append(recipe)
+        }
+        updateRecipes() // Обновляем список избранных рецептов
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -232,10 +141,16 @@ extension DiscoverViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecipeCardCell", for: indexPath) as? RecipeCardCell else {
-            fatalError("RecipeCardCell not found")
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
+        let recipe = recipes[indexPath.item]
+        let isItInFavorites = true // Все рецепты здесь считаются избранными
+        cell.configure(with: recipe, isItInFavorites)
+        cell.favoriteButtonAction = { [weak self] in
+            self?.toggleFavorite(for: recipe)
         }
-        cell.configure(with: recipes[indexPath.item])
+        cell.ratingButton.action = { [weak self] in
+            // Логика рейтинга (если нужна)
+        }
         return cell
     }
 }
@@ -243,10 +158,7 @@ extension DiscoverViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension DiscoverViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let totalSpacing = Constants.columnSpacing * (Constants.columnsCount - 1) + Constants.sectionInset * 2
-        let width = (collectionView.bounds.width - totalSpacing) / Constants.columnsCount
-        let height = width * Constants.aspectRatio
-        return CGSize(width: width, height: height)
+        return CGSize(width: collectionView.frame.width, height: collectionView.frame.width * 0.6)
     }
 }
 

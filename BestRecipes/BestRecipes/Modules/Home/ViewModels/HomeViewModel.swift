@@ -11,6 +11,8 @@ class HomeViewModel {
     //MARK: - Properties
     var callBack: (() -> Void)?
     
+    var favoriteRecipesUpdated: (() -> Void)? // Новый callback для обновления избранного
+    
     private(set) var allRecipes = [RecipeModel]() {
         didSet {
             callBack?()
