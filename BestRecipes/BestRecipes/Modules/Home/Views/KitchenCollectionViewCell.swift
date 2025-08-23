@@ -69,7 +69,7 @@ class KitchenCollectionViewCell: UICollectionViewCell {
 
     func configure(with kitchen: Kitchen) {
         nameLabel.text = kitchen.name
-        flagLabel.text = kitchen.flagEmoji
+        flagLabel.text = kitchen.flag
 
         fetchImage(with: kitchen.imageUrl) { [weak self] image in
             DispatchQueue.main.async {
