@@ -11,41 +11,24 @@ final class SeeAllViewController: UIViewController {
     
     // MARK: - Constants
     private enum Constants {
-        static let columnSpacing: CGFloat = 16
-        static let sectionInset: CGFloat = 16
-        static let aspectRatio: CGFloat = 1.4
-        static let columnsCount: CGFloat = 2
-        static let titleTopInset: CGFloat = 16
-        static let titleHorizontalInset: CGFloat = 16
-        static let collectionTopInset: CGFloat = 16
-        static let backButtonSize: CGFloat = 24
+        static let titleFontSize: CGFloat = 24
+        static let titleTopInset: CGFloat = 60
+        static let titleHorizontalInset: CGFloat = 20
+        static let backButtonSize: CGFloat = 44
+        static let tableViewTopInset: CGFloat = 20
+        static let emptyStateTopInset: CGFloat = 100
+        static let emptyStateHorizontalInset: CGFloat = 40
     }
     
     // MARK: - UI Elements
-    private lazy var collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = Constants.columnSpacing
-        layout.minimumInteritemSpacing = Constants.columnSpacing
-        layout.sectionInset = UIEdgeInsets(top: Constants.sectionInset, left: Constants.sectionInset, bottom: Constants.sectionInset, right: Constants.sectionInset)
-        
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .white
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(RecipeCardCell.self, forCellWithReuseIdentifier: "RecipeCardCell")
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        return collectionView
-    }()
-    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "All Recipes"
-        label.font = UIFont(name: "Poppins-Bold", size: 24)
+        label.font = UIFont(name: "Poppins-Bold", size: Constants.titleFontSize)
         label.textColor = UIColor(named: "Neutral100") ?? .black
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.accessibilityIdentifier = "all_recipes_title"
-        label.accessibilityLabel = "All recipes"
+        label.accessibilityIdentifier = "seeall_title"
+        label.accessibilityLabel = "All recipes screen title"
         label.adjustsFontForContentSizeCategory = true
         return label
     }()
@@ -55,10 +38,52 @@ final class SeeAllViewController: UIViewController {
         button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
         button.tintColor = UIColor(named: "Neutral100") ?? .black
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.accessibilityIdentifier = "back_button"
-        button.accessibilityLabel = "Back"
-        button.accessibilityHint = "Go back to previous screen"
+        button.accessibilityIdentifier = "seeall_back_button"
+        button.accessibilityLabel = "Back button"
+        button.accessibilityHint = "Tap to go back to previous screen"
         return button
+    }()
+    
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.accessibilityIdentifier = "seeall_table_view"
+        tableView.accessibilityLabel = "All recipes table"
+        
+        // Регистрируем новую ячейку для таблиц
+        tableView.register(RecipeTableViewCell.self, forCellReuseIdentifier: RecipeTableViewCell.reuseId)
+        
+        tableView.dataSource = self
+        tableView.delegate = self
+        
+        return tableView
+    }()
+    
+    private let emptyStateView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.isHidden = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.accessibilityIdentifier = "seeall_empty_state"
+        view.accessibilityLabel = "No recipes available"
+        return view
+    }()
+    
+    private let emptyStateLabel: UILabel = {
+        let label = UILabel()
+        label.text = "No recipes found"
+        label.font = UIFont(name: "Poppins-Regular", size: 16)
+        label.textColor = UIColor(named: "Neutral50") ?? .gray
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.accessibilityIdentifier = "seeall_empty_label"
+        label.accessibilityLabel = "No recipes found message"
+        label.adjustsFontForContentSizeCategory = true
+        return label
     }()
     
     // MARK: - Data
@@ -71,14 +96,18 @@ final class SeeAllViewController: UIViewController {
         setupConstraints()
         setupActions()
         loadMockData()
+        updateUI()
     }
     
     // MARK: - Setup
     private func setupUI() {
         view.backgroundColor = .white
-        view.addSubview(backButton)
+        
         view.addSubview(titleLabel)
-        view.addSubview(collectionView)
+        view.addSubview(backButton)
+        view.addSubview(tableView)
+        view.addSubview(emptyStateView)
+        emptyStateView.addSubview(emptyStateLabel)
     }
     
     private func setupConstraints() {
@@ -90,15 +119,27 @@ final class SeeAllViewController: UIViewController {
             backButton.heightAnchor.constraint(equalToConstant: Constants.backButtonSize),
             
             // Title
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.titleTopInset),
-            titleLabel.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: Constants.titleHorizontalInset),
+            titleLabel.topAnchor.constraint(equalTo: backButton.topAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: 12),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.titleHorizontalInset),
+            titleLabel.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
             
-            // Collection View
-            collectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Constants.collectionTopInset),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            // TableView
+            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Constants.tableViewTopInset),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            // Empty State
+            emptyStateView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyStateView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyStateView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.emptyStateHorizontalInset),
+            emptyStateView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.emptyStateHorizontalInset),
+            
+            emptyStateLabel.topAnchor.constraint(equalTo: emptyStateView.topAnchor),
+            emptyStateLabel.leadingAnchor.constraint(equalTo: emptyStateView.leadingAnchor),
+            emptyStateLabel.trailingAnchor.constraint(equalTo: emptyStateView.trailingAnchor),
+            emptyStateLabel.bottomAnchor.constraint(equalTo: emptyStateView.bottomAnchor)
         ])
     }
     
@@ -106,19 +147,20 @@ final class SeeAllViewController: UIViewController {
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
     }
     
+    // MARK: - Actions
     @objc private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
     
     // MARK: - Data Loading
     private func loadMockData() {
-        // Моковые данные для демо
         recipes = [
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/1-556x370.jpg",
                 title: "Spaghetti Carbonara",
                 readyInMinutes: 25,
-                spoonacularScore: 85.0,
+                servings: 4,
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                spoonacularScore: 85,
                 aggregateLikes: 450,
                 creditsText: "Chef John",
                 cuisines: ["Italian"],
@@ -127,10 +169,11 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/2-556x370.jpg",
                 title: "Chicken Caesar Salad",
                 readyInMinutes: 20,
-                spoonacularScore: 78.0,
+                servings: 2,
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                spoonacularScore: 78,
                 aggregateLikes: 320,
                 creditsText: "Chef Maria",
                 cuisines: ["American"],
@@ -139,10 +182,11 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/3-556x370.jpg",
                 title: "Beef Tacos",
                 readyInMinutes: 30,
-                spoonacularScore: 82.0,
+                servings: 6,
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                spoonacularScore: 82,
                 aggregateLikes: 280,
                 creditsText: "Chef Carlos",
                 cuisines: ["Mexican"],
@@ -151,10 +195,11 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/4-556x370.jpg",
                 title: "Vegetarian Pizza",
                 readyInMinutes: 35,
-                spoonacularScore: 75.0,
+                servings: 4,
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                spoonacularScore: 75,
                 aggregateLikes: 390,
                 creditsText: "Chef Anna",
                 cuisines: ["Italian"],
@@ -163,10 +208,11 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/5-556x370.jpg",
                 title: "Grilled Salmon",
                 readyInMinutes: 22,
-                spoonacularScore: 88.0,
+                servings: 2,
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                spoonacularScore: 88,
                 aggregateLikes: 520,
                 creditsText: "Chef David",
                 cuisines: ["Mediterranean"],
@@ -175,10 +221,11 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/6-556x370.jpg",
                 title: "Chocolate Cake",
                 readyInMinutes: 60,
-                spoonacularScore: 92.0,
+                servings: 8,
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                spoonacularScore: 92,
                 aggregateLikes: 680,
                 creditsText: "Chef Sarah",
                 cuisines: ["American"],
@@ -187,10 +234,11 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/7-556x370.jpg",
                 title: "Beef Steak",
                 readyInMinutes: 25,
-                spoonacularScore: 90.0,
+                servings: 2,
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                spoonacularScore: 90,
                 aggregateLikes: 550,
                 creditsText: "Chef Michael",
                 cuisines: ["American"],
@@ -199,99 +247,54 @@ final class SeeAllViewController: UIViewController {
                 analyzedInstructions: []
             ),
             RecipeModel(
-                image: "https://spoonacular.com/recipeImages/8-556x370.jpg",
                 title: "Pasta Primavera",
                 readyInMinutes: 18,
-                spoonacularScore: 80.0,
+                servings: 4,
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                spoonacularScore: 80,
                 aggregateLikes: 420,
                 creditsText: "Chef Lisa",
                 cuisines: ["Italian"],
                 dishTypes: ["main course"],
                 extendedIngredients: [],
                 analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/9-556x370.jpg",
-                title: "Mushroom Risotto",
-                readyInMinutes: 40,
-                spoonacularScore: 85.0,
-                aggregateLikes: 380,
-                creditsText: "Chef Marco",
-                cuisines: ["Italian"],
-                dishTypes: ["main course"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/10-556x370.jpg",
-                title: "Fish and Chips",
-                readyInMinutes: 35,
-                spoonacularScore: 78.0,
-                aggregateLikes: 290,
-                creditsText: "Chef James",
-                cuisines: ["British"],
-                dishTypes: ["main course"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/11-556x370.jpg",
-                title: "Chicken Curry",
-                readyInMinutes: 45,
-                spoonacularScore: 88.0,
-                aggregateLikes: 610,
-                creditsText: "Chef Priya",
-                cuisines: ["Indian"],
-                dishTypes: ["main course"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/12-556x370.jpg",
-                title: "Apple Pie",
-                readyInMinutes: 90,
-                spoonacularScore: 95.0,
-                aggregateLikes: 720,
-                creditsText: "Chef Grandma",
-                cuisines: ["American"],
-                dishTypes: ["dessert"],
-                extendedIngredients: [],
-                analyzedInstructions: []
             )
         ]
-        collectionView.reloadData()
+    }
+    
+    private func updateUI() {
+        emptyStateView.isHidden = !recipes.isEmpty
+        tableView.reloadData()
     }
 }
 
-// MARK: - UICollectionViewDataSource
-extension SeeAllViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+// MARK: - UITableViewDataSource
+extension SeeAllViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return recipes.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecipeCardCell", for: indexPath) as? RecipeCardCell else {
-            fatalError("RecipeCardCell not found")
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: RecipeTableViewCell.reuseId, for: indexPath) as? RecipeTableViewCell else {
+            return UITableViewCell()
         }
-        cell.configure(with: recipes[indexPath.item])
+        
+        let recipe = recipes[indexPath.row]
+        cell.setupRecipe(recipe)
+        cell.selectionStyle = .none
+        
         return cell
     }
 }
 
-// MARK: - UICollectionViewDelegateFlowLayout
-extension SeeAllViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let totalSpacing = Constants.columnSpacing * (Constants.columnsCount - 1) + Constants.sectionInset * 2
-        let width = (collectionView.bounds.width - totalSpacing) / Constants.columnsCount
-        let height = width * Constants.aspectRatio
-        return CGSize(width: width, height: height)
+// MARK: - UITableViewDelegate
+extension SeeAllViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 140 // Высота для RecipeItemCell в горизонтальном layout
     }
-}
-
-// MARK: - UICollectionViewDelegate
-extension SeeAllViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let recipe = recipes[indexPath.item]
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let recipe = recipes[indexPath.row]
         let detailVC = RecipeDetailViewController(recipe: recipe)
         navigationController?.pushViewController(detailVC, animated: true)
     }
