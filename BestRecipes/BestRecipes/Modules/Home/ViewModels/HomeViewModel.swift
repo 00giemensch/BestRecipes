@@ -8,6 +8,8 @@
 import UIKit
 
 class HomeViewModel {
+    static let shared = HomeViewModel()
+    
     //MARK: - Properties
     var callBack: (() -> Void)?
     var categoryRecipesCallBack: (() -> Void)?
@@ -30,7 +32,7 @@ class HomeViewModel {
     private(set)var foundRecipes: [RecipeModel] = []
     
     //MARK: - Lifecycle
-    init() {
+    private init() {
         fetchDishes()
         fetchCategoryDishes()
         fetchFavoriteRecipes()

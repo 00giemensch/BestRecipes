@@ -41,7 +41,7 @@ final class HomeViewController: UIViewController {
         static var categoryButtonSelectedForegroundColor: UIColor { UIColor.white }
         static var categoryButtonAnimationDuration: CGFloat { 0.2 }
     }
-    private var viewModel = HomeViewModel()
+    private var viewModel = HomeViewModel.shared
     private var searchTFBottomCT = NSLayoutConstraint()
     private var titleHeight: CGFloat = 0.0
     private var isSearching: Bool = false
