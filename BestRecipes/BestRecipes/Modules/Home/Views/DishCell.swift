@@ -10,7 +10,7 @@ import UIKit
 class DishCell: UICollectionViewCell {
     //MARK: - Properties
     static let cellId = "DishCell"
-    private var isAddedInFavorite: Bool = false {
+    internal var isAddedInFavorite: Bool = false {
         didSet {
             fillingBookmark()
         }
