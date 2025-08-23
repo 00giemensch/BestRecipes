@@ -9,6 +9,15 @@ import UIKit
 
 class HomeViewModel {
     //MARK: - Properties
+    
+    static let shared: HomeViewModel = {
+            let vm = HomeViewModel()
+            vm.setupInitialData()
+            return vm
+        }()
+    
+    private init() {} // Приватный инициализатор, чтобы нельзя было создать новый экземпляр
+    
     var callBack: (() -> Void)?
     
     var favoriteRecipesUpdated: (() -> Void)? // Новый callback для обновления избранного
@@ -19,18 +28,32 @@ class HomeViewModel {
         }
     }
     private let userStorage = UserStorage.shared
-    private(set)var favoriteRecipes = [RecipeModel]()
-    private(set)var favoriteRecipesIDDic = [String: Int]()
+    public private(set) var favoriteRecipes = [RecipeModel]() {
+            didSet {
+                favoriteRecipesIDDic.removeAll()
+                for (index, recipe) in favoriteRecipes.enumerated() {
+                    favoriteRecipesIDDic[recipe.image] = index
+                }
+                saveFavoritesToStorage()
+                favoriteRecipesUpdated?() // Уведомляем об обновлении избранного
+            }
+        }
+    public private(set)var favoriteRecipesIDDic = [String: Int]()
     private(set)var recentRecipes = [RecipeModel]()
     private(set)var kitchens = [Kitchen]()
     //MARK: - Lifecycle
-    init() {
-        //        fetchDishes()
-        getMockData()
-        fetchFavoriteRecipes()
-        fetchRecentRecipes()
-        
-    }
+//    init() {
+//        //        fetchDishes()
+//        getMockData()
+//        fetchFavoriteRecipes()
+//        fetchRecentRecipes()
+//        
+//    }
+    private func setupInitialData() {
+            getMockData()
+            fetchFavoriteRecipes()
+            fetchRecentRecipes()
+        }
     
     //MARK: - Methods
     private func fetchDishes() {
@@ -49,25 +72,37 @@ class HomeViewModel {
         userStorage.favoriteDishes.forEach { data in
             guard let recipe = try? JSONDecoder().decode(RecipeModel.self, from: data) else { return }
             favoriteRecipes.append(recipe)
-            favoriteRecipesIDDic[recipe.image] = favoriteRecipes.count - 1
+//            favoriteRecipesIDDic[recipe.image] = favoriteRecipes.count - 1
         }
     }
+    
+    private func saveFavoritesToStorage() {
+            userStorage.favoriteDishes.removeAll()
+            favoriteRecipes.forEach { recipe in
+                if let data = try? JSONEncoder().encode(recipe) {
+                    userStorage.favoriteDishes.append(data)
+                }
+            }
+        }
+    
     private func addFavorite(_ recipe: RecipeModel) {
         guard let data = try? JSONEncoder().encode(recipe) else { return }
         userStorage.favoriteDishes.append(data)
         favoriteRecipes.append(recipe)
-        favoriteRecipesIDDic[recipe.image] = favoriteRecipes.count - 1
+//        favoriteRecipesIDDic[recipe.image] = favoriteRecipes.count - 1
     }
     private func removeFavorite(at index: Int) {
-        favoriteRecipesIDDic.forEach { key, value in
-            if value > index {
-                favoriteRecipesIDDic[key] = value - 1
-            } else if value == index {
-                favoriteRecipesIDDic[key] = nil
-            }
-        }
-        favoriteRecipes.remove(at: index)
-        userStorage.favoriteDishes.remove(at: index)
+//        favoriteRecipesIDDic.forEach { key, value in
+//            if value > index {
+//                favoriteRecipesIDDic[key] = value - 1
+//            } else if value == index {
+//                favoriteRecipesIDDic[key] = nil
+//            }
+//        }
+//        favoriteRecipes.remove(at: index)
+//        userStorage.favoriteDishes.remove(at: index)
+        guard index < favoriteRecipes.count else { return }
+                favoriteRecipes.remove(at: index)
     }
     private func fetchRecentRecipes() {
         userStorage.recentRecipes.forEach { data in
@@ -86,7 +121,8 @@ class HomeViewModel {
         
     }
     public func addOrRemoveFavorite(_ recipe: RecipeModel) {
-        if let index = favoriteRecipesIDDic[recipe.image] {
+//        if let index = favoriteRecipesIDDic[recipe.image] {
+        if let index = favoriteRecipes.firstIndex(where: { $0.image == recipe.image }) {
             removeFavorite(at: index)
         } else {
             addFavorite(recipe)

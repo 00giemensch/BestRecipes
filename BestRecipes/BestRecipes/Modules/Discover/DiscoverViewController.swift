@@ -8,7 +8,6 @@
 import UIKit
 
 final class DiscoverViewController: UIViewController {
-    
     // MARK: - Constants
     private enum Constants {
         static let sectionInset: CGFloat = 16
@@ -35,7 +34,7 @@ final class DiscoverViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Saved Recipes" 
+        label.text = "Saved Recipes"
         label.font = UIFont(name: "Poppins-Bold", size: 24)
         label.textColor = UIColor(named: "Neutral100") ?? .black
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -52,7 +51,7 @@ final class DiscoverViewController: UIViewController {
     
     private let emptyStateLabel: UILabel = {
         let label = UILabel()
-        label.text = "No saved recipes" // Изменено на более подходящее сообщение
+        label.text = "No saved recipes"
         label.font = UIFont(name: "Poppins-Regular", size: 16)
         label.textColor = UIColor(named: "Neutral50") ?? .gray
         label.textAlignment = .center
@@ -61,15 +60,16 @@ final class DiscoverViewController: UIViewController {
     }()
     
     // MARK: - Data
-    private var recipes: [RecipeModel] = [] // Теперь будет содержать только избранные рецепты
-    private var favoriteRecipes: [RecipeModel] = [] // Временное хранение избранного в памяти
+    private var recipes: [RecipeModel] = []
+    private let viewModel = HomeViewModel.shared // Используем общий ViewModel
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        updateRecipes() // Загружаем только избранные рецепты при старте
+        setupBindings()
+        updateRecipes()
     }
     
     // MARK: - Setup
@@ -106,9 +106,17 @@ final class DiscoverViewController: UIViewController {
         ])
     }
     
+    private func setupBindings() {
+        viewModel.favoriteRecipesUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                self?.updateRecipes()
+            }
+        }
+    }
+    
     // MARK: - Data Management
     private func updateRecipes() {
-        recipes = favoriteRecipes // Отображаем только избранные рецепты
+        recipes = viewModel.favoriteRecipes
         updateUI()
     }
     
@@ -125,12 +133,8 @@ final class DiscoverViewController: UIViewController {
     
     // MARK: - Favorite Management
     private func toggleFavorite(for recipe: RecipeModel) {
-        if let index = favoriteRecipes.firstIndex(where: { $0.image == recipe.image }) {
-            favoriteRecipes.remove(at: index)
-        } else {
-            favoriteRecipes.append(recipe)
-        }
-        updateRecipes() // Обновляем список избранных рецептов
+        viewModel.addOrRemoveFavorite(recipe)
+        updateRecipes()
     }
 }
 
