@@ -152,9 +152,9 @@ extension DiscoverViewController: UICollectionViewDataSource {
         cell.favoriteButtonAction = { [weak self] in
             self?.toggleFavorite(for: recipe)
         }
-        cell.ratingButton.action = { [weak self] in
-            // Логика рейтинга (если нужна)
-        }
+//        cell.ratingButton.action = { [weak self] in
+//            // Логика рейтинга (если нужна)
+//        }
         return cell
     }
 }
