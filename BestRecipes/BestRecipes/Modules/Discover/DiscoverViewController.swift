@@ -11,10 +11,10 @@ final class DiscoverViewController: UIViewController {
     
     // MARK: - Constants
     private enum Constants {
-        static let titleFontSize: CGFloat = 24
-        static let titleTopInset: CGFloat = 60
+        static let titleFontSize: CGFloat = 20 // Уменьшаем размер шрифта заголовка
+        static let titleTopInset: CGFloat = 16 // Уменьшаем отступ сверху
         static let titleHorizontalInset: CGFloat = 16 // По Figma: (375 - 343) / 2 = 16
-        static let collectionTopInset: CGFloat = 20
+        static let collectionTopInset: CGFloat = 12 // Уменьшаем отступ между заголовком и коллекцией
         static let spacing: CGFloat = 16
         static let emptyStateTopInset: CGFloat = 100
         static let emptyStateHorizontalInset: CGFloat = 40
@@ -39,9 +39,9 @@ final class DiscoverViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 16
+        layout.minimumLineSpacing = 20 // Оптимальное расстояние между ячейками
         layout.minimumInteritemSpacing = 0
-        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16) // По Figma отступы
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 16, bottom: 24, right: 16) // Уменьшаем отступы
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
@@ -226,7 +226,7 @@ extension DiscoverViewController: UICollectionViewDataSource {
 extension DiscoverViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width - 32 // 16px отступы с каждой стороны = 343px
-        let height: CGFloat = 258 // Высота карточки по Figma
+        let height: CGFloat = 240 // Уменьшаем высоту карточки для более компактного вида
         return CGSize(width: width, height: height)
     }
 }

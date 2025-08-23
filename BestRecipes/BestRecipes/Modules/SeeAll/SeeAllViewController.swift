@@ -48,9 +48,9 @@ final class SeeAllViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = Constants.spacing
+        layout.minimumLineSpacing = Constants.spacing + 8 // Увеличиваем расстояние между ячейками
         layout.minimumInteritemSpacing = Constants.spacing
-        layout.sectionInset = UIEdgeInsets(top: Constants.spacing, left: Constants.spacing, bottom: Constants.spacing, right: Constants.spacing)
+        layout.sectionInset = UIEdgeInsets(top: Constants.spacing, left: Constants.spacing, bottom: Constants.spacing + 16, right: Constants.spacing) // Увеличиваем нижний отступ
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white

@@ -41,7 +41,7 @@ final class HomeViewController: UIViewController {
     private lazy var searchRecipesCollection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = Drawing.spacing
+        layout.minimumLineSpacing = Drawing.spacing + 8 // Увеличиваем расстояние между ячейками
         layout.minimumInteritemSpacing = Drawing.spacing
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.tag = 0

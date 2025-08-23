@@ -58,8 +58,12 @@ class RatingButton: UIView {
         setupButton()
     }
     private func setupBackground() {
-        self.backgroundColor = .black.withAlphaComponent(0.3)
+        self.backgroundColor = .black.withAlphaComponent(0.4) // Немного увеличиваем прозрачность для лучшей читаемости
         self.layer.cornerRadius = 8
+        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowOffset = CGSize(width: 0, height: 1)
+        self.layer.shadowOpacity = 0.2
+        self.layer.shadowRadius = 2
     }
     private func setupStarImageView() {
         self.addSubview(starImageView)
