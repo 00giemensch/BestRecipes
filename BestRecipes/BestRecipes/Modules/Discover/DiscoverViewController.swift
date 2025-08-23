@@ -23,12 +23,12 @@ final class DiscoverViewController: UIViewController {
     // MARK: - UI Elements
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Discover"
+        label.text = "Saved recipes"
         label.font = UIFont(name: "Poppins-Bold", size: Constants.titleFontSize)
         label.textColor = UIColor(named: "Neutral100") ?? .black
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.accessibilityIdentifier = "discover_title"
-        label.accessibilityLabel = "Discover screen title"
+        label.accessibilityIdentifier = "saved_recipes_title"
+        label.accessibilityLabel = "Saved recipes screen title"
         label.adjustsFontForContentSizeCategory = true
         return label
     }()
@@ -36,9 +36,9 @@ final class DiscoverViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = Constants.spacing
-        layout.minimumInteritemSpacing = Constants.spacing
-        layout.sectionInset = UIEdgeInsets(top: Constants.spacing, left: Constants.spacing, bottom: Constants.spacing, right: Constants.spacing)
+        layout.minimumLineSpacing = 16
+        layout.minimumInteritemSpacing = 0
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
@@ -46,8 +46,8 @@ final class DiscoverViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.register(DishCell.self, forCellWithReuseIdentifier: DishCell.cellId)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.accessibilityIdentifier = "discover_collection_view"
-        collectionView.accessibilityLabel = "Discover recipes collection"
+        collectionView.accessibilityIdentifier = "saved_recipes_collection_view"
+        collectionView.accessibilityLabel = "Saved recipes collection"
         
         return collectionView
     }()
@@ -129,48 +129,60 @@ final class DiscoverViewController: UIViewController {
         recipes = [
             RecipeModel(
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
-                title: "Grilled Salmon",
-                readyInMinutes: 25,
-                spoonacularScore: 88,
+                title: "How to make sharwama at home",
+                readyInMinutes: 15,
+                spoonacularScore: 25, // 2.5 звезды
                 aggregateLikes: 120,
-                creditsText: "Chef John",
-                cuisines: ["Mediterranean"],
+                creditsText: "Zeelicious Foods",
+                cuisines: ["Middle Eastern"],
                 dishTypes: ["main course"],
                 extendedIngredients: [],
                 analyzedInstructions: []
             ),
             RecipeModel(
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
-                title: "Chocolate Cake",
-                readyInMinutes: 60,
-                spoonacularScore: 92,
+                title: "How to make sharwama at home",
+                readyInMinutes: 15,
+                spoonacularScore: 25, // 2.5 звезды
                 aggregateLikes: 200,
-                creditsText: "Baking Master",
-                cuisines: ["American"],
-                dishTypes: ["dessert"],
-                extendedIngredients: [],
-                analyzedInstructions: []
-            ),
-            RecipeModel(
-                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
-                title: "Beef Steak",
-                readyInMinutes: 30,
-                spoonacularScore: 90,
-                aggregateLikes: 150,
-                creditsText: "Grill Master",
-                cuisines: ["American"],
+                creditsText: "Zeelicious Foods",
+                cuisines: ["Middle Eastern"],
                 dishTypes: ["main course"],
                 extendedIngredients: [],
                 analyzedInstructions: []
             ),
             RecipeModel(
                 image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
-                title: "Pasta Primavera",
-                readyInMinutes: 20,
-                spoonacularScore: 80,
-                aggregateLikes: 80,
-                creditsText: "Italian Chef",
-                cuisines: ["Italian"],
+                title: "How to make sharwama at home",
+                readyInMinutes: 15,
+                spoonacularScore: 25, // 2.5 звезды
+                aggregateLikes: 150,
+                creditsText: "Zeelicious Foods",
+                cuisines: ["Middle Eastern"],
+                dishTypes: ["main course"],
+                extendedIngredients: [],
+                analyzedInstructions: []
+            ),
+            RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                title: "How to make sharwama at home",
+                readyInMinutes: 15,
+                spoonacularScore: 25, // 2.5 звезды
+                aggregateLikes: 180,
+                creditsText: "Zeelicious Foods",
+                cuisines: ["Middle Eastern"],
+                dishTypes: ["main course"],
+                extendedIngredients: [],
+                analyzedInstructions: []
+            ),
+            RecipeModel(
+                image: "https://spoonacular.com/recipeImages/716429-556x370.jpg",
+                title: "How to make sharwama at home",
+                readyInMinutes: 15,
+                spoonacularScore: 25, // 2.5 звезды
+                aggregateLikes: 220,
+                creditsText: "Zeelicious Foods",
+                cuisines: ["Middle Eastern"],
                 dishTypes: ["main course"],
                 extendedIngredients: [],
                 analyzedInstructions: []
@@ -193,7 +205,7 @@ extension DiscoverViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
         let recipe = recipes[indexPath.item]
-        let isItInFavorites = false // Mock data for favorites
+        let isItInFavorites = true // Все рецепты сохранены (как на макете)
         
         cell.configure(with: recipe, isItInFavorites)
         cell.favoriteButtonAction = { [weak self] in
@@ -208,8 +220,8 @@ extension DiscoverViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension DiscoverViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = (collectionView.bounds.width - Constants.spacing * 3) / 2
-        let height = width * 1.4 // Aspect ratio
+        let width = collectionView.bounds.width - 32 // 16px отступы с каждой стороны
+        let height: CGFloat = 180 // Высота как на макете
         return CGSize(width: width, height: height)
     }
 }
