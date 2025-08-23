@@ -81,7 +81,9 @@ class PopularCategoryCell: UICollectionViewCell {
         let element = UILabel()
         element.font = UIFont.custom(.semibold, size: 14)
         element.text = "Mashmallow and rose wrap"
-        element.numberOfLines = 0
+        element.numberOfLines = 2
+        element.adjustsFontSizeToFitWidth = true
+        element.minimumScaleFactor = 0.5
         element.textAlignment = .center
         
         element.translatesAutoresizingMaskIntoConstraints = false
@@ -171,7 +173,8 @@ class PopularCategoryCell: UICollectionViewCell {
                 dishTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
                 dishTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
                 
-                footerSectionView.topAnchor.constraint(equalTo: dishTitleLabel.bottomAnchor, constant: 16),
+//                footerSectionView.topAnchor.constraint(equalTo: dishTitleLabel.bottomAnchor, constant: 16),
+                footerSectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
                 footerSectionView.heightAnchor.constraint(equalToConstant: 40),
                 footerSectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
                 footerSectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
@@ -200,15 +203,18 @@ class PopularCategoryCell: UICollectionViewCell {
     }
     
     func configureCell(with recipe: RecipeModel) {
-        NetworkManager.shared.loadImage(from: recipe.image) { result, error in
-            if result != error {
-                print(error)
-            } else {
-                guard let image = result
-                dishImage.image = result
+        dishTitleLabel.text = recipe.title
+        cookingTimeLabel.text = "\(recipe.readyInMinutes) min"
+        NetworkManager.shared.loadImage(from: recipe.image) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let image):
+                    self?.dishImage.image = image
+                case .failure:
+                    self?.dishImage.image = UIImage(named: "defaultSearch")
+                }
             }
         }
-        
     }
 }
 

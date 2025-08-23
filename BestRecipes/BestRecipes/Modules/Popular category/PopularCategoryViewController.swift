@@ -39,7 +39,12 @@ class PopularCategoryViewController: UIViewController {
             addButtons(with: allDishTypes)
         }
     }
-    private var filteredRecipes: [RecipeModel] = []
+    private var filteredRecipes: [RecipeModel] = [] {
+        didSet {
+            popularCategoryCollectionView.reloadData()
+            print(filteredRecipes[0].title)
+        }
+    }
     
   
 //MARK: - UI
@@ -105,18 +110,17 @@ class PopularCategoryViewController: UIViewController {
         
         NetworkManager.shared.fetchRandomRecipes { result in
             DispatchQueue.main.async { [weak self] in
+                var temp: Set<String> = []
                 switch result {
                 case .success(let recipes):
                     self?.allRecipes = recipes
                     self?.popularCategoryCollectionView.reloadData()
-                    
-                    self?.allRecipes.forEach { recipe in
-                        self?.allDishTypes.formUnion(recipe.dishTypes)
-                    }
-        
+                    self?.allRecipes.forEach { recipe in temp.formUnion(recipe.dishTypes) }
                 case .failure(let error):
                     print("ERROR: \(error)")
                 }
+                self?.allDishTypes = temp
+                self?.filteredRecipes = self!.allRecipes
             }
         }
         
@@ -201,7 +205,6 @@ extension PopularCategoryViewController: UICollectionViewDelegateFlowLayout {
 extension PopularCategoryViewController {
     private func addButtons(with categories: Set<String>) {
         let sortedDishTypes = categories.sorted()
-        print(sortedDishTypes)
         
         for (index, sortedDishType) in sortedDishTypes.enumerated() {
             let button: UIButton = {
@@ -254,9 +257,10 @@ extension PopularCategoryViewController {
         selectedButton = sender
         sender.isSelected = true
         
-        guard let currentDishType = sender.currentTitle else { return }
-        
+        guard let currentDishType = sender.titleLabel?.text else { return }
+        print(currentDishType)
         filteredRecipes = allRecipes.filter { $0.dishTypes.contains(currentDishType) }
+        print(filteredRecipes)
         popularCategoryCollectionView.reloadData()
     }
     
