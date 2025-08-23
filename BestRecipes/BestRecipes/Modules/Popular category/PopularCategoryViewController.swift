@@ -8,7 +8,7 @@
 import UIKit
 
 class PopularCategoryViewController: UIViewController {
-
+    
     private enum Drawings {
         static var popularCategoryTitle: String { "Popular category" }
         static var popCatTitleLabelHeight: CGFloat { 28 }
@@ -34,6 +34,12 @@ class PopularCategoryViewController: UIViewController {
 //MARK: - Properties
     private var selectedButton: UIButton?
     private var allRecipes: [RecipeModel] = []
+    private var allDishTypes: Set<String> = [] {
+        didSet {
+            addButtons(with: allDishTypes)
+        }
+    }
+    private var filteredRecipes: [RecipeModel] = []
     
   
 //MARK: - UI
@@ -63,6 +69,7 @@ class PopularCategoryViewController: UIViewController {
         let element = UICollectionView(frame: .zero, collectionViewLayout: viewLayout)
         element.showsHorizontalScrollIndicator = false
         element.translatesAutoresizingMaskIntoConstraints = false
+        
         return element
     }()
     
@@ -72,7 +79,6 @@ class PopularCategoryViewController: UIViewController {
         
         element.showsHorizontalScrollIndicator = false
         element.showsVerticalScrollIndicator = false
-//        element.backgroundColor = .red
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
     }()
@@ -82,7 +88,6 @@ class PopularCategoryViewController: UIViewController {
         element.axis = .horizontal
         element.spacing = Drawings.buttonStackSpacing
         element.distribution = .fillProportionally
-//        element.backgroundColor = .green
         
         element.translatesAutoresizingMaskIntoConstraints = false
         return element
@@ -99,16 +104,22 @@ class PopularCategoryViewController: UIViewController {
         popularCategoryCollectionView.register(PopularCategoryCell.self, forCellWithReuseIdentifier: PopularCategoryCell.identifier)
         
         NetworkManager.shared.fetchRandomRecipes { result in
-                    DispatchQueue.main.async { [weak self] in
-                        switch result {
-                        case .success(let recipes):
-                            self?.allRecipes = recipes
-//                            self?.popularCategoryCollectionView.reloadData()
-                        case .failure(let error):
-                            print("ERROR: \(error)")
-                        }
+            DispatchQueue.main.async { [weak self] in
+                switch result {
+                case .success(let recipes):
+                    self?.allRecipes = recipes
+                    self?.popularCategoryCollectionView.reloadData()
+                    
+                    self?.allRecipes.forEach { recipe in
+                        self?.allDishTypes.formUnion(recipe.dishTypes)
                     }
+        
+                case .failure(let error):
+                    print("ERROR: \(error)")
                 }
+            }
+        }
+        
         
         setViews()
         setupConstraints()
@@ -125,7 +136,7 @@ class PopularCategoryViewController: UIViewController {
         popularCategoryMainStack.addArrangedSubview(popularCategoryCollectionView)
         
         dishCategoriesScrollView.addSubview(categoriesButtonsStack)
-        addButtons()
+
     }
     
     private func setupConstraints() {
@@ -156,7 +167,7 @@ class PopularCategoryViewController: UIViewController {
 
 extension PopularCategoryViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        1
+        return filteredRecipes.count
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -165,9 +176,11 @@ extension PopularCategoryViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PopularCategoryCell.identifier, for: indexPath) as! PopularCategoryCell
-    
+        let cellItem = filteredRecipes[indexPath.item]
+        cell.configureCell(with: cellItem)
+        
         return cell
-    }   
+    }
 }
 
 //MARK: - Extension UICollectionViewDelegate
@@ -179,9 +192,6 @@ extension PopularCategoryViewController: UICollectionViewDelegate {
 //MARK: - Extension UICollectionViewDelegateFlowLayout
 
 extension PopularCategoryViewController: UICollectionViewDelegateFlowLayout {
-    
-    
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return Drawings.collectionViewCellSize
     }
@@ -189,14 +199,16 @@ extension PopularCategoryViewController: UICollectionViewDelegateFlowLayout {
 //MARK: - Extension ViewController with scrollView
 
 extension PopularCategoryViewController {
-    private func addButtons(with categories: [String] = ["Salad", "Breakfast", "Appetizer", "Noodle", "Pankake", "Marshmallow"]) {
+    private func addButtons(with categories: Set<String>) {
+        let sortedDishTypes = categories.sorted()
+        print(sortedDishTypes)
         
-        for (index, category) in categories.enumerated() {
+        for (index, sortedDishType) in sortedDishTypes.enumerated() {
             let button: UIButton = {
                 
                 // Настраиваем первоначальное оборажение кнопки
                 var buttonConfiguration = UIButton.Configuration.filled()
-                buttonConfiguration.title = "\(category)"
+                buttonConfiguration.title = "\(sortedDishType)"
                 buttonConfiguration.attributedTitle?.font = UIFont.custom(.semibold, size: 12)
                 buttonConfiguration.contentInsets = Drawings.categoryButtonsPadding
                 buttonConfiguration.baseBackgroundColor = Drawings.categoryButtonNormalBackgroundColor
@@ -240,8 +252,12 @@ extension PopularCategoryViewController {
     @objc private func updatePopularCategoryCV(_ sender: UIButton) {
         selectedButton?.isSelected = false
         selectedButton = sender
-        
         sender.isSelected = true
+        
+        guard let currentDishType = sender.currentTitle else { return }
+        
+        filteredRecipes = allRecipes.filter { $0.dishTypes.contains(currentDishType) }
+        popularCategoryCollectionView.reloadData()
     }
     
 }

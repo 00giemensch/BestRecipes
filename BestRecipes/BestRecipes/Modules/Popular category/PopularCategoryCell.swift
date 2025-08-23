@@ -198,6 +198,18 @@ class PopularCategoryCell: UICollectionViewCell {
     private func fillingBookmark() {
         favoriteButton.tintColor = isAddedInFavorite ? .systemRed : .gray
     }
+    
+    func configureCell(with recipe: RecipeModel) {
+        NetworkManager.shared.loadImage(from: recipe.image) { result, error in
+            if result != error {
+                print(error)
+            } else {
+                guard let image = result
+                dishImage.image = result
+            }
+        }
+        
+    }
 }
 
 //MARK: - Extension UIImage
