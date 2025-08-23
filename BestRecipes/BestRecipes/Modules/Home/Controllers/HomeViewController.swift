@@ -34,9 +34,9 @@ final class HomeViewController: UIViewController {
     private let searchTextField = SearchTextField()
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    private let trendingNowLabel = UILabel()
-    private let recentRecipeLabel = UILabel()
-    private let popularKitchensLabel = UILabel()
+    private let trendingNowHeader = CollectionHeader()
+    private let recentRecipeHeader = CollectionHeader()
+    private let popularKitchensHeader = CollectionHeader()
     //MARK: Collections
     private lazy var searchRecipesCollection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -82,17 +82,6 @@ final class HomeViewController: UIViewController {
         return collection
     }()
     
-    //TODO: - Create class SeeAllButton
-    let seeAllButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("See all →", for: .normal)
-        button.titleLabel?.font = UIFont(name: "Poppins-Bold", size: 14)
-        button.setTitleColor(UIColor(named: "Primary50") ?? UIColor(hex: 0xFD5B44), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(nil, action: #selector(seeAllTapped), for: .touchUpInside)
-        return button
-    }()
-    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,6 +101,8 @@ final class HomeViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
         recentRecipeCollection.reloadData()
+        guard !viewModel.recentRecipes.isEmpty else { return }
+        showRecentRecipe()
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -131,9 +122,11 @@ final class HomeViewController: UIViewController {
         }
         searchRecipesCollection.reloadData()
     }
-    // Mock methods
-    @objc func seeAllTapped() {
-        print("See all tapped")
+    private func showRecentRecipe() {
+        recentRecipeHeader.isHidden = false
+        recentRecipeCollection.isHidden = false
+        recentRecipeHeader.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        recentRecipeCollection.heightAnchor.constraint(equalToConstant: 190).isActive = true
     }
     
     // MARK: - Testing Methods
@@ -150,11 +143,10 @@ final class HomeViewController: UIViewController {
         setupScrollView()
         setupContentView()
         setupSearchRecipesCollection()
-        setupTrendingNowLabel()
+        setupTrendingNowHeader()
         setupTrendingNowCollection()
         setupRecentRecipeLabel()
         setupRecentRecipeCollection()
-        setupSeeAllButton()
         setupPopularKitchensLabel()
         setupPopularKitchensCollection()
     }
@@ -171,7 +163,6 @@ final class HomeViewController: UIViewController {
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Drawing.horizontalEdges)
         ])
     }
-    
     private func setupSearchTextField() {
         view.addSubviews(searchTextField)
         searchTextField.delegate = self
@@ -197,7 +188,7 @@ final class HomeViewController: UIViewController {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor),
+            scrollView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: Drawing.searchBottomInset),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -242,15 +233,19 @@ final class HomeViewController: UIViewController {
             searchRecipesCollection.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
-    private func setupTrendingNowLabel() {
-        contentView.addSubview(trendingNowLabel)
-        trendingNowLabel.text = "Trending now 🔥"
-        trendingNowLabel.font = UIFont.custom(.bold, size: 20)
-        trendingNowLabel.translatesAutoresizingMaskIntoConstraints = false
+    private func setupTrendingNowHeader() {
+        contentView.addSubview(trendingNowHeader)
+        trendingNowHeader.setTitle("Trending now 🔥")
+        trendingNowHeader.action = { [weak self] in
+            print("Trending now see all")
+        }
+        trendingNowHeader.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            trendingNowLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            trendingNowLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Drawing.collectionVerticalInset),
+            trendingNowHeader.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Drawing.horizontalEdges),
+            trendingNowHeader.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Drawing.horizontalEdges),
+            trendingNowHeader.heightAnchor.constraint(equalToConstant: 40),
+            trendingNowHeader.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Drawing.collectionVerticalInset),
         ])
     }
     private func setupTrendingNowCollection() {
@@ -262,34 +257,25 @@ final class HomeViewController: UIViewController {
         trendingNowCollection.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            trendingNowCollection.topAnchor.constraint(equalTo: trendingNowLabel.bottomAnchor),
+            trendingNowCollection.topAnchor.constraint(equalTo: trendingNowHeader.bottomAnchor),
             trendingNowCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             trendingNowCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             trendingNowCollection.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9)
         ])
     }
-    //TODO: create SeeAllButtonClass and del
-    func setupSeeAllButton() {
-        contentView.addSubview(seeAllButton)
-        NSLayoutConstraint.activate([
-            
-            seeAllButton.centerYAnchor.constraint(equalTo: recentRecipeLabel.centerYAnchor),
-            seeAllButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            seeAllButton.widthAnchor.constraint(equalToConstant: 71),
-            seeAllButton.heightAnchor.constraint(equalToConstant: 20),
-            
-        ])
-    }
     private func setupRecentRecipeLabel() {
-        contentView.addSubview(recentRecipeLabel)
-        recentRecipeLabel.text = "Recent recipe"
-        recentRecipeLabel.font = UIFont.custom(.bold, size: 20)
-        recentRecipeLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(recentRecipeHeader)
+        recentRecipeHeader.setTitle("Recent recipe")
+        recentRecipeHeader.action = { [weak self] in
+            print("Recent recipe see all")
+        }
+        recentRecipeHeader.isHidden = true
+        recentRecipeHeader.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            recentRecipeLabel.topAnchor.constraint(equalTo: trendingNowCollection.bottomAnchor, constant: 16),
-            recentRecipeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            recentRecipeLabel.heightAnchor.constraint(equalToConstant: 28)
+            recentRecipeHeader.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Drawing.horizontalEdges),
+            recentRecipeHeader.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Drawing.horizontalEdges),
+            recentRecipeHeader.topAnchor.constraint(equalTo: trendingNowCollection.bottomAnchor, constant: Drawing.collectionVerticalInset),
         ])
     }
     private func setupRecentRecipeCollection() {
@@ -299,25 +285,29 @@ final class HomeViewController: UIViewController {
         recentRecipeCollection.register(RecipeItemCell.self, forCellWithReuseIdentifier: RecipeItemCell.reuseId)
         recentRecipeCollection.backgroundColor = .systemBackground
         recentRecipeCollection.showsHorizontalScrollIndicator = false
+        recentRecipeCollection.isHidden = true
         recentRecipeCollection.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            recentRecipeCollection.topAnchor.constraint(equalTo: recentRecipeLabel.bottomAnchor, constant: 16),
+            recentRecipeCollection.topAnchor.constraint(equalTo: recentRecipeHeader.bottomAnchor, constant: Drawing.horizontalEdges),
             recentRecipeCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             recentRecipeCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            recentRecipeCollection.heightAnchor.constraint(equalToConstant: 190)
+//            recentRecipeCollection.heightAnchor.constraint(equalToConstant: 190)
         ])
     }
     private func setupPopularKitchensLabel() {
-        contentView.addSubview(popularKitchensLabel)
-        popularKitchensLabel.text = "Popular kitchens"
-        popularKitchensLabel.font = UIFont.custom(.bold, size: 20)
-        popularKitchensLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(popularKitchensHeader)
+        popularKitchensHeader.setTitle("Popular kitchens")
+        popularKitchensHeader.action = { [weak self] in
+            print("Popular kitchens see all")
+        }
+        popularKitchensHeader.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            popularKitchensLabel.topAnchor.constraint(equalTo: recentRecipeCollection.bottomAnchor, constant: Drawing.searchTopInset),
-            popularKitchensLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Drawing.horizontalEdges),
-            popularKitchensLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Drawing.horizontalEdges)
+            popularKitchensHeader.topAnchor.constraint(equalTo: recentRecipeCollection.bottomAnchor, constant: Drawing.searchTopInset),
+            popularKitchensHeader.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Drawing.horizontalEdges),
+            popularKitchensHeader.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Drawing.horizontalEdges),
+            popularKitchensHeader.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
     private func setupPopularKitchensCollection() {
@@ -331,22 +321,21 @@ final class HomeViewController: UIViewController {
         popularKitchensCollection.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            popularKitchensCollection.topAnchor.constraint(equalTo: popularKitchensLabel.bottomAnchor, constant: Drawing.collectionVerticalInset),
+            popularKitchensCollection.topAnchor.constraint(equalTo: popularKitchensHeader.bottomAnchor, constant: Drawing.collectionVerticalInset),
             popularKitchensCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             popularKitchensCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             popularKitchensCollection.heightAnchor.constraint(equalToConstant: 190)
         ])
     }
-    
 }
 
 // MARK: - SearchTextField Delegate
 extension HomeViewController: SearchTextFieldDelegate {
     func closeButtonTapped() {
         //performSearch(with: "")
-        guard searchTextField.isEditing else { return }
+        guard searchRecipesCollection.alpha == 1 else { return }
         print("❌ Close search")
-        filteredRecipes = []
+        viewModel.clearSearchResults()
         searchTextField.endEditing(true)
         DispatchQueue.main.async {
             self.searchRecipesCollection.reloadData()
@@ -382,6 +371,7 @@ extension HomeViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.layer.borderColor = UIColor.searchBar.cgColor
         
+        guard contentView.alpha > 0 else { return }
         titleHeight = titleLabel.frame.height + Drawing.spacing + Drawing.searchTopInset
         UIView.animate(withDuration: 0.3) {
             self.contentView.alpha = 0
@@ -399,13 +389,19 @@ extension HomeViewController: UITextFieldDelegate {
         textField.text = nil
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        //        textField.resignFirstResponder()
+        textField.resignFirstResponder()
+        guard let query = textField.text else { return false }
+        viewModel.searchRecipes(by: query) { [weak self] in
+            DispatchQueue.main.async {
+                self?.searchRecipesCollection.reloadData()
+            }
+        }
         return true
     }
-    func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        //        performSearch(with: "")
-        return true
-    }
+//    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+//        //        performSearch(with: "")
+//        return true
+//    }
 }
 
 // MARK: - CollectionView DataSource
@@ -413,7 +409,7 @@ extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView.tag {
         case 0:
-            return filteredRecipes.count
+            return viewModel.foundRecipes.count
         case 1:
             return viewModel.allRecipes.count
         case 2:
@@ -434,7 +430,7 @@ extension HomeViewController: UICollectionViewDataSource {
                 for: indexPath
             ) as? SearchCollectionViewCell else { return UICollectionViewCell() }
             
-            let recipe = filteredRecipes[indexPath.item]
+            let recipe = viewModel.foundRecipes[indexPath.item]
             cell.configure(with: recipe)
             return cell
         case 1:
@@ -483,7 +479,7 @@ extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch collectionView.tag {
         case 0:
-            let selectedRecipe = filteredRecipes[indexPath.item]
+            let selectedRecipe = viewModel.foundRecipes[indexPath.item]
             viewModel.addRecentRecipes(selectedRecipe)
             showRecipeDetail(for: selectedRecipe)
         case 1:

@@ -21,10 +21,11 @@ class HomeViewModel {
     private(set)var favoriteRecipesIDDic = [String: Int]()
     private(set)var recentRecipes = [RecipeModel]() 
     private(set)var kitchens = [Kitchen]()
+    private(set)var foundRecipes: [RecipeModel] = []
     //MARK: - Lifecycle
     init() {
-//        fetchDishes()
-        getMockData()
+        fetchDishes()
+//        getMockData()
         fetchFavoriteRecipes()
         fetchRecentRecipes()
         
@@ -90,7 +91,23 @@ class HomeViewModel {
             addFavorite(recipe)
         }
     }
-    
+    public func searchRecipes(by query: String, completition: (() -> Void)?) {
+        clearSearchResults()
+        NetworkManager.shared.searchRecipes(query: query) {[weak self] result in
+            DispatchQueue.main.async { [weak self] in
+                switch result {
+                case .success(let recipes):
+                    self?.foundRecipes = recipes
+                    completition?()
+                case .failure(let error):
+                    print("ERROR: \(error)")
+                }
+            }
+        }
+    }
+    public func clearSearchResults() {
+        foundRecipes.removeAll()
+    }
     //TODO: Del this method
     func getMockData() {
         DispatchQueue.main.async {
