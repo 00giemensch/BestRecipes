@@ -22,7 +22,7 @@ final class HomeViewController: UIViewController {
         static var searchTFHeight: CGFloat { 44 }
         static var iconSize: CGFloat { 16 }
     }
-    private var viewModel = HomeViewModel()
+    private var viewModel = HomeViewModel.shared
     private var searchTFBottomCT = NSLayoutConstraint()
     private var titleHeight: CGFloat = 0.0
     private var allRecipes: [RecipeModel] = []
@@ -439,22 +439,41 @@ extension HomeViewController: UICollectionViewDataSource {
             cell.configure(with: recipe)
             return cell
         case 1:
+//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
+//            let recipe = viewModel.allRecipes[indexPath.item]
+//            let isItInFavorites = viewModel.favoriteRecipesIDDic.keys.contains(recipe.image)
+//            
+//            cell.configure(with: recipe, isItInFavorites)
+//            cell.favoriteButtonAction = { [weak self] in
+//                self?.viewModel.addOrRemoveFavorite(recipe)
+//            }
+//            /// this action print all favorites
+//            cell.ratingButton.action = { [weak self] in
+//                let favorites = self?.viewModel.favoriteRecipes
+//                favorites?.forEach { data in
+//                    print(data.title)
+//                }
+//            }
+//            return cell
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
-            let recipe = viewModel.allRecipes[indexPath.item]
-            let isItInFavorites = viewModel.favoriteRecipesIDDic.keys.contains(recipe.image)
-            
-            cell.configure(with: recipe, isItInFavorites)
-            cell.favoriteButtonAction = { [weak self] in
-                self?.viewModel.addOrRemoveFavorite(recipe)
-            }
-            /// this action print all favorites
-            cell.ratingButton.action = { [weak self] in
-                let favorites = self?.viewModel.favoriteRecipes
-                favorites?.forEach { data in
-                    print(data.title)
+                let recipe = viewModel.allRecipes[indexPath.item]
+                let isItInFavorites = viewModel.favoriteRecipes.contains { $0.image == recipe.image }
+                
+                cell.configure(with: recipe, isItInFavorites)
+                cell.favoriteButtonAction = { [weak self] in
+                    guard let self = self else { return }
+                    self.viewModel.addOrRemoveFavorite(recipe)
+                    cell.isAddedInFavorite = self.viewModel.favoriteRecipes.contains { $0.image == recipe.image }
+                    collectionView.reloadItems(at: [indexPath]) // Обновляем только текущую ячейку
                 }
-            }
-            return cell
+                cell.ratingButton.action = { [weak self] in
+                    guard let self = self else { return }
+                    let favorites = self.viewModel.favoriteRecipes
+                    favorites.forEach { data in
+                        print(data.title)
+                    }
+                }
+                    return cell
         case 2:
             return UICollectionViewCell()
         case 3:
