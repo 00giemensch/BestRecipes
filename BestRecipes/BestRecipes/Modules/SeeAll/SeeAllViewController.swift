@@ -2,20 +2,18 @@
 //  SeeAllViewController.swift
 //  BestRecipes
 //
-//  Created by Nurislam on 19.08.2025.
+//  Created by Ilnur on 23.08.2025.
 //
 
 import UIKit
 
 final class SeeAllViewController: UIViewController {
-    
     // MARK: - Constants
     private enum Constants {
         static let sectionInset: CGFloat = 16
         static let titleTopInset: CGFloat = 16
         static let titleHorizontalInset: CGFloat = 16
         static let collectionTopInset: CGFloat = 16
-        static let backButtonSize: CGFloat = 24
     }
     
     // MARK: - UI Elements
@@ -36,19 +34,10 @@ final class SeeAllViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Saved Recipes"
         label.font = UIFont(name: "Poppins-Bold", size: 24)
         label.textColor = UIColor(named: "Neutral100") ?? .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
-    }()
-    
-    private let backButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = UIColor(named: "Neutral100") ?? .black
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
     }()
     
     private let emptyStateView: UIView = {
@@ -61,7 +50,7 @@ final class SeeAllViewController: UIViewController {
     
     private let emptyStateLabel: UILabel = {
         let label = UILabel()
-        label.text = "No saved recipes"
+        label.text = "No recipes found"
         label.font = UIFont(name: "Poppins-Regular", size: 16)
         label.textColor = UIColor(named: "Neutral50") ?? .gray
         label.textAlignment = .center
@@ -71,21 +60,32 @@ final class SeeAllViewController: UIViewController {
     
     // MARK: - Data
     private var recipes: [RecipeModel] = []
-    private var favoriteRecipes: [RecipeModel] = [] // Временное хранение избранного в памяти
+    private let viewModel = HomeViewModel.shared
+    private var sectionTitle: String
+    
+    // MARK: - Initialization
+    init(title: String) {
+        self.sectionTitle = title
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        setupActions()
+        setupBindings()
         updateRecipes()
     }
     
     // MARK: - Setup
     private func setupUI() {
         view.backgroundColor = .white
-        view.addSubview(backButton)
+        titleLabel.text = sectionTitle
         view.addSubview(titleLabel)
         view.addSubview(collectionView)
         view.addSubview(emptyStateView)
@@ -94,15 +94,9 @@ final class SeeAllViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Back Button
-            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.titleTopInset),
-            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.titleHorizontalInset),
-            backButton.widthAnchor.constraint(equalToConstant: Constants.backButtonSize),
-            backButton.heightAnchor.constraint(equalToConstant: Constants.backButtonSize),
-            
             // Title
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.titleTopInset),
-            titleLabel.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: Constants.titleHorizontalInset),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.titleHorizontalInset),
             titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.titleHorizontalInset),
             
             // Collection View
@@ -123,17 +117,24 @@ final class SeeAllViewController: UIViewController {
         ])
     }
     
-    private func setupActions() {
-        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-    }
-    
-    @objc private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
+    private func setupBindings() {
+        viewModel.callBack = { [weak self] in
+            DispatchQueue.main.async {
+                self?.updateRecipes()
+            }
+        }
     }
     
     // MARK: - Data Management
     private func updateRecipes() {
-        recipes = favoriteRecipes // Отображаем только избранные рецепты
+        switch sectionTitle.lowercased() {
+        case "trending now":
+            recipes = viewModel.allRecipes
+        case "recent recipes":
+            recipes = viewModel.recentRecipes
+        default:
+            recipes = []
+        }
         updateUI()
     }
     
@@ -150,12 +151,8 @@ final class SeeAllViewController: UIViewController {
     
     // MARK: - Favorite Management
     private func toggleFavorite(for recipe: RecipeModel) {
-        if let index = favoriteRecipes.firstIndex(where: { $0.image == recipe.image }) {
-            favoriteRecipes.remove(at: index)
-        } else {
-            favoriteRecipes.append(recipe)
-        }
-        updateRecipes() // Обновляем список сохранённых рецептов
+        viewModel.addOrRemoveFavorite(recipe)
+        updateRecipes()
     }
 }
 
@@ -168,13 +165,10 @@ extension SeeAllViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
         let recipe = recipes[indexPath.item]
-        let isItInFavorites = true // Все рецепты в Saved Recipes считаются избранными
+        let isItInFavorites = viewModel.favoriteRecipes.contains { $0.image == recipe.image }
         cell.configure(with: recipe, isItInFavorites)
         cell.favoriteButtonAction = { [weak self] in
             self?.toggleFavorite(for: recipe)
-        }
-        cell.ratingButton.action = { [weak self] in
-            // Логика рейтинга (если нужна)
         }
         return cell
     }

@@ -132,8 +132,17 @@ final class HomeViewController: UIViewController {
         searchRecipesCollection.reloadData()
     }
     // Mock methods
-    @objc func seeAllTapped() {
-        let seeAllVC = SeeAllViewController()
+    @objc func seeAllTapped(_ sender: UIButton) {
+        let sectionTitle: String
+        switch sender.superview {
+        case trendingNowLabel.superview:
+            sectionTitle = "Trending Now"
+        case recentRecipeLabel.superview:
+            sectionTitle = "Recent Recipes"
+        default:
+            sectionTitle = "See All"
+        }
+        let seeAllVC = SeeAllViewController(title: sectionTitle)
         navigationController?.pushViewController(seeAllVC, animated: true)
     }
     
