@@ -143,6 +143,13 @@ final class HomeViewController: UIViewController {
                 self?.prepareCategoryCollection()
             }
         }
+        // Добавляем слушатель для обновления коллекций при изменении избранного
+        FavoritesViewModel.shared.favoriteRecipesUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                self?.trendingNowCollection.reloadData()
+                self?.popularCategoryCollection.reloadData()
+            }
+        }
         setupLayout()
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -552,10 +559,11 @@ extension HomeViewController: UICollectionViewDataSource {
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
             let recipe = viewModel.allRecipes[indexPath.item]
-            let isItInFavorites = viewModel.favoriteRecipesIDDic.keys.contains(recipe.image)
+            let isItInFavorites = FavoritesViewModel.shared.isFavorite(recipe)
             cell.configure(with: recipe, isItInFavorites)
             cell.favoriteButtonAction = { [weak self] in
-                self?.viewModel.addOrRemoveFavorite(recipe)
+                FavoritesViewModel.shared.addOrRemoveFavorite(recipe)
+//                cell.isAddedInFavorite = FavoritesViewModel.shared.isFavorite(recipe)
             }
             /// this action print all favorites
             cell.ratingButton.action = { [weak self] in
@@ -568,10 +576,10 @@ extension HomeViewController: UICollectionViewDataSource {
         case 2:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PopularCategoryCell.identifier, for: indexPath) as! PopularCategoryCell
             let cellItem = filteredRecipes[indexPath.item]
-            let isItInFavorites = viewModel.favoriteRecipesIDDic.keys.contains(cellItem.image)
+            let isItInFavorites = FavoritesViewModel.shared.isFavorite(cellItem)
             cell.configureCell(with: cellItem, isItInFavorites)
             cell.favoriteButtonAction = { [weak self] in
-                self?.viewModel.addOrRemoveFavorite(cellItem)
+                FavoritesViewModel.shared.addOrRemoveFavorite(cellItem)
             }
             return cell
         case 3:
