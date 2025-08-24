@@ -200,7 +200,6 @@ final class HomeViewController: UIViewController {
     }
     
     func showSeeAllVC(for recipe: [RecipeModel], with title: String) {
-        navigationItem.backBarButtonItem
         let seeAllVC = SeeAllViewController(recipes: recipe)
         seeAllVC.navigationItem.title = title
         navigationController?.pushViewController(seeAllVC, animated: true)

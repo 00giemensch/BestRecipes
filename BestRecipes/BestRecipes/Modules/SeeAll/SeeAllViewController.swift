@@ -81,7 +81,7 @@ final class SeeAllViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        navigationController?.navigationItem.hidesBackButton = true
         setNavigationBar()
         setupUI()
         setupConstraints()
@@ -167,6 +167,21 @@ final class SeeAllViewController: UIViewController {
     //MARK: - Setup NavigationBar
     func setNavigationBar() {
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.custom(.semibold, size: 24)]
+        navigationItem.hidesBackButton = true
+        
+        let backButton = UIButton(type: .system)
+        backButton.setImage(UIImage(resource: .arrowLeft).withRenderingMode(.alwaysTemplate), for: .normal)
+        backButton.setTitle("", for: .normal)
+        backButton.tintColor = .black
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        backButton.imageView?.contentMode = .scaleAspectFit
+
+        let backBarButtonItem = UIBarButtonItem(customView: backButton)
+        navigationItem.leftBarButtonItem = backBarButtonItem
+    }
+    
+    @objc func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
     }
 }
 
