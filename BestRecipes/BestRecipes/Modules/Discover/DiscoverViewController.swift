@@ -8,6 +8,7 @@
 import UIKit
 
 final class DiscoverViewController: UIViewController {
+    
     // MARK: - Constants
     private enum Constants {
         static let sectionInset: CGFloat = 16
@@ -61,14 +62,20 @@ final class DiscoverViewController: UIViewController {
     
     // MARK: - Data
     private var recipes: [RecipeModel] = []
-    private let viewModel = HomeViewModel.shared // Используем общий ViewModel
+    private let favoritesVM = FavoritesViewModel.shared
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        setupBindings()
+        // Добавляем слушатель для обновления при изменении избранного
+                favoritesVM.favoriteRecipesUpdated = { [weak self] in
+                    DispatchQueue.main.async {
+                        self?.updateRecipes()
+                    }
+                }
+//        setupBindings()
         updateRecipes()
     }
     
@@ -106,17 +113,18 @@ final class DiscoverViewController: UIViewController {
         ])
     }
     
-    private func setupBindings() {
-//        viewModel.favoriteRecipesUpdated = { [weak self] in
+//    private func setupBindings() {
+//        // Добавляем наблюдатель за изменениями в FavoritesViewModel
+//        favoritesVM.addObserver { [weak self] in
 //            DispatchQueue.main.async {
 //                self?.updateRecipes()
 //            }
 //        }
-    }
+//    }
     
     // MARK: - Data Management
     private func updateRecipes() {
-        recipes = viewModel.favoriteRecipes
+        recipes = favoritesVM.favoriteRecipes
         updateUI()
     }
     
@@ -133,7 +141,8 @@ final class DiscoverViewController: UIViewController {
     
     // MARK: - Favorite Management
     private func toggleFavorite(for recipe: RecipeModel) {
-        viewModel.addOrRemoveFavorite(recipe)
+        favoritesVM.addOrRemoveFavorite(recipe)
+        // Обновляем список после изменения
         updateRecipes()
     }
 }
@@ -145,16 +154,23 @@ extension DiscoverViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
+//        let recipe = recipes[indexPath.item]
+//        // Устанавливаем текущее состояние как true, так как это список избранных
+//        let isItInFavorites = true
+//        cell.configure(with: recipe, isItInFavorites)
+//        cell.favoriteButtonAction = { [weak self] in
+//            self?.toggleFavorite(for: recipe)
+//            // Обновляем состояние кнопки после изменения
+//            cell.isAddedInFavorite = self?.favoritesVM.isFavorite(recipe) ?? false
+//        }
+//        return cell
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
         let recipe = recipes[indexPath.item]
-        let isItInFavorites = true // Все рецепты здесь считаются избранными
-        cell.configure(with: recipe, isItInFavorites)
+        cell.configure(with: recipe, true) // Всегда true, так как это избранное
         cell.favoriteButtonAction = { [weak self] in
             self?.toggleFavorite(for: recipe)
         }
-//        cell.ratingButton.action = { [weak self] in
-//            // Логика рейтинга (если нужна)
-//        }
         return cell
     }
 }
