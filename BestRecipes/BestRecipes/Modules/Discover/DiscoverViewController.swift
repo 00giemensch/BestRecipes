@@ -89,10 +89,10 @@ final class DiscoverViewController: UIViewController {
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 28),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -115),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             emptyStateView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             emptyStateView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
