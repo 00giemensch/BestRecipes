@@ -13,6 +13,21 @@ final class CustomTabBarController: UITabBarController {
         super.viewDidLoad()
         setupCustomTabBar()
         setupViewControllers()
+        setupCustomTabBarAppearance()
+    }
+    
+    private func setupCustomTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.clear]
+        
+        appearance.stackedLayoutAppearance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 100)
+        appearance.stackedLayoutAppearance.selected.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 100)
+        
+        tabBar.standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            tabBar.scrollEdgeAppearance = appearance
+        }
     }
     
     private func setupCustomTabBar() {

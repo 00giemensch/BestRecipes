@@ -9,20 +9,12 @@ import UIKit
 
 final class DiscoverViewController: UIViewController {
     
-    // MARK: - Constants
-    private enum Constants {
-        static let sectionInset: CGFloat = 16
-        static let titleTopInset: CGFloat = 16
-        static let titleHorizontalInset: CGFloat = 16
-        static let collectionTopInset: CGFloat = 16
-    }
-    
     // MARK: - UI Elements
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = Constants.sectionInset
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.minimumLineSpacing = 16
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
@@ -31,15 +23,6 @@ final class DiscoverViewController: UIViewController {
         collectionView.register(DishCell.self, forCellWithReuseIdentifier: DishCell.cellId)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
-    }()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Saved Recipes"
-        label.font = UIFont(name: "Poppins-Bold", size: 24)
-        label.textColor = UIColor(named: "Neutral100") ?? .black
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
     }()
     
     private let emptyStateView: UIView = {
@@ -69,58 +52,58 @@ final class DiscoverViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        // Добавляем слушатель для обновления при изменении избранного
+        // слушатель для обновления при изменении избранного
                 favoritesVM.favoriteRecipesUpdated = { [weak self] in
                     DispatchQueue.main.async {
                         self?.updateRecipes()
                     }
                 }
-//        setupBindings()
         updateRecipes()
+        
+        
+        title = "Saved recipes"
+        navigationController?.navigationBar.prefersLargeTitles = false
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.black,
+                .font: UIFont.custom(.bold, size: 24)
+        ]
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        
     }
     
     // MARK: - Setup
     private func setupUI() {
         view.backgroundColor = .white
-        view.addSubview(titleLabel)
+//        view.addSubview(titleLabel)
         view.addSubview(collectionView)
         view.addSubview(emptyStateView)
         emptyStateView.addSubview(emptyStateLabel)
     }
     
+    
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Title
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.titleTopInset),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.titleHorizontalInset),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.titleHorizontalInset),
             
-            // Collection View
-            collectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Constants.collectionTopInset),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            // Empty State View
-            emptyStateView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Constants.collectionTopInset),
+            emptyStateView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             emptyStateView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             emptyStateView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             emptyStateView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            // Empty State Label
             emptyStateLabel.centerXAnchor.constraint(equalTo: emptyStateView.centerXAnchor),
             emptyStateLabel.centerYAnchor.constraint(equalTo: emptyStateView.centerYAnchor)
+
         ])
     }
-    
-//    private func setupBindings() {
-//        // Добавляем наблюдатель за изменениями в FavoritesViewModel
-//        favoritesVM.addObserver { [weak self] in
-//            DispatchQueue.main.async {
-//                self?.updateRecipes()
-//            }
-//        }
-//    }
     
     // MARK: - Data Management
     private func updateRecipes() {
