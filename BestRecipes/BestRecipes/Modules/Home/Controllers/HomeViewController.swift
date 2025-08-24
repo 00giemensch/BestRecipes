@@ -513,13 +513,16 @@ extension HomeViewController: UITextFieldDelegate {
         textField.text = nil
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        guard let query = textField.text else { return false }
+        guard let query = textField.text else {
+            textField.resignFirstResponder()
+            return false
+        }
         viewModel.searchRecipes(by: query) { [weak self] in
             DispatchQueue.main.async {
                 self?.searchRecipesCollection.reloadData()
             }
         }
+        textField.resignFirstResponder()
         return true
     }
 }
