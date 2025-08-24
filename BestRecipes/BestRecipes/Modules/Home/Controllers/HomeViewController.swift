@@ -41,6 +41,7 @@ final class HomeViewController: UIViewController {
         static var categoryButtonSelectedForegroundColor: UIColor { UIColor.white }
         static var categoryButtonAnimationDuration: CGFloat { 0.2 }
     }
+
     private var viewModel = HomeViewModel.shared
     private var searchTFBottomCT = NSLayoutConstraint()
     private var titleHeight: CGFloat = 0.0
@@ -191,6 +192,13 @@ final class HomeViewController: UIViewController {
         navigationController?.pushViewController(detailVC, animated: true)
     }
     
+    func showSeeAllVC(for recipe: [RecipeModel], with title: String) {
+        navigationItem.backBarButtonItem
+        let seeAllVC = SeeAllViewController(recipes: recipe)
+        seeAllVC.navigationItem.title = title
+        navigationController?.pushViewController(seeAllVC, animated: true)
+    }
+    
     //MARK: - Setup Layout
     private func setupLayout() {
         setupTitleLabel()
@@ -296,6 +304,9 @@ final class HomeViewController: UIViewController {
         contentView.addSubview(trendingNowHeader)
         trendingNowHeader.setTitle("Trending now 🔥")
         trendingNowHeader.action = { [weak self] in
+            if let allRecipe = self?.viewModel.allRecipes {
+                self?.showSeeAllVC(for: allRecipe, with: "Trending now")
+            }
             print("Trending now see all")
         }
         trendingNowHeader.translatesAutoresizingMaskIntoConstraints = false
@@ -326,6 +337,9 @@ final class HomeViewController: UIViewController {
         contentView.addSubview(recentRecipeHeader)
         recentRecipeHeader.setTitle("Recent recipe")
         recentRecipeHeader.action = { [weak self] in
+            if let recentRecipe = self?.viewModel.recentRecipes {
+                self?.showSeeAllVC(for: recentRecipe, with: "Recent recipe")
+            }
             print("Recent recipe see all")
         }
         recentRecipeHeader.isHidden = true
@@ -355,9 +369,12 @@ final class HomeViewController: UIViewController {
     }
     private func setupPopularKitchensLabel() {
         contentView.addSubview(popularKitchensHeader)
-        popularKitchensHeader.setTitle("Popular kitchens")
+        popularKitchensHeader.setTitle("Popular cuisines")
         popularKitchensHeader.action = { [weak self] in
-            print("Popular kitchens see all")
+            if let popCuisines = self?.viewModel.kitchens {
+//                self?.showSeeAllVC(for: popCuisines, with: "Popular cuisines")
+            }
+            print("Popular cuisines see all")
         }
         popularKitchensHeader.translatesAutoresizingMaskIntoConstraints = false
         
@@ -658,7 +675,7 @@ extension HomeViewController {
                 
                 // Настраиваем первоначальное оборажение кнопки
                 var buttonConfiguration = UIButton.Configuration.filled()
-                buttonConfiguration.title = "\(sortedDishType)"
+                buttonConfiguration.title = sortedDishType.capitalizingFirstLetter()
                 buttonConfiguration.attributedTitle?.font = UIFont.custom(.semibold, size: 12)
                 buttonConfiguration.contentInsets = Drawing.categoryButtonsPadding
                 buttonConfiguration.baseBackgroundColor = Drawing.categoryButtonNormalBackgroundColor
@@ -703,8 +720,19 @@ extension HomeViewController {
         selectedButton = sender
         sender.isSelected = true
         
-        guard let currentDishType = sender.titleLabel?.text else { return }
+        guard let currentDishType = sender.titleLabel?.text?.lowercased() else { return }
         filteredRecipes = allRecipes.filter { $0.dishTypes.contains(currentDishType) }
         popularCategoryCollection.reloadData()
+    }
+}
+
+//MARK: - Extension String
+extension String {
+    func capitalizingFirstLetter() -> String {
+        return prefix(1).capitalized + dropFirst()
+    }
+    
+    mutating func capitalizeFirstLetter() {
+        self = self.capitalizingFirstLetter()
     }
 }

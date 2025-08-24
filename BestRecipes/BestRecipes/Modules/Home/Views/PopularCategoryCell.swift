@@ -74,7 +74,7 @@ class PopularCategoryCell: UICollectionViewCell {
     
     private lazy var dishImage: UIImageView = {
         let element = UIImageView(frame: Drawings.imageRectSize)
-        element.image = UIImage(named: "defaultSearch")
+        element.image = UIImage(resource: .defaultSearch)
         element.contentMode = .scaleAspectFill
         element.layer.masksToBounds = true
         element.layer.cornerRadius = element.frame.height / 2
@@ -86,7 +86,7 @@ class PopularCategoryCell: UICollectionViewCell {
     private lazy var dishTitleLabel: UILabel = {
         let element = UILabel()
         element.font = UIFont.custom(.semibold, size: 14)
-        element.text = "Mashmallow and rose wrap"
+        element.text = ""
         element.numberOfLines = 2
         element.adjustsFontSizeToFitWidth = true
         element.minimumScaleFactor = 0.5
@@ -210,7 +210,7 @@ class PopularCategoryCell: UICollectionViewCell {
     
     func configureCell(with recipe: RecipeModel,_ isAddToFavorite: Bool) {
         dishTitleLabel.text = recipe.title
-        cookingTimeLabel.text = "\(recipe.readyInMinutes) min"
+        cookingTimeLabel.text = "\(recipe.readyInMinutes) Mins"
         isAddedInFavorite = isAddToFavorite
         NetworkManager.shared.loadImage(from: recipe.image) { [weak self] result in
             DispatchQueue.main.async {

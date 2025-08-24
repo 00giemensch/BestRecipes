@@ -116,7 +116,7 @@ class DishCell: UICollectionViewCell {
     private func setupTitleLabel() {
         contentView.addSubview(titleLabel)
         titleLabel.text = "Title text fot testing textLabel"
-        titleLabel.font = UIFont.custom(.bold, size: 14)
+        titleLabel.font = UIFont.custom(.semibold, size: 16)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -151,7 +151,7 @@ class DishCell: UICollectionViewCell {
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            avatarImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            avatarImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
             avatarImageView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             avatarImageView.widthAnchor.constraint(equalToConstant: 32),
             avatarImageView.heightAnchor.constraint(equalToConstant: 32)
@@ -160,7 +160,7 @@ class DishCell: UICollectionViewCell {
     private func setupSubtitleLabel() {
         contentView.addSubview(subtitleLabel)
         subtitleLabel.text = "Subtitle text for subtitle lable"
-        subtitleLabel.font = UIFont.custom(.light, size: 12)
+        subtitleLabel.font = UIFont.custom(.regular, size: 12)
         subtitleLabel.numberOfLines = 2
         subtitleLabel.adjustsFontSizeToFitWidth = true
         subtitleLabel.textColor = .lightGray
@@ -168,7 +168,7 @@ class DishCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             subtitleLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
-            subtitleLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
+            subtitleLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 7),
             subtitleLabel.trailingAnchor.constraint(equalTo: dishImageView.trailingAnchor)
         ])
     }
