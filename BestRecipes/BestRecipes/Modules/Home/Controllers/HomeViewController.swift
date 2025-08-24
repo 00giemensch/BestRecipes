@@ -148,14 +148,16 @@ final class HomeViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         navigationController?.navigationBar.isHidden = true
-        recentRecipeCollection.reloadData()
+        updateFavorites()
         guard !viewModel.recentRecipes.isEmpty else { return }
         showRecentRecipe()
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.navigationBar.isHidden = false
+        viewModel.clearFavorite()
     }
     //MARK: - Methods
     // Search Methods
@@ -185,7 +187,12 @@ final class HomeViewController: UIViewController {
         allDishTypes = temp
         filteredRecipes = allRecipes
     }
-    
+    private func updateFavorites() {
+        viewModel.fetchFavoriteRecipes()
+        trendingNowCollection.reloadData()
+        popularCategoryCollection.reloadData()
+        recentRecipeCollection.reloadData()
+    }
     // MARK: - Testing Methods
     func showRecipeDetail(for recipe: RecipeModel) {
         let detailVC = RecipeDetailViewController(recipe: recipe)
