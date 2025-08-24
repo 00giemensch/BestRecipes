@@ -10,14 +10,15 @@ import UIKit
 class CollectionHeader: UIView {
     //MARK: - Properties
     var action: (() -> Void)?
-    
+    private var addBatton: Bool
     //MARK: - UI Components
     private let button = UIButton()
     private let hedderView = UIView()
     private let titleLabel = UILabel()
     
     //MARK: - Lifecycle
-    init() {
+    init(_ isNeedBatton: Bool = true) {
+        self.addBatton = isNeedBatton
         super.init(frame: .zero)
         setupLayout()
     }
@@ -64,6 +65,7 @@ class CollectionHeader: UIView {
         ])
     }
     private func setupButton() {
+        guard addBatton else { return }
         self.addSubview(button)
         let titleText = NSMutableAttributedString()
         let attributes : [NSAttributedString.Key: Any] = [

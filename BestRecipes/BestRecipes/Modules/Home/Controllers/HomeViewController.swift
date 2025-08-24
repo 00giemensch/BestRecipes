@@ -58,7 +58,6 @@ final class HomeViewController: UIViewController {
         }
     }
     
-    
     //MARK: - UI Components
     private let titleLabel = UILabel()
     private let searchTextField = SearchTextField()
@@ -66,7 +65,7 @@ final class HomeViewController: UIViewController {
     private let contentView = UIView()
     private let trendingNowHeader = CollectionHeader()
     private let recentRecipeHeader = CollectionHeader()
-    private let popularCategoryHeader = CollectionHeader()
+    private let popularCategoryHeader = CollectionHeader(false)
     private let popularKitchensHeader = CollectionHeader()
     private let popularCategoryMainStack = UIStackView()
     private let dishCategoriesScrollView = UIScrollView()
