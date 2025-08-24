@@ -43,7 +43,6 @@ final class DiscoverViewController: UIViewController {
     }()
     
     // MARK: - Data
-    private var recipes: [RecipeModel] = []
     private let favoritesVM = FavoritesViewModel.shared
     
     // MARK: - Lifecycle
@@ -51,18 +50,27 @@ final class DiscoverViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        // слушатель для обновления при изменении избранного
-                favoritesVM.favoriteRecipesUpdated = { [weak self] in
-                    DispatchQueue.main.async {
-                        self?.updateRecipes()
-                    }
-                }
-        updateRecipes()
-        
-        
+        // Добавляем слушатель для обновления при изменении избранного
+        favoritesVM.favoriteRecipesUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                self?.updateUI()
+            }
+        }
+        updateUI()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard favoritesVM.favoriteRecipes.isEmpty else { return }
+        favoritesVM.fetchFavoriteRecipes()
+        DispatchQueue.main.async {
+            self.updateUI()
+        }
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        favoritesVM.clearFavorite()
         title = "Saved recipes"
         navigationController?.navigationBar.prefersLargeTitles = false
-        
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .white
@@ -72,14 +80,13 @@ final class DiscoverViewController: UIViewController {
         ]
         appearance.shadowColor = .clear
         navigationItem.standardAppearance = appearance
-        navigationItem.scrollEdgeAppearance = appearance
         
+        navigationItem.scrollEdgeAppearance = appearance
     }
     
     // MARK: - Setup
     private func setupUI() {
         view.backgroundColor = .white
-//        view.addSubview(titleLabel)
         view.addSubview(collectionView)
         view.addSubview(emptyStateView)
         emptyStateView.addSubview(emptyStateLabel)
@@ -107,12 +114,10 @@ final class DiscoverViewController: UIViewController {
     
     // MARK: - Data Management
     private func updateRecipes() {
-        recipes = favoritesVM.favoriteRecipes
         updateUI()
     }
-    
     private func updateUI() {
-        if recipes.isEmpty {
+        if favoritesVM.favoriteRecipes.isEmpty {
             emptyStateView.isHidden = false
             collectionView.isHidden = true
         } else {
@@ -121,37 +126,20 @@ final class DiscoverViewController: UIViewController {
         }
         collectionView.reloadData()
     }
-    
-    // MARK: - Favorite Management
-    private func toggleFavorite(for recipe: RecipeModel) {
-        favoritesVM.addOrRemoveFavorite(recipe)
-        updateRecipes()
-    }
 }
 
 // MARK: - UICollectionViewDataSource
 extension DiscoverViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return recipes.count
+        return favoritesVM.favoriteRecipes.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
-//        let recipe = recipes[indexPath.item]
-//        // Устанавливаем текущее состояние как true, так как это список избранных
-//        let isItInFavorites = true
-//        cell.configure(with: recipe, isItInFavorites)
-//        cell.favoriteButtonAction = { [weak self] in
-//            self?.toggleFavorite(for: recipe)
-//            // Обновляем состояние кнопки после изменения
-//            cell.isAddedInFavorite = self?.favoritesVM.isFavorite(recipe) ?? false
-//        }
-//        return cell
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
-        let recipe = recipes[indexPath.item]
+        let recipe = favoritesVM.favoriteRecipes[indexPath.item]
         cell.configure(with: recipe, true) // Всегда true, так как это избранное
         cell.favoriteButtonAction = { [weak self] in
-            self?.toggleFavorite(for: recipe)
+            self?.favoritesVM.removeFavorite(recipe)
         }
         return cell
     }
@@ -167,7 +155,7 @@ extension DiscoverViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - UICollectionViewDelegate
 extension DiscoverViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let recipe = recipes[indexPath.item]
+        let recipe = favoritesVM.favoriteRecipes[indexPath.item]
         let detailVC = RecipeDetailViewController(recipe: recipe)
         navigationController?.pushViewController(detailVC, animated: true)
     }
