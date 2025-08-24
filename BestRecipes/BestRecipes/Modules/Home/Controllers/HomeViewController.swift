@@ -319,7 +319,7 @@ final class HomeViewController: UIViewController {
             trendingNowCollection.topAnchor.constraint(equalTo: trendingNowHeader.bottomAnchor),
             trendingNowCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             trendingNowCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            trendingNowCollection.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9)
+            trendingNowCollection.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.32)
         ])
     }
     private func setupRecentRecipeLabel() {
@@ -635,7 +635,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout{
             let height = ceil(width * Drawing.collectionRatioHtoW)
             return CGSize(width: width, height: height)
         case 1:
-            return CGSize(width: view.frame.width * 0.9, height: view.frame.height * 0.4)
+            return CGSize(width: 280,height: 254)
         case 2:
             return Drawing.collectionViewCellSize
         case 3:

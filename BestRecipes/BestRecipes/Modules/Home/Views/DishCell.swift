@@ -107,16 +107,16 @@ class DishCell: UICollectionViewCell {
         shadowView.addSubview(dishImageView)
         
         NSLayoutConstraint.activate([
-            dishImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            dishImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             dishImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
             dishImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
-            dishImageView.heightAnchor.constraint(equalToConstant: contentView.frame.height * 0.73)
+            dishImageView.heightAnchor.constraint(equalToConstant: 180)
         ])
     }
     private func setupTitleLabel() {
         contentView.addSubview(titleLabel)
         titleLabel.text = "Title text fot testing textLabel"
-        titleLabel.font = UIFont.custom(.bold, size: 22)
+        titleLabel.font = UIFont.custom(.bold, size: 14)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -128,7 +128,7 @@ class DishCell: UICollectionViewCell {
     private func setupFavoriteButton() {
         contentView.addSubview(favoriteButton)
         favoriteButton.backgroundColor = .white
-        favoriteButton.layer.cornerRadius = 16
+        favoriteButton.layer.cornerRadius = 18
         let image = UIImage(resource: .bookmarkIco).withRenderingMode(.alwaysTemplate)
         favoriteButton.setImage(image, for: .normal)
         fillingBookmark()
@@ -160,7 +160,7 @@ class DishCell: UICollectionViewCell {
     private func setupSubtitleLabel() {
         contentView.addSubview(subtitleLabel)
         subtitleLabel.text = "Subtitle text for subtitle lable"
-        subtitleLabel.font = UIFont.custom(.light, size: 17)
+        subtitleLabel.font = UIFont.custom(.light, size: 12)
         subtitleLabel.numberOfLines = 2
         subtitleLabel.adjustsFontSizeToFitWidth = true
         subtitleLabel.textColor = .lightGray
@@ -174,9 +174,6 @@ class DishCell: UICollectionViewCell {
     }
     private func setupRatingButton() {
         contentView.addSubview(ratingButton)
-        ratingButton.action = { [weak self] in
-            print("ratingButton tup")
-        }
         ratingButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
