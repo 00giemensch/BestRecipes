@@ -13,8 +13,8 @@ final class DiscoverViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 16
-        layout.sectionInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+        layout.minimumLineSpacing = 24
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .white
@@ -26,20 +26,19 @@ final class DiscoverViewController: UIViewController {
     }()
     
     private let emptyStateView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.isHidden = true
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+        $0.backgroundColor = .white
+        $0.isHidden = true
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        return $0
+    }(UIView())
     
     private let emptyStateLabel: UILabel = {
-        let label = UILabel()
+        let label = UILabel.create(
+            font: .custom(.regular, size: 16),
+            color: UIColor(named: "Neutral50") ?? .gray
+        )
         label.text = "No saved recipes"
-        label.font = UIFont(name: "Poppins-Regular", size: 16)
-        label.textColor = UIColor(named: "Neutral50") ?? .gray
         label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -69,8 +68,9 @@ final class DiscoverViewController: UIViewController {
         appearance.backgroundColor = .white
         appearance.titleTextAttributes = [
             .foregroundColor: UIColor.black,
-                .font: UIFont.custom(.bold, size: 24)
+            .font: UIFont.custom(.bold, size: 24)
         ]
+        appearance.shadowColor = .clear
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
         
@@ -90,9 +90,9 @@ final class DiscoverViewController: UIViewController {
         NSLayoutConstraint.activate([
             
             collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -115),
             
             emptyStateView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             emptyStateView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -125,7 +125,6 @@ final class DiscoverViewController: UIViewController {
     // MARK: - Favorite Management
     private func toggleFavorite(for recipe: RecipeModel) {
         favoritesVM.addOrRemoveFavorite(recipe)
-        // Обновляем список после изменения
         updateRecipes()
     }
 }
@@ -161,7 +160,7 @@ extension DiscoverViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension DiscoverViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: collectionView.frame.width * 0.6)
+        return CGSize(width: collectionView.frame.width, height: collectionView.frame.width * 0.75)
     }
 }
 
