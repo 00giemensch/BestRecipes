@@ -9,21 +9,43 @@ import Foundation
 
 class FavoritesViewModel {
     static let shared = FavoritesViewModel()
-    private init() {}
     
-    var favoriteRecipes: [RecipeModel] = []
     var favoriteRecipesUpdated: (() -> Void)?
-    
-    func addOrRemoveFavorite(_ recipe: RecipeModel) {
-        if let index = favoriteRecipes.firstIndex(where: { $0.image == recipe.image }) {
-            favoriteRecipes.remove(at: index)
-        } else {
-            favoriteRecipes.append(recipe)
+    private let userStorage = UserStorage.shared
+    private(set)var favoriteRecipesIDDic = [String: Int]()
+    var favoriteRecipes: [RecipeModel] = [] {
+        didSet {
+            favoriteRecipesUpdated?()
         }
-        favoriteRecipesUpdated?() // Уведомляем об изменении
     }
-    
-    func isFavorite(_ recipe: RecipeModel) -> Bool {
-        favoriteRecipes.contains { $0.image == recipe.image }
+
+    //MARK: - Lifecycle
+    private init() {
+        fetchFavoriteRecipes()
+    }
+
+    //MARK: - Methods
+    open func fetchFavoriteRecipes() {
+        userStorage.favoriteDishes.forEach { data in
+            guard let recipe = try? JSONDecoder().decode(RecipeModel.self, from: data) else { return }
+            favoriteRecipes.append(recipe)
+            favoriteRecipesIDDic[recipe.image] = favoriteRecipes.count - 1
+        }
+    }
+    public func removeFavorite(_ recipe: RecipeModel) {
+        guard let index = favoriteRecipesIDDic[recipe.image] else { return }
+        favoriteRecipesIDDic.forEach { key, value in
+            if value > index {
+                favoriteRecipesIDDic[key] = value - 1
+            } else if value == index {
+                favoriteRecipesIDDic[key] = nil
+            }
+        }
+        favoriteRecipes.remove(at: index)
+        userStorage.favoriteDishes.remove(at: index)
+    }
+    public func clearFavorite() {
+        favoriteRecipesIDDic = [:]
+        favoriteRecipes = []
     }
 }

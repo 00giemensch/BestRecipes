@@ -33,6 +33,7 @@ class HomeViewModel {
     
     //MARK: - Lifecycle
     private init() {
+        //        getMock()
         fetchDishes()
         fetchCategoryDishes()
         fetchFavoriteRecipes()
@@ -62,13 +63,6 @@ class HomeViewModel {
                     print("ERROR: \(error)")
                 }
             }
-        }
-    }
-    private func fetchFavoriteRecipes() {
-        userStorage.favoriteDishes.forEach { data in
-            guard let recipe = try? JSONDecoder().decode(RecipeModel.self, from: data) else { return }
-            favoriteRecipes.append(recipe)
-            favoriteRecipesIDDic[recipe.image] = favoriteRecipes.count - 1
         }
     }
     private func addFavorite(_ recipe: RecipeModel) {
@@ -135,21 +129,40 @@ class HomeViewModel {
     public func clearSearchResults() {
         foundRecipes.removeAll()
     }
-    
-    
+    public func fetchFavoriteRecipes() {
+        userStorage.favoriteDishes.forEach { data in
+            guard let recipe = try? JSONDecoder().decode(RecipeModel.self, from: data) else { return }
+            favoriteRecipes.append(recipe)
+            favoriteRecipesIDDic[recipe.image] = favoriteRecipes.count - 1
+        }
+    }
+    public func clearFavorite() {
+        favoriteRecipesIDDic = [:]
+        favoriteRecipes = []
+    }
+}
 //    func getMock() {
 //        DispatchQueue.main.async {
 //            self.allRecipes = [
 //                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "One", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["q","r","t","y","u"], extendedIngredients: [], analyzedInstructions: []),
-//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Two", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["q","w","e","r"], extendedIngredients: [], analyzedInstructions: []),
-//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Three", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["u"], extendedIngredients: [], analyzedInstructions: []),
-//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Four", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["e","y","u"], extendedIngredients: [], analyzedInstructions: []),
-//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Five", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["w","r","y"], extendedIngredients: [], analyzedInstructions: []),
-//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Six", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["r","t","y","u"], extendedIngredients: [], analyzedInstructions: []),
-//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "SEven", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["q","w","u"], extendedIngredients: [], analyzedInstructions: []),
-//                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Eight", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["q","w","e"], extendedIngredients: [], analyzedInstructions: []),
+//                RecipeModel(image: "https://img.spoonacular.com/recipes/634476-556x370.jpg", title: "Two", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["q","w","e","r"], extendedIngredients: [], analyzedInstructions: []),
+//                RecipeModel(image: "https://img.spoonacular.com/recipes/721185-556x370.jpg", title: "Three", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["u"], extendedIngredients: [], analyzedInstructions: []),
+//                //                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Four", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["e","y","u"], extendedIngredients: [], analyzedInstructions: []),
+//                //                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Five", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["w","r","y"], extendedIngredients: [], analyzedInstructions: []),
+//                //                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Six", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["r","t","y","u"], extendedIngredients: [], analyzedInstructions: []),
+//                //                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "SEven", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["q","w","u"], extendedIngredients: [], analyzedInstructions: []),
+//                //                RecipeModel(image: "https://img.spoonacular.com/recipes/715538-312x231.jpg", title: "Eight", readyInMinutes: 3, spoonacularScore: 12, aggregateLikes: 3, creditsText: "asdfg", cuisines: ["1","2","3","4","5","6"], dishTypes: ["q","w","e"], extendedIngredients: [], analyzedInstructions: []),
 //            ]
 //        }
 //    }
-}
+//}
 
+//https://img.spoonacular.com/recipes/634476-556x370.jpg
+//
+//
+//https://img.spoonacular.com/recipes/634476-556x370.jpg
+//https://img.spoonacular.com/recipes/634476-556x370.jpg
+//https://img.spoonacular.com/recipes/721185-556x370.jpg
+//https://img.spoonacular.com/recipes/715538-312x231.jpg
+//https://img.spoonacular.com/recipes/634476-556x370.jpg
+//https://img.spoonacular.com/recipes/721185-556x370.jpg

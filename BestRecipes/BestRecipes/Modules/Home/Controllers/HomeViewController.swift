@@ -144,25 +144,20 @@ final class HomeViewController: UIViewController {
                 self?.prepareCategoryCollection()
             }
         }
-        // Добавляем слушатель для обновления коллекций при изменении избранного
-        FavoritesViewModel.shared.favoriteRecipesUpdated = { [weak self] in
-            DispatchQueue.main.async {
-                self?.trendingNowCollection.reloadData()
-                self?.popularCategoryCollection.reloadData()
-            }
-        }
         setupLayout()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         navigationController?.navigationBar.isHidden = true
-        recentRecipeCollection.reloadData()
+        updateFavorites()
         guard !viewModel.recentRecipes.isEmpty else { return }
         showRecentRecipe()
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.navigationBar.isHidden = false
+        viewModel.clearFavorite()
     }
     //MARK: - Methods
     // Search Methods
@@ -192,7 +187,12 @@ final class HomeViewController: UIViewController {
         allDishTypes = temp
         filteredRecipes = allRecipes
     }
-    
+    private func updateFavorites() {
+        viewModel.fetchFavoriteRecipes()
+        trendingNowCollection.reloadData()
+        popularCategoryCollection.reloadData()
+        recentRecipeCollection.reloadData()
+    }
     // MARK: - Testing Methods
     func showRecipeDetail(for recipe: RecipeModel) {
         let detailVC = RecipeDetailViewController(recipe: recipe)
@@ -336,7 +336,7 @@ final class HomeViewController: UIViewController {
             trendingNowCollection.topAnchor.constraint(equalTo: trendingNowHeader.bottomAnchor),
             trendingNowCollection.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             trendingNowCollection.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            trendingNowCollection.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9)
+            trendingNowCollection.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.32)
         ])
     }
     private func setupRecentRecipeLabel() {
@@ -575,11 +575,10 @@ extension HomeViewController: UICollectionViewDataSource {
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
             let recipe = viewModel.allRecipes[indexPath.item]
-            let isItInFavorites = FavoritesViewModel.shared.isFavorite(recipe)
+            let isItInFavorites = viewModel.favoriteRecipesIDDic.keys.contains(recipe.image)
             cell.configure(with: recipe, isItInFavorites)
             cell.favoriteButtonAction = { [weak self] in
-                FavoritesViewModel.shared.addOrRemoveFavorite(recipe)
-//                cell.isAddedInFavorite = FavoritesViewModel.shared.isFavorite(recipe)
+                self?.viewModel.addOrRemoveFavorite(recipe)
             }
             /// this action print all favorites
             cell.ratingButton.action = { [weak self] in
@@ -592,10 +591,10 @@ extension HomeViewController: UICollectionViewDataSource {
         case 2:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PopularCategoryCell.identifier, for: indexPath) as! PopularCategoryCell
             let cellItem = filteredRecipes[indexPath.item]
-            let isItInFavorites = FavoritesViewModel.shared.isFavorite(cellItem)
+            let isItInFavorites = viewModel.favoriteRecipesIDDic.keys.contains(cellItem.image)
             cell.configureCell(with: cellItem, isItInFavorites)
             cell.favoriteButtonAction = { [weak self] in
-                FavoritesViewModel.shared.addOrRemoveFavorite(cellItem)
+                self?.viewModel.addOrRemoveFavorite(cellItem)
             }
             return cell
         case 3:
@@ -659,7 +658,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout{
             let height = ceil(width * Drawing.collectionRatioHtoW)
             return CGSize(width: width, height: height)
         case 1:
-            return CGSize(width: view.frame.width * 0.9, height: view.frame.height * 0.4)
+            return CGSize(width: 280,height: 254)
         case 2:
             return Drawing.collectionViewCellSize
         case 3:
