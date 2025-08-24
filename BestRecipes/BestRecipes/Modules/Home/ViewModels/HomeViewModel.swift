@@ -119,14 +119,13 @@ class HomeViewModel {
             addFavorite(recipe)
         }
     }
-    public func searchRecipes(by query: String, completition: (() -> Void)?) {
-        clearSearchResults()
+    public func searchRecipes(by query: String, completion: (() -> Void)?) {
         NetworkManager.shared.searchRecipes(query: query) {[weak self] result in
             DispatchQueue.main.async { [weak self] in
                 switch result {
                 case .success(let recipes):
                     self?.foundRecipes = recipes
-                    completition?()
+                    completion?()
                 case .failure(let error):
                     print("ERROR: \(error)")
                 }

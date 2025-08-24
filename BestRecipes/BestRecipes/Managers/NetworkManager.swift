@@ -10,6 +10,7 @@ import UIKit
 
 enum NetworkError: Error {
     case invalidURL
+    case invalidQuery
     case decodingError
     case noData
     case noImage
@@ -82,9 +83,14 @@ final class NetworkManager {
         query: String,
         completion: @escaping ((Result<[RecipeModel], NetworkError>) -> Void)
     ) {
+        let cleanedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !cleanedQuery.isEmpty else {
+            completion(.failure(.invalidQuery))
+            return
+        }
         let parameters: [String: Any] = [
             "apiKey": apiKey,
-            "query": query.lowercased(),
+            "query": cleanedQuery,
             "fillIngredients": true,
             "addRecipeInformation": true,
             "addRecipeInstructions": true,
@@ -114,11 +120,7 @@ final class NetworkManager {
                 completion(.failure(.noData))
                 return
             }
-            
-//            if let jsonString = String(data: data, encoding: .utf8) {
-//                print(jsonString)
-//            }
-            
+
             do {
                 let decodedData = try JSONDecoder().decode(SearchRecipe.self, from: data)
                 completion(.success(decodedData.results))
