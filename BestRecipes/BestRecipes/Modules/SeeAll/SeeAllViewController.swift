@@ -10,8 +10,8 @@ import UIKit
 final class SeeAllViewController: UIViewController {
     // MARK: - Constants
     private enum Constants {
-        static let sectionInset: CGFloat = 16
-        static let titleTopInset: CGFloat = 16
+        static let sectionInset: CGFloat = 24
+        static let titleTopInset: CGFloat = 12
         static let titleHorizontalInset: CGFloat = 16
         static let collectionTopInset: CGFloat = 16
     }
@@ -34,8 +34,9 @@ final class SeeAllViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "Poppins-Bold", size: 24)
+        label.font = UIFont.custom(.semibold, size: 24)
         label.textColor = UIColor(named: "Neutral100") ?? .black
+        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -61,11 +62,15 @@ final class SeeAllViewController: UIViewController {
     // MARK: - Data
     private var recipes: [RecipeModel] = []
     private let viewModel = HomeViewModel.shared
-    private var sectionTitle: String
+    private var sectionTitle: String = ""
     
     // MARK: - Initialization
-    init(title: String) {
-        self.sectionTitle = title
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    init(recipes: [RecipeModel]) {
+        self.recipes = recipes
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -76,10 +81,13 @@ final class SeeAllViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        setNavigationBar()
         setupUI()
         setupConstraints()
-        setupBindings()
-        updateRecipes()
+//        setupBindings()
+//        updateRecipes()
+        updateUI()
     }
     
     // MARK: - Setup
@@ -101,8 +109,8 @@ final class SeeAllViewController: UIViewController {
             
             // Collection View
             collectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Constants.collectionTopInset),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             // Empty State View
@@ -127,15 +135,16 @@ final class SeeAllViewController: UIViewController {
     
     // MARK: - Data Management
     private func updateRecipes() {
-        switch sectionTitle.lowercased() {
-        case "trending now":
-            recipes = viewModel.allRecipes
-        case "recent recipes":
-            recipes = viewModel.recentRecipes
-        default:
-            recipes = []
-        }
-        updateUI()
+//        switch sectionTitle.lowercased() {
+//        case "trending now":
+//            recipes = viewModel.allRecipes
+//        case "recent recipes":
+//            recipes = viewModel.recentRecipes
+//        default:
+//            recipes = []
+//        }
+//        recipes = allRecipes
+//        updateUI()
     }
     
     private func updateUI() {
@@ -154,6 +163,11 @@ final class SeeAllViewController: UIViewController {
         viewModel.addOrRemoveFavorite(recipe)
         updateRecipes()
     }
+    
+    //MARK: - Setup NavigationBar
+    func setNavigationBar() {
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.custom(.semibold, size: 24)]
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -170,6 +184,7 @@ extension SeeAllViewController: UICollectionViewDataSource {
         cell.favoriteButtonAction = { [weak self] in
             self?.toggleFavorite(for: recipe)
         }
+        
         return cell
     }
 }
@@ -177,7 +192,7 @@ extension SeeAllViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension SeeAllViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: collectionView.frame.width * 0.6)
+        return CGSize(width: collectionView.frame.width, height: collectionView.frame.width * 0.75)
     }
 }
 
