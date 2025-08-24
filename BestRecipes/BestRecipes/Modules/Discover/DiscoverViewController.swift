@@ -9,19 +9,11 @@ import UIKit
 
 final class DiscoverViewController: UIViewController {
     
-    // MARK: - Constants
-    private enum Constants {
-        static let sectionInset: CGFloat = 16
-        static let titleTopInset: CGFloat = 16
-        static let titleHorizontalInset: CGFloat = 16
-        static let collectionTopInset: CGFloat = 16
-    }
-    
     // MARK: - UI Elements
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = Constants.sectionInset
+        layout.minimumLineSpacing = 24
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -33,30 +25,20 @@ final class DiscoverViewController: UIViewController {
         return collectionView
     }()
     
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Saved Recipes"
-        label.font = UIFont(name: "Poppins-Bold", size: 24)
-        label.textColor = UIColor(named: "Neutral100") ?? .black
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
     private let emptyStateView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.isHidden = true
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+        $0.backgroundColor = .white
+        $0.isHidden = true
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        return $0
+    }(UIView())
     
     private let emptyStateLabel: UILabel = {
-        let label = UILabel()
+        let label = UILabel.create(
+            font: .custom(.regular, size: 16),
+            color: UIColor(named: "Neutral50") ?? .gray
+        )
         label.text = "No saved recipes"
-        label.font = UIFont(name: "Poppins-Regular", size: 16)
-        label.textColor = UIColor(named: "Neutral50") ?? .gray
         label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -87,39 +69,46 @@ final class DiscoverViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         favoritesVM.clearFavorite()
+        title = "Saved recipes"
+        navigationController?.navigationBar.prefersLargeTitles = false
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.black,
+            .font: UIFont.custom(.bold, size: 24)
+        ]
+        appearance.shadowColor = .clear
+        navigationItem.standardAppearance = appearance
+        
+        navigationItem.scrollEdgeAppearance = appearance
     }
     
     // MARK: - Setup
     private func setupUI() {
         view.backgroundColor = .white
-        view.addSubview(titleLabel)
         view.addSubview(collectionView)
         view.addSubview(emptyStateView)
         emptyStateView.addSubview(emptyStateLabel)
     }
     
+    
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Title
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.titleTopInset),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.titleHorizontalInset),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.titleHorizontalInset),
             
-            // Collection View
-            collectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Constants.collectionTopInset),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 28),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            // Empty State View
-            emptyStateView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Constants.collectionTopInset),
+            emptyStateView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             emptyStateView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             emptyStateView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             emptyStateView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            // Empty State Label
             emptyStateLabel.centerXAnchor.constraint(equalTo: emptyStateView.centerXAnchor),
             emptyStateLabel.centerYAnchor.constraint(equalTo: emptyStateView.centerYAnchor)
+
         ])
     }
     
@@ -159,7 +148,7 @@ extension DiscoverViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension DiscoverViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: collectionView.frame.width * 0.6)
+        return CGSize(width: collectionView.frame.width, height: collectionView.frame.width * 0.75)
     }
 }
 
