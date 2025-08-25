@@ -64,9 +64,6 @@
 # Clone the repository
 git clone https://github.com/00giemensch/BestRecipes
 
-# Or fork it to your own repository
-# Click "Fork" button on GitHub, then clone your fork
-
 # Open the project
 cd BestRecipes
 open BestRecipes.xcodeproj
