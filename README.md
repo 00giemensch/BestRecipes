@@ -15,7 +15,7 @@ _Элегантное iOS‑приложение для поиска рецеп�
 - [Highlights](#-highlights)
 - [Stack](#️-stack)
 - [Quickstart](#-quickstart)
-- [Screens](#️-screens-optional)
+- [Screens](#️-screens)
 - [Team](#-team)
 
 ## ✨ Highlights
@@ -34,8 +34,6 @@ _Элегантное iOS‑приложение для поиска рецеп�
 API_KEY = e6c43b44170840ab8cd46bedce80bf3f
 ```
 3) Product → Clean Build Folder → Run (iOS 16+)
-
-> Если API возвращает неполные поля, возможен `decodingError` — переведите соответствующие поля в optional в `RecipeModel`.
 
 ## 🖼️ Screens
 <div align="center">
