@@ -15,6 +15,8 @@
 
 </div>
 
+## 🖼️ Screens
+
 <style>
 .screens-showcase {
   display: flex;
@@ -239,6 +241,26 @@
     <img src="docs/screens/saved.png" alt="Saved Recipes" class="screen">
     <div class="screen-label">❤️ Saved</div>
   </div>
+</div>
+
+<!-- Fallback for browsers that don't support CSS animations -->
+<div align="center" style="margin: 30px 0;">
+  <table>
+    <tr>
+      <td align="center"><strong>🚀 Onboarding</strong></td>
+      <td align="center"><strong>🏠 Home</strong></td>
+      <td align="center"><strong>🔍 Search</strong></td>
+      <td align="center"><strong>📖 Detail</strong></td>
+      <td align="center"><strong>❤️ Saved</strong></td>
+    </tr>
+    <tr>
+      <td><img src="docs/screens/onboarding.png" width="150" alt="Onboarding"></td>
+      <td><img src="docs/screens/home.png" width="150" alt="Home"></td>
+      <td><img src="docs/screens/search.png" width="150" alt="Search"></td>
+      <td><img src="docs/screens/detail.png" width="150" alt="Detail"></td>
+      <td><img src="docs/screens/saved.png" width="150" alt="Saved"></td>
+    </tr>
+  </table>
 </div>
 
 <script>
