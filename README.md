@@ -46,7 +46,6 @@
 <img src="https://img.shields.io/badge/MVVM-ff69b4?style=for-the-badge" alt="MVVM" />
 <img src="https://img.shields.io/badge/URLSession-red?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/JSONDecoder-green?style=for-the-badge"/>
-<img src="https://img.shields.io/badge/UICollectionView-purple?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/UserDefaults-yellow?style=for-the-badge"/>
 
 </div>
@@ -64,6 +63,9 @@
 ```bash
 # Clone the repository
 git clone https://github.com/00giemensch/BestRecipes
+
+# Or fork it to your own repository
+# Click "Fork" button on GitHub, then clone your fork
 
 # Open the project
 cd BestRecipes
@@ -113,7 +115,7 @@ API_KEY = your_api_key_here
 <img src="https://img.shields.io/badge/Ankor45-blue?style=for-the-badge"/></a>
 <a href="https://github.com/00giemensch">
 <img src="https://img.shields.io/badge/00giemensch-purple?style=for-the-badge"/></a>
-<a href="https://github.com/nikita-username">
+<a href="https://github.com/PilotBro">
 <img src="https://img.shields.io/badge/Nikita-cyan?style=for-the-badge"/></a>
 
 </div>
