@@ -37,10 +37,12 @@ API_KEY = e6c43b44170840ab8cd46bedce80bf3f
 
 > Если API возвращает неполные поля, возможен `decodingError` — переведите соответствующие поля в optional в `RecipeModel`.
 
-## 🖼️ Screens (optional)
-| Home | Detail | Saved |
-| --- | --- | --- |
-| ![](docs/screens/home.png) | ![](docs/screens/detail.png) | ![](docs/screens/saved.png) |
+## 🖼️ Screens
+<div align="center">
+
+<img src="docs/screens/home.png" width="320" alt="Home screen"/>
+
+</div>
 
 Добавьте изображения в `Resources/Assets.xcassets` и вставьте ссылки сюда или дайте мне пути — оформлю сам.
 
