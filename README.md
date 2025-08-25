@@ -113,6 +113,8 @@ API_KEY = your_api_key_here
 <img src="https://img.shields.io/badge/Ankor45-blue?style=for-the-badge"/></a>
 <a href="https://github.com/00giemensch">
 <img src="https://img.shields.io/badge/00giemensch-purple?style=for-the-badge"/></a>
+<a href="https://github.com/nikita-username">
+<img src="https://img.shields.io/badge/Nikita-cyan?style=for-the-badge"/></a>
 
 </div>
 
