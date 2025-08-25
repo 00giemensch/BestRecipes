@@ -73,9 +73,13 @@ open BestRecipes.xcodeproj
 ```
 
 ### API Setup
-This app uses the [Spoonacular API](https://spoonacular.com/food-api). You'll need to:
-1. Sign up for a free API key at [Spoonacular](https://spoonacular.com/food-api)
-2. Add your API key to the project (see NetworkManager.swift)
+This app uses the [Spoonacular API](https://spoonacular.com/food-api). The API key is configured through:
+
+1. **Secrets.xcconfig** file in `Resources/` folder
+2. **Info.plist** references `$(API_KEY)` from build settings
+3. **NetworkManager** automatically retrieves the key from Bundle
+
+**Note:** The `Secrets.xcconfig` file is already configured with a valid API key for this project.
 
 ---
 
