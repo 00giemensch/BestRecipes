@@ -1,69 +1,137 @@
-# 🍳 BestRecipes — находи, сохраняй, готовь
+# 🍳 BestRecipes — find, save, cook
 
 <div align="center">
 
-![iOS](https://img.shields.io/badge/iOS-16%2B-0b84fe)
-![Swift](https://img.shields.io/badge/Swift-5.0-f05138)
-![UI](https://img.shields.io/badge/UI-UIKit-6e56cf)
-![Arch](https://img.shields.io/badge/Architecture-MVVM-00b894)
+![Swift](https://img.shields.io/badge/Swift-5.0-orange?style=for-the-badge&logo=swift)
+![iOS](https://img.shields.io/badge/iOS-16%2B-black?style=for-the-badge&logo=apple)
+![UIKit](https://img.shields.io/badge/UIKit-blue?style=for-the-badge)
+![MVVM](https://img.shields.io/badge/MVVM-ff69b4?style=for-the-badge)
 
 </div>
 
-_Элегантное iOS‑приложение для поиска рецептов с быстрым UX, избранным и детальными карточками. Данные — Spoonacular API._
-
-## 🧭 Навигация
-- [Highlights](#-highlights)
-- [Stack](#️-stack)
-- [Quickstart](#-quickstart)
-- [Screens](#️-screens)
-- [Team](#-team)
-
-## ✨ Highlights
-- 🔍 **Поиск** (`complexSearch`) c быстрым откликом
-- 🔥 **Trending now** и популярные категории на главной
-- ⭐ **Saved recipes** и блок **Недавние**
-- 📄 **Детали**: фото, рейтинг, ингредиенты, пошаговые инструкции
-
-## ⚙️ Stack
-**Swift 5** · **iOS 16+** · **UIKit** · **MVVM** · **URLSession/JSONDecoder** · **xcconfig → Info.plist**
-
-## 🚀 Quickstart
-1) Откройте `BestRecipes.xcodeproj` (Xcode 16+)
-2) Проверьте `BestRecipes/Resources/Secrets.xcconfig`:
-```
-API_KEY = e6c43b44170840ab8cd46bedce80bf3f
-```
-3) Product → Clean Build Folder → Run (iOS 16+)
-
-## 🖼️ Screens
 <div align="center">
 
-<img src="docs/screens/home.png" width="320" alt="Home screen"/>
+**Recipe discovery app with search and favorites. DevRush Project 2.**
 
 </div>
 
-Добавьте изображения в `Resources/Assets.xcassets` и вставьте ссылки сюда или дайте мне пути — оформлю сам.
+<p align="center">
+  <img src="docs/screens/home.png" width="320" alt="Home screen">
+</p>
 
-## 🔗 Links
-- Spoonacular API: `https://spoonacular.com/food-api`
-- UI шрифты: Poppins (в проекте через `UIAppFonts`)
+---
 
-## 👥 Team
+## ✨ Features
+
 <div align="center">
 
-<a href="https://github.com/nurislam-kenzheyev22" title="Nurislam"><img src="https://github.com/nurislam-kenzheyev22.png?size=80" width="64" height="64" style="border-radius:50%"/></a>
-<a href="https://github.com/Croha-lili" title="Анастасия Тихонова" style="margin-left:12px"><img src="https://github.com/Croha-lili.png?size=80" width="64" height="64" style="border-radius:50%"/></a>
-<a href="https://github.com/VaryaUtkina" title="Варвара Уткина" style="margin-left:12px"><img src="https://github.com/VaryaUtkina.png?size=80" width="64" height="64" style="border-radius:50%"/></a>
-<a href="https://github.com/Ankor45" title="Ankor45" style="margin-left:12px"><img src="https://github.com/Ankor45.png?size=80" width="64" height="64" style="border-radius:50%"/></a>
-<a href="https://github.com/00giemensch" title="00giemensch" style="margin-left:12px"><img src="https://github.com/00giemensch.png?size=80" width="64" height="64" style="border-radius:50%"/></a>
-
-<br/>
-
-[Nurislam](https://github.com/nurislam-kenzheyev22) · [Анастасия](https://github.com/Croha-lili) · [Варвара](https://github.com/VaryaUtkina) · [Ankor45](https://github.com/Ankor45) · [00giемensch](https://github.com/00giemensch)
+| 🔍 **Smart Search** | 🔥 **Trending Now** | ⭐ **Favorites** | 📄 **Rich Details** |
+|:---:|:---:|:---:|:---:|
+| Fast complex search | Popular categories | Save & organize | Photos & ratings |
+| Real-time results | Dynamic filtering | Recent recipes | Step-by-step guides |
 
 </div>
 
 ---
 
-<sub>© 2025 BestRecipes. Для внутренних/учебных целей. При необходимости можно указать MIT/Apache‑2.0.</sub>
-BestRecipes - приложение для iOS, созданное в рамках марафона по iOS разработке от Devrush
+## 🛠 Technologies
+
+<div align="center">
+
+<a href="https://swift.org">
+<img src="https://img.shields.io/badge/Swift-5-orange?style=for-the-badge&logo=swift" alt="Swift Version 5" /></a>
+<a href="https://developer.apple.com/ios/">
+<img src="https://img.shields.io/badge/iOS-16%2B-black?style=for-the-badge&logo=apple" alt="iOS Version 16+"/></a>
+<img src="https://img.shields.io/badge/UIKit-blue?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/MVVM-ff69b4?style=for-the-badge" alt="MVVM" />
+<img src="https://img.shields.io/badge/URLSession-red?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/JSONDecoder-green?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/UICollectionView-purple?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/UserDefaults-yellow?style=for-the-badge"/>
+
+</div>
+
+---
+
+## 🚀 How to run
+
+### Requirements
+- Xcode 15.0+
+- iOS 16.0+
+- macOS 13.0+
+
+### Installation
+```bash
+# Clone the repository
+git clone https://github.com/00giemensch/BestRecipes
+
+# Open the project
+cd BestRecipes
+open BestRecipes.xcodeproj
+
+# Build and run on simulator or device
+```
+
+### API Setup
+This app uses the [Spoonacular API](https://spoonacular.com/food-api). The API key is configured through:
+
+1. **Secrets.xcconfig** file in `Resources/` folder
+2. **Info.plist** references `$(API_KEY)` from build settings
+3. **NetworkManager** automatically retrieves the key from Bundle
+
+**Note:** The `Secrets.xcconfig` file is in `.gitignore` for security. If you don't have it:
+
+1. Create `Resources/Secrets.xcconfig` file
+2. Add: `API_KEY = your_spoonacular_api_key_here`
+3. Get free API key at [Spoonacular](https://spoonacular.com/food-api)
+
+**Example Secrets.xcconfig:**
+```
+//
+//  Secrets.xcconfig
+//  BestRecipes
+//
+
+API_KEY = your_api_key_here
+```
+
+---
+
+## 👥 Team
+
+<div align="center">
+
+### Worked on the project
+
+<a href="https://github.com/nurislam-kenzheyev22">
+<img src="https://img.shields.io/badge/Nurislam-orange?style=for-the-badge"/></a>
+<a href="https://github.com/Croha-lili"> 
+<img src="https://img.shields.io/badge/Anastasia-green?style=for-the-badge"/></a>
+<a href="https://github.com/VaryaUtkina">
+<img src="https://img.shields.io/badge/Varya-pink?style=for-the-badge"/></a>
+<a href="https://github.com/Ankor45">
+<img src="https://img.shields.io/badge/Ankor45-blue?style=for-the-badge"/></a>
+<a href="https://github.com/00giemensch">
+<img src="https://img.shields.io/badge/00giemensch-purple?style=for-the-badge"/></a>
+
+</div>
+
+---
+
+## 🔗 Links
+
+<div align="center">
+
+<a href="https://spoonacular.com/food-api">
+<img src="https://img.shields.io/badge/Spoonacular_API-FF6B6B?style=for-the-badge&logo=spoonacular&logoColor=white" alt="Spoonacular API"/>
+</a>
+
+</div>
+
+---
+
+<div align="center">
+
+<sub>© 2025 BestRecipes • For internal/educational purposes</sub>
+
+</div>
