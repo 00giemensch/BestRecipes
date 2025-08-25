@@ -79,7 +79,21 @@ This app uses the [Spoonacular API](https://spoonacular.com/food-api). The API k
 2. **Info.plist** references `$(API_KEY)` from build settings
 3. **NetworkManager** automatically retrieves the key from Bundle
 
-**Note:** The `Secrets.xcconfig` file is already configured with a valid API key for this project.
+**Note:** The `Secrets.xcconfig` file is in `.gitignore` for security. If you don't have it:
+
+1. Create `Resources/Secrets.xcconfig` file
+2. Add: `API_KEY = your_spoonacular_api_key_here`
+3. Get free API key at [Spoonacular](https://spoonacular.com/food-api)
+
+**Example Secrets.xcconfig:**
+```
+//
+//  Secrets.xcconfig
+//  BestRecipes
+//
+
+API_KEY = your_api_key_here
+```
 
 ---
 
