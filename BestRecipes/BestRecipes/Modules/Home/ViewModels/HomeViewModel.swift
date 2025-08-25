@@ -33,6 +33,7 @@ class HomeViewModel {
     
     //MARK: - Lifecycle
     private init() {
+        self.kitchens = Kitchen.getKitchens()
         //        getMock()
         fetchDishes()
         fetchCategoryDishes()
