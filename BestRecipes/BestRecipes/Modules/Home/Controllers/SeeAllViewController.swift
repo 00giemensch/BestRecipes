@@ -15,7 +15,11 @@ final class SeeAllViewController: UIViewController {
         static let titleHorizontalInset: CGFloat = 16
         static let collectionTopInset: CGFloat = 16
     }
-    
+    enum CollectionType {
+        case cuisenes
+        case recipes
+    }
+    private let type: CollectionType
     // MARK: - UI Elements
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -27,7 +31,6 @@ final class SeeAllViewController: UIViewController {
         collectionView.backgroundColor = .white
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(DishCell.self, forCellWithReuseIdentifier: DishCell.cellId)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
@@ -61,16 +64,19 @@ final class SeeAllViewController: UIViewController {
     
     // MARK: - Data
     private var recipes: [RecipeModel] = []
+    private var cuisenes: [Kitchen] = []
     private let viewModel = HomeViewModel.shared
     private var sectionTitle: String = ""
     
     // MARK: - Initialization
-    init() {
+    init(_ type: CollectionType = .recipes, recipes: [RecipeModel]) {
+        self.recipes = recipes
+        self.type = type
         super.init(nibName: nil, bundle: nil)
     }
-    
-    init(recipes: [RecipeModel]) {
-        self.recipes = recipes
+    init(_ type: CollectionType = .cuisenes, cuisenes: [Kitchen]) {
+        self.cuisenes = cuisenes
+        self.type = type
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -81,7 +87,8 @@ final class SeeAllViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        setupCell()
         setNavigationBar()
         setupUI()
         setupConstraints()
@@ -108,7 +115,14 @@ final class SeeAllViewController: UIViewController {
         view.addSubview(emptyStateView)
         emptyStateView.addSubview(emptyStateLabel)
     }
-    
+    private func setupCell() {
+        switch type {
+        case .cuisenes:
+            collectionView.register(KitchenCollectionViewCell.self, forCellWithReuseIdentifier: KitchenCollectionViewCell.identifier)
+        case .recipes:
+            collectionView.register(DishCell.self, forCellWithReuseIdentifier: DishCell.cellId)
+        }
+    }
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             // Title
@@ -157,7 +171,7 @@ final class SeeAllViewController: UIViewController {
     }
     
     private func updateUI() {
-        if recipes.isEmpty {
+        if recipes.isEmpty && cuisenes.isEmpty  {
             emptyStateView.isHidden = false
             collectionView.isHidden = true
         } else {
@@ -182,19 +196,35 @@ final class SeeAllViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension SeeAllViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return recipes.count
+        switch type {
+        case .cuisenes:
+            return cuisenes.count
+        case .recipes:
+            return recipes.count
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
-        let recipe = recipes[indexPath.item]
-        let isItInFavorites = viewModel.favoriteRecipes.contains { $0.image == recipe.image }
-        cell.configure(with: recipe, isItInFavorites)
-        cell.favoriteButtonAction = { [weak self] in
-            self?.toggleFavorite(for: recipe)
+        switch type {
+        case .cuisenes:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: KitchenCollectionViewCell.identifier, for: indexPath) as! KitchenCollectionViewCell
+            let cuisene = cuisenes[indexPath.item]
+            cell.configure(with: cuisene)
+            
+            return cell
+        case .recipes:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DishCell.cellId, for: indexPath) as! DishCell
+            let recipe = recipes[indexPath.item]
+            let isItInFavorites = viewModel.favoriteRecipes.contains { $0.image == recipe.image }
+            cell.configure(with: recipe, isItInFavorites)
+            cell.favoriteButtonAction = { [weak self] in
+                self?.toggleFavorite(for: recipe)
+            }
+            
+            return cell
         }
         
-        return cell
     }
 }
 
@@ -208,8 +238,17 @@ extension SeeAllViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - UICollectionViewDelegate
 extension SeeAllViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let recipe = recipes[indexPath.item]
-        let detailVC = RecipeDetailViewController(recipe: recipe)
-        navigationController?.pushViewController(detailVC, animated: true)
+        switch type {
+        case .cuisenes:
+            viewModel.searchRecipes(by: cuisenes[indexPath.row].name) { [weak self] in
+                let seeAllVC = SeeAllViewController(recipes: self?.viewModel.foundRecipes ?? [])
+                seeAllVC.navigationItem.title = self?.cuisenes[indexPath.row].name.capitalizingFirstLetter()
+                self?.navigationController?.pushViewController(seeAllVC, animated: true)
+            }
+        case .recipes:
+            let recipe = recipes[indexPath.item]
+            let detailVC = RecipeDetailViewController(recipe: recipe)
+            navigationController?.pushViewController(detailVC, animated: true)
+        }
     }
 }

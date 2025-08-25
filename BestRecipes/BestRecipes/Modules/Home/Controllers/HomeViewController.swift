@@ -380,6 +380,9 @@ final class HomeViewController: UIViewController {
         popularKitchensHeader.action = { [weak self] in
             if let popCuisines = self?.viewModel.kitchens {
 //                self?.showSeeAllVC(for: popCuisines, with: "Popular cuisines")
+                let seeAllVC = SeeAllViewController(cuisenes: popCuisines)
+                seeAllVC.navigationItem.title = "Popular cuisines"
+                self?.navigationController?.pushViewController(seeAllVC, animated: true)
             }
             print("Popular cuisines see all")
         }
@@ -637,6 +640,13 @@ extension HomeViewController: UICollectionViewDelegate {
         case 3:
             let selectedRecipe = viewModel.recentRecipes[indexPath.item]
             showRecipeDetail(for: selectedRecipe)
+        case 4:
+            let query = viewModel.kitchens[indexPath.item].name
+            viewModel.searchRecipes(by: query) { [weak self] in
+                if let recipes = self?.viewModel.foundRecipes {
+                    self?.showSeeAllVC(for: recipes, with: query.capitalizingFirstLetter())
+                }
+            }
         default:
             break
         }

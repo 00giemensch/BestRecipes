@@ -87,11 +87,11 @@ final class DiscoverViewController: UIViewController {
     // MARK: - Setup
     private func setupUI() {
         view.backgroundColor = .white
+        navigationItem.title = "Saved recipes"
         view.addSubview(collectionView)
         view.addSubview(emptyStateView)
         emptyStateView.addSubview(emptyStateLabel)
     }
-    
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
