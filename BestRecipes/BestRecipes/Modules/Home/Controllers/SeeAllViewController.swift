@@ -89,6 +89,15 @@ final class SeeAllViewController: UIViewController {
 //        updateRecipes()
         updateUI()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.fetchFavoriteRecipes()
+        collectionView.reloadData()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        viewModel.clearFavorite()
+    }
     
     // MARK: - Setup
     private func setupUI() {

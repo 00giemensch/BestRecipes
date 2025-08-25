@@ -421,9 +421,6 @@ final class HomeViewController: UIViewController {
         categoriesButtonsStack.translatesAutoresizingMaskIntoConstraints = false
     }
     private func setupPopularCategoryHeader() {
-        popularCategoryHeader.action = { [weak self] in
-                print("popularCategory see all")
-        }
         popularCategoryHeader.setTitle(Drawing.popularCategoryTitle)
         popularCategoryHeader.translatesAutoresizingMaskIntoConstraints = false
     }
