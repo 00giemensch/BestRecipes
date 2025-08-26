@@ -2,15 +2,6 @@
 
 <div align="center">
 
-![Swift](https://img.shields.io/badge/Swift-5.0-orange?style=for-the-badge&logo=swift)
-![iOS](https://img.shields.io/badge/iOS-16%2B-black?style=for-the-badge&logo=apple)
-![UIKit](https://img.shields.io/badge/UIKit-blue?style=for-the-badge)
-![MVVM](https://img.shields.io/badge/MVVM-ff69b4?style=for-the-badge)
-
-</div>
-
-<div align="center">
-
 **Recipe discovery app with search and favorites. DevRush Project 2.**
 
 </div>
